@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모두잇미래교육진흥협회 | MFEPA</title>
+  <meta name="description" content="모두잇미래교육진흥협회 - AI·디지털 교육으로 세대 간 기술 격차를 해소하고 포용적 미래 사회를 만듭니다">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Particles Background -->
+  <canvas id="particles" class="particles-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <img src="https://public.readdy.ai/ai/img_res/4417e5be-985a-406f-8b29-6ac2a54723b6.png" alt="MFEPA 로고">
+        <span class="nav-brand">MFEPA</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">협회소개</a></li>
+        <li><a href="#programs">프로그램</a></li>
+        <li><a href="#instructors">강사진</a></li>
+        <li><a href="#stats">성과</a></li>
+        <li><a href="#testimonials">후기</a></li>
+        <li><a href="#contact" class="nav-cta">문의하기</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section - Immersive Full Screen -->
+  <section class="hero" id="hero">
+    <canvas id="heroCanvas" class="hero-canvas"></canvas>
+    <div class="hero-bg-effects">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+      <div class="hero-grid-lines"></div>
+    </div>
+    <!-- Animated Rings -->
+    <div class="hero-rings">
+      <div class="hero-ring ring-1"></div>
+      <div class="hero-ring ring-2"></div>
+      <div class="hero-ring ring-3"></div>
+    </div>
+    <!-- Mouse Glow Follower -->
+    <div class="hero-mouse-glow" id="heroMouseGlow"></div>
+
+    <!-- Floating AI Brand Badges -->
+    <div class="ai-badge afb-chatgpt">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span>ChatGPT</span>
+    </div>
+    <div class="ai-badge afb-gemini">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 1L14.1 8.9L22 12L14.1 15.1L12 23L9.9 15.1L2 12L9.9 8.9Z"/></svg>
+      <span>Gemini</span>
+    </div>
+    <div class="ai-badge afb-grok">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span>Grok</span>
+    </div>
+
+    <!-- Subtle Geometric Accents -->
+    <div class="geo-accent geo-1"></div>
+    <div class="geo-accent geo-2"></div>
+    <div class="geo-accent geo-3"></div>
+    <div class="geo-accent geo-4"></div>
+
+    <!-- Central Glow Behind Text -->
+    <div class="hero-center-glow"></div>
+
+    <div class="hero-center">
+      <div class="hero-chip">
+        <span class="hero-chip-dot"></span>
+        <span>AI Education Experts</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="hero-title-line">미래교육으로</span>
+        <span class="hero-title-line hero-title-gradient">모두를 잇습니다</span>
+      </h1>
+      <p class="hero-desc">
+        AI·디지털 역량 교육을 통해<br>
+        세대와 기술의 격차를 연결합니다
+      </p>
+      <div class="hero-actions">
+        <a href="#programs" class="btn btn-glow">
+          <span>프로그램 둘러보기</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        <a href="#contact" class="btn btn-glass-hero">
+          <i class="fas fa-headset"></i>
+          <span>상담 신청</span>
+        </a>
+      </div>
+      <!-- Inline Stats -->
+      <div class="hero-inline-stats">
+        <div class="hero-stat">
+          <strong>3,000+</strong>
+          <span>수료생</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>75+</strong>
+          <span>협력기관</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>98.5%</strong>
+          <span>만족도</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>4.9/5</strong>
+          <span>평균 평점</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="hero-scroll-indicator">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- About Section - Bento Grid -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip"><i class="fas fa-sparkles"></i> About Us</span>
+        <h2 class="section-title">기술을 넘어<br><span class="gradient-text">가능성을 연결</span>합니다</h2>
+      </div>
+      <div class="bento-grid">
+        <div class="bento-card bento-large">
+          <div class="bento-glow"></div>
+          <div class="bento-card-img">
+            <img src="images/사명.png" alt="사명">
+          </div>
+          <h3>사명</h3>
+          <p>시니어, 디지털 소외계층 등 다양한 학습자를 위한 맞춤형 AI·디지털 교육을 설계하여 기술 접근성의 격차를 해소하고, 포용적 디지털 사회 구현에 기여합니다.</p>
+        </div>
+        <div class="bento-card">
+          <div class="bento-glow"></div>
+          <div class="bento-card-img">
+            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=220&fit=crop&crop=center" alt="비전">
+          </div>
+          <h3>비전</h3>
+          <p>AI 리터러시 확산을 통해 누구나 디지털 전환 시대에 주체적으로 참여하는 사회를 만듭니다.</p>
+        </div>
+        <div class="bento-card">
+          <div class="bento-glow"></div>
+          <div class="bento-card-img">
+            <img src="images/목표.png" alt="목표">
+          </div>
+          <h3>목표</h3>
+          <p>체계적 커리큘럼과 자격 인증 시스템으로 실질적인 디지털 역량을 갖춘 인재를 양성합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs Section - Horizontal Scroll Cards -->
+  <section class="section section-gradient" id="programs">
+    <div class="container">
+      <div class="section-header section-header-light">
+        <span class="section-chip section-chip-light"><i class="fas fa-graduation-cap"></i> Programs</span>
+        <h2 class="section-title">자격증 & 교육 프로그램</h2>
+        <p class="section-subtitle">현장 중심 커리큘럼과 자격 인증으로 검증된 AI 전문 역량을 완성합니다.</p>
+      </div>
+      <div class="programs-showcase">
+
+        <div class="program-card-v2">
+          <div class="program-card-bg"></div>
+          <div class="program-number">01</div>
+          <div class="program-img">
+            <img src="https://static.readdy.ai/image/53d91c25cf69878cff5dc4dff9406378/42c3859f6687552a92030795cd6de4d3.png" alt="AI 비즈니스 활용 전문가">
+          </div>
+          <div class="program-body">
+            <div class="program-level">1급 / 2급</div>
+            <h3>AI 비즈니스 활용 전문가</h3>
+            <p>ChatGPT, Gemini 등 생성형 AI를 업무에 전략적으로 활용하는 실무 중심 과정입니다.</p>
+            <ul class="program-tags">
+              <li>생성형 AI</li>
+              <li>콘텐츠 마케팅</li>
+              <li>실무 프로젝트</li>
+            </ul>
+            <a href="https://blog.naver.com/sujung_world/223932309503" target="_blank" rel="noopener" class="program-link">자세히 보기 <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="program-card-v2">
+          <div class="program-card-bg"></div>
+          <div class="program-number">02</div>
+          <div class="program-img">
+            <img src="https://static.readdy.ai/image/53d91c25cf69878cff5dc4dff9406378/6a183f77a94a4db9b90616658d521b9b.png" alt="AI 스마트폰 활용 전문가">
+          </div>
+          <div class="program-body">
+            <div class="program-level">1급 / 2급</div>
+            <h3>AI 스마트폰 활용 전문가</h3>
+            <p>스마트폰 기반 AI 도구를 활용한 숏폼 영상·콘텐츠 제작 전문 과정입니다.</p>
+            <ul class="program-tags">
+              <li>숏폼 영상</li>
+              <li>AI 편집 도구</li>
+              <li>콘텐츠 제작</li>
+            </ul>
+            <a href="https://blog.naver.com/sujung_world/223973718742" target="_blank" rel="noopener" class="program-link">자세히 보기 <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="program-card-v2">
+          <div class="program-card-bg"></div>
+          <div class="program-number">03</div>
+          <div class="program-img">
+            <img src="https://static.readdy.ai/image/53d91c25cf69878cff5dc4dff9406378/9470a2ddd95383b41d3623e471aebaef.jpeg" alt="미리캔버스 지도자 과정">
+          </div>
+          <div class="program-body">
+            <div class="program-level">1급 / 2급</div>
+            <h3>미리캔버스 지도자 과정</h3>
+            <p>미리캔버스와 생성형 AI를 결합한 디자인 콘텐츠 제작 역량을 갖춘 지도자를 양성합니다.</p>
+            <ul class="program-tags">
+              <li>미리캔버스</li>
+              <li>AI 디자인</li>
+              <li>지도자 자격</li>
+            </ul>
+            <a href="https://blog.naver.com/sujung_world/224075996224" target="_blank" rel="noopener" class="program-link">자세히 보기 <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Instructors Section - Modern Grid with Featured Leader -->
+  <section class="section" id="instructors">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip"><i class="fas fa-chalkboard-user"></i> Instructors</span>
+        <h2 class="section-title">전문 <span class="gradient-text">강사진</span></h2>
+        <p class="section-subtitle">풍부한 현장 경험과 전문 자격을 갖춘 강사진이 교육을 이끕니다.</p>
+      </div>
+
+      <!-- Featured Instructor -->
+      <div class="instructor-hero">
+        <div class="instructor-hero-image">
+          <img src="images/박옥경.png" alt="박옥경">
+          <div class="instructor-hero-ring"></div>
+        </div>
+        <div class="instructor-hero-info">
+          <span class="instructor-hero-badge"><i class="fas fa-crown"></i> 협회장 · 대표강사</span>
+          <h3>박옥경</h3>
+          <div class="instructor-hero-tags">
+            <span>AI 비즈니스</span>
+            <span>AI 스마트폰 활용</span>
+            <span>AI 영상 제작</span>
+            <span>시니어 교육</span>
+            <span>미리캔버스 공인강사</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructor Grid -->
+      <div class="instructors-grid-v2">
+        <div class="instructor-card-v2">
+          <img src="images/박미영.png" alt="박미영">
+          <div class="instructor-card-info">
+            <h4>박미영</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/심숙경.png" alt="심숙경">
+          <div class="instructor-card-info">
+            <h4>심숙경</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/주은지.png" alt="주은지">
+          <div class="instructor-card-info">
+            <h4>주은지</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/박해경.png" alt="박해경">
+          <div class="instructor-card-info">
+            <h4>박해경</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/허수정.png" alt="허수정">
+          <div class="instructor-card-info">
+            <h4>허수정</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/최교빈.png" alt="최교빈">
+          <div class="instructor-card-info">
+            <h4>최교빈</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/이은영.png" alt="이은영">
+          <div class="instructor-card-info">
+            <h4>이은영</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/양혜경.png" alt="양혜경">
+          <div class="instructor-card-info">
+            <h4>양혜경</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/이윤경.png" alt="이윤경">
+          <div class="instructor-card-info">
+            <h4>이윤경</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+        <div class="instructor-card-v2">
+          <img src="images/김미나.png" alt="김미나">
+          <div class="instructor-card-info">
+            <h4>김미나</h4>
+            <span>AI 비즈니스 · AI 스마트폰 활용</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section - Glowing Dashboard -->
+  <section class="section section-stats" id="stats">
+    <div class="stats-bg-pattern"></div>
+    <div class="container">
+      <div class="section-header section-header-light">
+        <span class="section-chip section-chip-light"><i class="fas fa-chart-line"></i> Achievements</span>
+        <h2 class="section-title">활동 <span class="gradient-text-light">성과</span></h2>
+        <p class="section-subtitle">데이터로 증명하는 교육의 가치</p>
+      </div>
+      <div class="stats-dashboard">
+        <div class="stats-row">
+          <div class="stat-glass">
+            <div class="stat-icon-bg"><i class="fas fa-face-smile"></i></div>
+            <div class="stat-value">98.5<span>%</span></div>
+            <div class="stat-name">전체 만족도</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:98.5%"></div></div>
+          </div>
+          <div class="stat-glass">
+            <div class="stat-icon-bg"><i class="fas fa-star"></i></div>
+            <div class="stat-value">4.9<span>/5</span></div>
+            <div class="stat-name">평균 평점</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:98%"></div></div>
+          </div>
+          <div class="stat-glass">
+            <div class="stat-icon-bg"><i class="fas fa-rotate-right"></i></div>
+            <div class="stat-value">95<span>%</span></div>
+            <div class="stat-name">재수강률</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:95%"></div></div>
+          </div>
+          <div class="stat-glass">
+            <div class="stat-icon-bg"><i class="fas fa-share-nodes"></i></div>
+            <div class="stat-value">92<span>%</span></div>
+            <div class="stat-name">추천율</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:92%"></div></div>
+          </div>
+        </div>
+        <div class="partners-row">
+          <div class="partner-glass">
+            <div class="partner-num">75<span>+</span></div>
+            <div class="partner-name">협력기관</div>
+          </div>
+          <div class="partner-glass">
+            <div class="partner-num">20<span>+</span></div>
+            <div class="partner-name">교육청</div>
+          </div>
+          <div class="partner-glass">
+            <div class="partner-num">25<span>+</span></div>
+            <div class="partner-name">대학교</div>
+          </div>
+          <div class="partner-glass">
+            <div class="partner-num">3,000<span>+</span></div>
+            <div class="partner-name">수료생</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip"><i class="fas fa-quote-left"></i> Reviews</span>
+        <h2 class="section-title">수강생 <span class="gradient-text">후기</span></h2>
+        <p class="section-subtitle">교육 현장에서 전해지는 변화의 목소리</p>
+      </div>
+      <div class="testimonials-masonry">
+        <div class="testimonial-glass">
+          <div class="testimonial-top">
+            <div class="testimonial-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <i class="fas fa-quote-right testimonial-quote-icon"></i>
+          </div>
+          <blockquote>
+            "처음엔 AI가 너무 어려웠는데, 선생님이 천천히 알려주셔서 이제 ChatGPT로 손자 생일카드도 만들어요. 정말 감사합니다!"
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">김</div>
+            <div>
+              <strong>김○○</strong>
+              <span>시니어 AI 과정 수강생</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-glass">
+          <div class="testimonial-top">
+            <div class="testimonial-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <i class="fas fa-quote-right testimonial-quote-icon"></i>
+          </div>
+          <blockquote>
+            "ChatGPT와 미리캔버스로 업무 효율이 3배 이상 향상됐어요. 실무에 바로 적용할 수 있어서 정말 유익했습니다."
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">이</div>
+            <div>
+              <strong>이○○</strong>
+              <span>AI 비즈니스 과정 수강생</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-glass">
+          <div class="testimonial-top">
+            <div class="testimonial-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <i class="fas fa-quote-right testimonial-quote-icon"></i>
+          </div>
+          <blockquote>
+            "70이 넘어서 AI를 배우기 시작했는데, 이제는 제가 동네 어르신들에게 알려드려요. 배움에는 나이가 없다고 느꼈습니다."
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">정</div>
+            <div>
+              <strong>정○○</strong>
+              <span>스마트폰 활용 과정 수강생</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-glass">
+          <div class="testimonial-top">
+            <div class="testimonial-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <i class="fas fa-quote-right testimonial-quote-icon"></i>
+          </div>
+          <blockquote>
+            "스마트폰으로 영상 편집까지 할 수 있게 될 줄 몰랐어요. 수업 후 유튜브 채널을 개설했는데 벌써 구독자가 500명이 넘었습니다!"
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">박</div>
+            <div>
+              <strong>박○○</strong>
+              <span>AI 스마트폰 활용 과정 수강생</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-glass">
+          <div class="testimonial-top">
+            <div class="testimonial-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <i class="fas fa-quote-right testimonial-quote-icon"></i>
+          </div>
+          <blockquote>
+            "미리캔버스 지도자 자격증을 취득한 후 문화센터에서 강의를 시작하게 됐어요. 제 인생의 새로운 전환점이 되었습니다."
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">최</div>
+            <div>
+              <strong>최○○</strong>
+              <span>미리캔버스 지도자 과정 수강생</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-glass">
+          <div class="testimonial-top">
+            <div class="testimonial-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <i class="fas fa-quote-right testimonial-quote-icon"></i>
+          </div>
+          <blockquote>
+            "소상공인으로서 마케팅이 항상 고민이었는데, AI 비즈니스 과정에서 배운 것들로 블로그와 SNS 콘텐츠를 직접 만들고 있어요. 매출이 눈에 띄게 올랐습니다."
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">한</div>
+            <div>
+              <strong>한○○</strong>
+              <span>AI 비즈니스 과정 수강생</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section - Compact -->
+  <section class="section section-contact" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip"><i class="fas fa-paper-plane"></i> Contact</span>
+        <h2 class="section-title">교육 상담 및 문의</h2>
+        <p class="section-subtitle">프로그램 안내부터 수강 신청까지, 편하게 연락 주세요.</p>
+      </div>
+      <div class="contact-compact">
+        <div class="contact-row">
+          <a href="tel:010-9376-8061" class="contact-pill">
+            <div class="contact-pill-icon"><i class="fas fa-phone"></i></div>
+            <div><span>전화 문의</span><strong>010-9376-8061</strong></div>
+          </a>
+          <a href="mailto:anais0305@naver.com" class="contact-pill">
+            <div class="contact-pill-icon"><i class="fas fa-envelope"></i></div>
+            <div><span>이메일</span><strong>anais0305@naver.com</strong></div>
+          </a>
+          <div class="contact-pill">
+            <div class="contact-pill-icon"><i class="fas fa-clock"></i></div>
+            <div><span>운영시간</span><strong>평일 09:00 - 18:00</strong></div>
+          </div>
+        </div>
+        <a href="https://open.kakao.com/o/s6vueyOg" target="_blank" rel="noopener" class="btn btn-kakao-main">
+          <i class="fas fa-comment"></i>
+          <span>카카오톡 오픈채팅 문의하기</span>
+        </a>
+        <div class="contact-socials-row">
+          <a href="https://www.instagram.com/sujung_world/" target="_blank" rel="noopener" aria-label="인스타그램"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@sujung_world" target="_blank" rel="noopener" aria-label="유튜브"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.threads.com/@sujung_world" target="_blank" rel="noopener" aria-label="스레드"><i class="fab fa-threads"></i></a>
+          <a href="https://blog.naver.com/sujung_world" target="_blank" rel="noopener" aria-label="블로그"><i class="fas fa-blog"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/" class="footer-logo-link">
+            <img src="https://public.readdy.ai/ai/img_res/4417e5be-985a-406f-8b29-6ac2a54723b6.png" alt="MFEPA 로고" class="footer-logo">
+            <span>MFEPA</span>
+          </a>
+          <p class="footer-tagline">모두잇미래교육진흥협회<br>AI 교육으로 포용적 디지털 사회를 만듭니다.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>바로가기</h4>
+            <ul>
+              <li><a href="#about">협회소개</a></li>
+              <li><a href="#programs">강의프로그램</a></li>
+              <li><a href="#instructors">강사소개</a></li>
+              <li><a href="#contact">문의하기</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>프로그램</h4>
+            <ul>
+              <li><a href="#programs">AI 비즈니스 전문가</a></li>
+              <li><a href="#programs">AI 스마트폰 전문가</a></li>
+              <li><a href="#programs">미리캔버스 지도자</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>연락처</h4>
+            <ul>
+              <li><a href="tel:010-9376-8061">010-9376-8061</a></li>
+              <li><a href="mailto:anais0305@naver.com">anais0305@naver.com</a></li>
+              <li>평일 09:00 - 18:00</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 모두잇미래교육진흥협회 (MFEPA). All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="backToTop" aria-label="맨 위로">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
