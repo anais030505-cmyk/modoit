@@ -579,8 +579,8 @@ ul { list-style: none; }
   box-shadow: var(--shadow-card-hover); transform: translateY(-5px);
 }
 .instructor-card-v2 img {
-  width: 60px; height: 60px; object-fit: cover; border-radius: 50%;
-  margin: 0 auto 4px; border: 3px solid var(--white);
+  width: 40px; height: 40px; object-fit: cover; border-radius: 50%;
+  margin: 0 auto 4px; border: 2px solid var(--white);
   box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: all var(--transition);
 }
 .instructor-card-v2:hover img { border-color: var(--purple-lighter); box-shadow: var(--shadow-purple); }
@@ -592,6 +592,12 @@ ul { list-style: none; }
 .instructor-card-info .instructor-venues span {
   font-size: 0.58rem; color: var(--purple); background: var(--purple-bg);
   padding: 1px 6px; border-radius: 20px; font-weight: 600; line-height: 1.3;
+}
+.instructor-senior-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  margin-top: 2px; font-size: 0.6rem !important; font-weight: 700;
+  color: var(--purple) !important; background: var(--purple-subtle);
+  padding: 2px 8px; border-radius: 20px;
 }
 
 /* === STATS === */
@@ -860,7 +866,7 @@ ul { list-style: none; }
   .section-subtitle br { display: none; }
   .instructors-grid-v2 { grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .instructor-card-v2 { padding: 12px 6px; }
-  .instructor-card-v2 img { width: 56px; height: 56px; }
+  .instructor-card-v2 img { width: 36px; height: 36px; }
   .ai-badge { display: none; }
   .geo-accent { display: none; }
   .contact-row { flex-direction: column; align-items: center; }
