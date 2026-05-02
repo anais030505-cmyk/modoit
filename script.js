@@ -250,7 +250,8 @@ document.querySelectorAll(
   // YouTube 채널 ID (UCxxxxxxxx 형식) - 채널 페이지 소스에서 확인 가능
   const CHANNEL_ID = 'UCv9JR_80V09Jq5_0odEHr_A';
 
-  const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}&api_key=free`;
+  const feedUrl = encodeURIComponent(`https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`);
+  const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`;
 
   const frame = document.getElementById('youtubeLatestFrame');
   const loading = document.getElementById('youtubeLoading');
