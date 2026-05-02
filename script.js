@@ -248,7 +248,7 @@ document.querySelectorAll(
 (function loadYoutubeLatest() {
   // rss2json을 이용해 유튜브 채널의 최신 영상을 API키 없이 불러옵니다.
   // YouTube 채널 ID (UCxxxxxxxx 형식) - 채널 페이지 소스에서 확인 가능
-  const CHANNEL_ID = 'UCsujung_world'; // ← 실제 채널 ID로 교체 필요
+  const CHANNEL_ID = 'UCv9JR_80V09Jq5_0odEHr_A';
 
   const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}&api_key=free`;
 
