@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20260407">
+  <link rel="stylesheet" href="style.css?v=20260503">
 </head>
 <body>
 
@@ -33,8 +33,11 @@
         <li><a href="#stats">성과</a></li>
         <li><a href="#partners">협력기관</a></li>
         <li><a href="https://blog.naver.com/sujung_world" target="_blank" rel="noopener">출강기록</a></li>
+        <li><a href="https://www.ceojhn.com/news/articleList.html?sc_sub_section_code=S2N15&view_type=sm" target="_blank" rel="noopener">AI칼럼</a></li>
+        <li><a href="https://www.youtube.com/@sujung_world" target="_blank" rel="noopener" class="nav-youtube"><i class="fab fa-youtube"></i> 유튜브</a></li>
         <li><a href="#testimonials">후기</a></li>
         <li><a href="#contact" class="nav-cta">문의하기</a></li>
+        <li><a href="https://open.kakao.com/o/g5r1uQsf" target="_blank" rel="noopener" class="nav-kakao"><i class="fas fa-comment"></i> 단톡방</a></li>
       </ul>
     </div>
   </nav>
@@ -216,6 +219,13 @@
           <span class="press-date">2025</span>
         </a>
       </div>
+      <div class="press-cta">
+        <a href="https://www.ceojhn.com/news/articleList.html?sc_sub_section_code=S2N15&view_type=sm" target="_blank" rel="noopener" class="btn btn-outline-purple">
+          <i class="fas fa-pen-nib"></i>
+          <span>CEO저널 AI 칼럼 더 보기</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -286,6 +296,30 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- YouTube Latest Video Section -->
+  <section class="section section-youtube" id="youtube">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip"><i class="fab fa-youtube"></i> YouTube</span>
+        <h2 class="section-title">공식 <span class="gradient-text">유튜브</span></h2>
+        <p class="section-subtitle">모두잇미래교육진흥협회의 최신 강의 영상을 만나보세요</p>
+      </div>
+      <div class="youtube-latest-wrap">
+        <div class="youtube-embed-box">
+          <iframe id="youtubeLatestFrame" src="" title="최신 유튜브 영상" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div class="youtube-loading" id="youtubeLoading"><i class="fab fa-youtube"></i><span>영상 불러오는 중...</span></div>
+        </div>
+        <div class="youtube-info" id="youtubeInfo">
+          <p class="youtube-video-title" id="youtubeTitle"></p>
+          <a href="https://www.youtube.com/@sujung_world" target="_blank" rel="noopener" class="btn btn-youtube-channel">
+            <i class="fab fa-youtube"></i>
+            <span>채널 전체 보기</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -838,10 +872,16 @@
             <div><span>운영시간</span><strong>평일 09:00 - 18:00</strong></div>
           </div>
         </div>
-        <a href="https://open.kakao.com/o/s6vueyOg" target="_blank" rel="noopener" class="btn btn-kakao-main">
-          <i class="fas fa-comment"></i>
-          <span>카카오톡 오픈채팅 문의하기</span>
-        </a>
+        <div class="contact-btn-row">
+          <a href="https://open.kakao.com/o/s6vueyOg" target="_blank" rel="noopener" class="btn btn-kakao-main">
+            <i class="fas fa-comment"></i>
+            <span>카카오톡 오픈채팅 문의하기</span>
+          </a>
+          <a href="https://open.kakao.com/o/g5r1uQsf" target="_blank" rel="noopener" class="btn btn-kakao-group">
+            <i class="fas fa-users"></i>
+            <span>협회 단톡방 참여</span>
+          </a>
+        </div>
         <div class="contact-socials-row">
           <a href="https://www.instagram.com/sujung_world/" target="_blank" rel="noopener" aria-label="인스타그램"><i class="fab fa-instagram"></i></a>
           <a href="https://www.youtube.com/@sujung_world" target="_blank" rel="noopener" aria-label="유튜브"><i class="fab fa-youtube"></i></a>

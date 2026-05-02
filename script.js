@@ -244,6 +244,39 @@ document.querySelectorAll(
   observer.observe(el);
 });
 
+// === YouTube Latest Video Loader ===
+(function loadYoutubeLatest() {
+  // rss2json을 이용해 유튜브 채널의 최신 영상을 API키 없이 불러옵니다.
+  // YouTube 채널 ID (UCxxxxxxxx 형식) - 채널 페이지 소스에서 확인 가능
+  const CHANNEL_ID = 'UCsujung_world'; // ← 실제 채널 ID로 교체 필요
+
+  const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}&api_key=free`;
+
+  const frame = document.getElementById('youtubeLatestFrame');
+  const loading = document.getElementById('youtubeLoading');
+  const titleEl = document.getElementById('youtubeTitle');
+  if (!frame) return;
+
+  fetch(rssUrl)
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 'ok' && data.items && data.items.length > 0) {
+        const item = data.items[0];
+        const videoId = item.link.includes('v=')
+          ? item.link.split('v=')[1].split('&')[0]
+          : item.link.split('/').pop();
+        frame.src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
+        frame.classList.add('loaded');
+        if (loading) loading.classList.add('hide');
+        if (titleEl) titleEl.textContent = item.title;
+      }
+    })
+    .catch(() => {
+      // API 실패 시 채널 링크로 대체
+      if (loading) loading.innerHTML = '<i class="fab fa-youtube"></i><span>채널에서 최신 영상을 확인하세요</span>';
+    });
+})();
+
 // === Active Nav Highlighting ===
 const sections = document.querySelectorAll('section[id]');
 const navLinkItems = document.querySelectorAll('.nav-links a[href^="#"]');
