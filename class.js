@@ -19,12 +19,13 @@ import {
 // 아래 값을 교체하세요 (Authentication + Firestore 활성화 필요)
 // =====================================================
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCKn6pnMR5lDbJM6C2kLDN8XceByLkL5oU",
+  authDomain: "modoit-class.firebaseapp.com",
+  projectId: "modoit-class",
+  storageBucket: "modoit-class.firebasestorage.app",
+  messagingSenderId: "835548872571",
+  appId: "1:835548872571:web:a99d253820abf3b70887de",
+  measurementId: "G-ZXD2EBQWSX"
 };
 
 // =====================================================
