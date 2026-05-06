@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모두잇 클래스 | AI·디지털 교육 강의</title>
+  <meta name="description" content="모두잇미래교육진흥협회 공식 AI·디지털 교육 강의 플랫폼">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="class.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="cls-header" id="clsHeader">
+    <div class="cls-container">
+      <a href="class.html" class="cls-logo">
+        <img src="images/logo.png" alt="모두잇 로고">
+        <div class="cls-logo-text">
+          <span class="cls-logo-main">모두잇</span>
+          <span class="cls-logo-sub">CLASS</span>
+        </div>
+      </a>
+
+      <nav class="cls-nav" id="clsNav">
+        <a href="class.html" class="cls-nav-link active" id="navAll">전체강의</a>
+        <a href="class.html?filter=free" class="cls-nav-link" id="navFree">무료강의</a>
+        <a href="class.html?filter=paid" class="cls-nav-link" id="navPaid">유료강의</a>
+        <a href="#" class="cls-nav-link cls-coming" onclick="return false">
+          멤버십강의 <span class="cls-badge-soon">준비중</span>
+        </a>
+        <a href="#" class="cls-nav-link cls-coming" onclick="return false">
+          챌린지 <span class="cls-badge-soon">준비중</span>
+        </a>
+        <a href="#reviews" class="cls-nav-link">수강후기</a>
+        <a href="#faq" class="cls-nav-link">FAQ</a>
+        <a href="index.html" class="cls-nav-link">← 협회 홈</a>
+      </nav>
+
+      <div class="cls-header-right">
+        <!-- 로그인 전 -->
+        <button id="loginBtn" class="cls-btn-login" onclick="openLoginModal()">
+          <i class="fas fa-user"></i> 로그인
+        </button>
+        <!-- 로그인 후 -->
+        <div id="userArea" class="cls-user-area" style="display:none">
+          <img id="userPhoto" src="" alt="" class="cls-user-photo">
+          <span id="userName" class="cls-user-name"></span>
+          <button onclick="handleLogout()" class="cls-btn-logout">로그아웃</button>
+        </div>
+        <button class="cls-mobile-toggle" id="mobileToggle" onclick="toggleMobileNav()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="cls-hero">
+    <div class="cls-hero-bg">
+      <div class="cls-hero-orb cls-hero-orb-1"></div>
+      <div class="cls-hero-orb cls-hero-orb-2"></div>
+    </div>
+    <div class="cls-container cls-hero-inner">
+      <div class="cls-hero-content">
+        <span class="cls-hero-chip"><i class="fas fa-graduation-cap"></i> 모두잇 공식 강의 플랫폼</span>
+        <h1 class="cls-hero-title">
+          AI·디지털 역량으로<br>
+          <span class="cls-hero-gradient">더 나은 내일</span>을 만드세요
+        </h1>
+        <p class="cls-hero-desc">현장 경험을 담은 실무 중심 AI 교육 콘텐츠를 지금 바로 만나보세요</p>
+        <div class="cls-hero-stats">
+          <div class="cls-hero-stat">
+            <strong id="totalCourseCount">0</strong>
+            <span>전체 강의</span>
+          </div>
+          <div class="cls-hero-stat-div"></div>
+          <div class="cls-hero-stat">
+            <strong id="freeCourseCount">0</strong>
+            <span>무료 강의</span>
+          </div>
+          <div class="cls-hero-stat-div"></div>
+          <div class="cls-hero-stat">
+            <strong id="totalViewsCount">0</strong>
+            <span>총 수강</span>
+          </div>
+        </div>
+      </div>
+      <div class="cls-hero-visual">
+        <div class="cls-hero-card-visual">
+          <div class="cls-hv-icon"><i class="fas fa-play-circle"></i></div>
+          <p class="cls-hv-label">지금 바로 수강하기</p>
+          <div class="cls-hv-badges">
+            <span>AI 비즈니스</span>
+            <span>미리캔버스</span>
+            <span>AI 스마트폰</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FILTER BAR ===== -->
+  <div class="cls-filter-bar" id="filterBar">
+    <div class="cls-container cls-filter-inner">
+      <div class="cls-tabs" id="catTabs">
+        <button class="cls-tab active" data-cat="all">전체</button>
+        <button class="cls-tab" data-cat="AI비즈니스활용">AI 비즈니스 활용</button>
+        <button class="cls-tab" data-cat="AI스마트폰활용">AI 스마트폰 활용</button>
+        <button class="cls-tab" data-cat="미리캔버스">미리캔버스</button>
+        <button class="cls-tab" data-cat="기타">기타</button>
+      </div>
+      <div class="cls-filter-right">
+        <select class="cls-sort" id="sortSelect">
+          <option value="order">기본순</option>
+          <option value="popular">인기순</option>
+          <option value="latest">최신순</option>
+          <option value="free">무료 먼저</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COURSE GRID ===== -->
+  <main class="cls-main">
+    <div class="cls-container">
+      <div class="cls-course-grid" id="courseGrid">
+        <!-- JS로 렌더링 -->
+      </div>
+      <div class="cls-empty" id="emptyState" style="display:none">
+        <i class="fas fa-search"></i>
+        <p>해당 카테고리에 강의가 없습니다</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== REVIEWS ===== -->
+  <section class="cls-section cls-reviews-section" id="reviews">
+    <div class="cls-container">
+      <div class="cls-sec-header">
+        <span class="cls-sec-chip"><i class="fas fa-star"></i> Reviews</span>
+        <h2 class="cls-sec-title">수강생 <span class="cls-title-accent">후기</span></h2>
+        <p class="cls-sec-sub">실제 수강생들의 생생한 후기</p>
+      </div>
+      <div class="cls-reviews-grid" id="reviewsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="cls-section cls-faq-section" id="faq">
+    <div class="cls-container">
+      <div class="cls-sec-header">
+        <span class="cls-sec-chip"><i class="fas fa-circle-question"></i> FAQ</span>
+        <h2 class="cls-sec-title">자주 묻는 <span class="cls-title-accent">질문</span></h2>
+      </div>
+      <div class="cls-faq-list">
+        <div class="cls-faq-item">
+          <button class="cls-faq-q">강의는 어떻게 수강하나요? <i class="fas fa-chevron-down"></i></button>
+          <div class="cls-faq-a">로그인 후 원하는 강의를 클릭하시면 바로 수강하실 수 있습니다. 무료 강의는 누구나 시청 가능합니다.</div>
+        </div>
+        <div class="cls-faq-item">
+          <button class="cls-faq-q">유료 강의 결제는 어떻게 하나요? <i class="fas fa-chevron-down"></i></button>
+          <div class="cls-faq-a">유료 강의 결제 기능은 곧 오픈 예정입니다. 현재는 <a href="index.html#contact">문의하기</a>를 통해 수강 신청하실 수 있습니다.</div>
+        </div>
+        <div class="cls-faq-item">
+          <button class="cls-faq-q">수강 기간이 있나요? <i class="fas fa-chevron-down"></i></button>
+          <div class="cls-faq-a">무료 강의는 기간 제한 없이 언제든 시청 가능합니다. 유료 강의 수강 기간은 강의별로 상이하며 추후 안내됩니다.</div>
+        </div>
+        <div class="cls-faq-item">
+          <button class="cls-faq-q">모바일에서도 수강 가능한가요? <i class="fas fa-chevron-down"></i></button>
+          <div class="cls-faq-a">네, PC와 모바일 모두에서 최적화된 화면으로 수강하실 수 있습니다.</div>
+        </div>
+        <div class="cls-faq-item">
+          <button class="cls-faq-q">수료증 발급이 되나요? <i class="fas fa-chevron-down"></i></button>
+          <div class="cls-faq-a">협회 자격증 과정 수료 시 수료증 및 자격증 발급이 가능합니다. 자세한 사항은 문의하기를 이용해 주세요.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="cls-footer">
+    <div class="cls-container">
+      <div class="cls-footer-top">
+        <div class="cls-footer-brand">
+          <div class="cls-footer-logo-wrap">
+            <img src="images/logo.png" alt="모두잇">
+            <span>모두잇 클래스</span>
+          </div>
+          <p>AI·디지털 교육으로 세대와 기술의 격차를 연결합니다</p>
+        </div>
+        <div class="cls-footer-links">
+          <strong>바로가기</strong>
+          <a href="index.html">협회 홈페이지</a>
+          <a href="index.html#programs">교육 프로그램</a>
+          <a href="index.html#contact">문의하기</a>
+          <a href="https://blog.naver.com/sujung_world" target="_blank" rel="noopener">출강기록</a>
+        </div>
+        <div class="cls-footer-contact">
+          <strong>연락처</strong>
+          <p><i class="fas fa-phone"></i> 010-9376-8061</p>
+          <p><i class="fas fa-envelope"></i> anais0305@naver.com</p>
+          <p><i class="fas fa-clock"></i> 평일 09:00 - 18:00</p>
+        </div>
+      </div>
+      <div class="cls-footer-bottom">
+        <p>© 2025 모두잇미래교육진흥협회. All rights reserved.</p>
+        <div class="cls-footer-socials">
+          <a href="https://www.instagram.com/sujung_world/" target="_blank" rel="noopener" aria-label="인스타그램"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@sujung_world" target="_blank" rel="noopener" aria-label="유튜브"><i class="fab fa-youtube"></i></a>
+          <a href="https://open.kakao.com/o/g5r1uQsf" target="_blank" rel="noopener" aria-label="카카오 단톡방"><i class="fas fa-comment"></i></a>
+          <a href="https://blog.naver.com/sujung_world" target="_blank" rel="noopener" aria-label="블로그"><i class="fas fa-blog"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="cls-overlay" id="loginModal" onclick="closeLoginModal(event)">
+    <div class="cls-modal" id="loginModalBox">
+      <button class="cls-modal-close" onclick="closeLoginModal()"><i class="fas fa-times"></i></button>
+      <div class="cls-modal-logo">
+        <img src="images/logo.png" alt="모두잇">
+        <div>
+          <span class="cls-modal-brand">모두잇 클래스</span>
+        </div>
+      </div>
+      <h2 class="cls-modal-title">로그인</h2>
+      <p class="cls-modal-sub">수강 기록 및 맞춤 추천을 위해 로그인해주세요</p>
+      <div class="cls-login-btns">
+        <button class="cls-btn-google" onclick="loginWithGoogle()">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+          구글로 로그인
+        </button>
+        <button class="cls-btn-kakao" onclick="loginWithKakao()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.74 1.72 5.15 4.32 6.59l-1.1 4.05 4.73-3.13c.65.09 1.33.14 2.05.14 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>
+          카카오로 로그인
+        </button>
+      </div>
+      <p class="cls-modal-terms">
+        로그인 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== COURSE DETAIL MODAL ===== -->
+  <div class="cls-overlay" id="courseModal" onclick="closeCourseModal(event)">
+    <div class="cls-modal cls-course-modal" id="courseModalBox">
+      <button class="cls-modal-close" onclick="closeCourseModal()"><i class="fas fa-times"></i></button>
+      <div class="cls-video-wrap">
+        <iframe id="courseFrame" src="" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="cls-course-info">
+        <div class="cls-course-badges" id="courseDetailBadges"></div>
+        <h2 id="courseDetailTitle" class="cls-course-title"></h2>
+        <p id="courseDetailDesc" class="cls-course-desc"></p>
+        <div id="courseDetailMeta" class="cls-course-meta"></div>
+        <div id="courseDetailCta" class="cls-course-cta"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (v10) -->
+  <script type="module" src="class.js"></script>
+  <!-- Kakao SDK -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+</body>
+</html>
