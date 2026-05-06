@@ -31,7 +31,7 @@ const firebaseConfig = {
 // ⚙️  카카오 앱 키
 // developers.kakao.com → 내 애플리케이션 → JavaScript 키
 // =====================================================
-const KAKAO_JS_KEY = 'YOUR_KAKAO_JS_KEY';
+const KAKAO_JS_KEY = 'b59c8052d94c133575b1f736da7a196d';
 
 // =====================================================
 // 📚  샘플 강의 데이터
