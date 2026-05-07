@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모두잇 클래스 | 관리자</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* --- 상단바 --- */
+    .admin-bar {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-bar-left { display: flex; align-items: center; gap: 12px; }
+    .admin-bar-left img { width: 32px; height: 32px; border-radius: 8px; }
+    .admin-bar-left span { font-weight: 700; font-size: 15px; }
+    .admin-bar-left .sub { color: #a78bfa; font-size: 12px; margin-left: 4px; }
+    .admin-bar-right { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+    .admin-bar-right img { width: 28px; height: 28px; border-radius: 50%; }
+    .admin-bar-right a { color: #a78bfa; text-decoration: none; }
+
+    /* --- 로그인 화면 --- */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .login-screen h1 { font-size: 22px; }
+    .login-screen .login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .login-screen .login-btn:hover { box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+    .login-screen .login-btn img { width: 20px; }
+    .login-screen .err { color: #e74c3c; font-size: 13px; }
+
+    /* --- 메인 --- */
+    .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+    /* 액션바 */
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .actions h2 { font-size: 20px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .btn-primary { background: #7c3aed; color: #fff; }
+    .btn-primary:hover { background: #6d28d9; }
+    .btn-secondary { background: #fff; color: #333; border: 1px solid #ddd; }
+    .btn-secondary:hover { background: #f9fafb; }
+    .btn-danger { background: #fee2e2; color: #dc2626; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* 안내 */
+    .info-box {
+      background: #ede9fe;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #5b21b6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 테이블 */
+    .course-table {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+      overflow: hidden;
+    }
+    .course-row {
+      display: grid;
+      grid-template-columns: 40px 80px 1fr 120px 70px 70px 60px 100px;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background .15s;
+      cursor: grab;
+    }
+    .course-row:active { cursor: grabbing; }
+    .course-row:hover { background: #faf5ff; }
+    .course-row.dragging { opacity: .4; background: #ede9fe; }
+    .course-row.drag-over { border-top: 3px solid #7c3aed; }
+    .course-head {
+      font-size: 12px;
+      color: #888;
+      font-weight: 600;
+      text-transform: uppercase;
+      cursor: default;
+      background: #fafafa;
+    }
+    .course-head:hover { background: #fafafa; }
+    .drag-handle { color: #ccc; font-size: 16px; text-align: center; }
+    .course-thumb {
+      width: 72px;
+      height: 40px;
+      border-radius: 4px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+    .course-title-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .course-title-cell strong {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .course-title-cell small { color: #999; font-size: 11px; }
+    .badge-free { background: #dcfce7; color: #166534; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-paid { background: #fef3c7; color: #92400e; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-hidden { background: #fee2e2; color: #991b1b; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-published { background: #dcfce7; color: #166534; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .row-actions { display: flex; gap: 4px; }
+
+    /* 모달 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    .modal-box h3 { font-size: 18px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border .2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: #7c3aed; outline: none; }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .preview-thumb {
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 16/9;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f3f4f6;
+      margin-top: 8px;
+    }
+    .help-text { font-size: 11px; color: #999; margin-top: 4px; }
+
+    /* 빈 상태 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+    .empty-state i { font-size: 48px; margin-bottom: 12px; color: #ddd; }
+    .empty-state p { font-size: 15px; }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .course-row {
+        grid-template-columns: 30px 60px 1fr 60px;
+        font-size: 12px;
+      }
+      .course-row .hide-mobile { display: none; }
+      .modal-box { padding: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* 토스트 */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a2e;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 999;
+      transition: transform .3s ease, opacity .3s ease;
+      opacity: 0;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* 로딩 */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      color: #aaa;
+      gap: 8px;
+    }
+    .loading i { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 탭 */
+    .admin-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .admin-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .admin-tab.active { background: #7c3aed; color: #fff; }
+    .admin-tab:hover:not(.active) { background: #f3f4f6; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* 수강생 테이블 */
+    .user-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .user-card-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+    .user-card-header .user-meta { flex: 1; }
+    .user-card-header .user-meta strong { font-size: 14px; display: block; }
+    .user-card-header .user-meta small { color: #888; font-size: 12px; }
+    .user-card-header .user-badge {
+      background: #ede9fe;
+      color: #7c3aed;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+    .user-history-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid #f5f5f5;
+      font-size: 13px;
+    }
+    .user-history-row img {
+      width: 56px;
+      height: 32px;
+      border-radius: 4px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+    .user-history-row .uh-title { flex: 1; font-weight: 500; }
+    .user-history-row .uh-date { color: #999; font-size: 11px; white-space: nowrap; }
+    .user-history-row .uh-cat { color: #7c3aed; font-size: 11px; white-space: nowrap; }
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      flex: 1;
+      min-width: 120px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .stat-card strong { display: block; font-size: 28px; color: #7c3aed; }
+    .stat-card span { font-size: 12px; color: #888; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 로그인 화면 ===== -->
+  <div id="loginScreen" class="login-screen">
+    <img src="images/logo.png" alt="모두잇" style="width:64px;border-radius:12px">
+    <h1>모두잇 클래스 관리자</h1>
+    <p style="color:#888;font-size:14px">관리자 계정으로 로그인하세요</p>
+    <button class="login-btn" onclick="doLogin()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+      구글로 로그인
+    </button>
+    <div id="loginErr" class="err" style="display:none"></div>
+  </div>
+
+  <!-- ===== 관리자 화면 ===== -->
+  <div id="adminPanel" style="display:none">
+    <div class="admin-bar">
+      <div class="admin-bar-left">
+        <img src="images/logo.png" alt="">
+        <span>모두잇 클래스 <span class="sub">ADMIN</span></span>
+      </div>
+      <div class="admin-bar-right">
+        <img id="adminPhoto" src="" alt="">
+        <span id="adminName"></span>
+        <a href="class.html" target="_blank"><i class="fas fa-external-link-alt"></i> 사이트 보기</a>
+        <a href="#" onclick="doLogout();return false"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+      </div>
+    </div>
+
+    <div class="admin-wrap">
+      <!-- 탭 -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('courses')"><i class="fas fa-graduation-cap"></i> 강의 관리</button>
+        <button class="admin-tab" onclick="switchTab('users')"><i class="fas fa-users"></i> 수강생 관리</button>
+      </div>
+
+      <!-- ===== 강의 관리 탭 ===== -->
+      <div class="tab-panel active" id="tabCourses">
+        <div class="info-box">
+          <i class="fas fa-info-circle"></i>
+          드래그하여 강의 순서를 변경하세요. 변경 사항은 즉시 Firestore에 저장됩니다.
+        </div>
+
+        <div class="actions">
+          <h2><i class="fas fa-graduation-cap"></i> 강의 관리 (<span id="courseCount">0</span>개)</h2>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" onclick="syncSampleToFirestore()">
+              <i class="fas fa-upload"></i> 샘플 데이터 업로드
+            </button>
+            <button class="btn btn-primary" onclick="openModal()">
+              <i class="fas fa-plus"></i> 새 강의 추가
+            </button>
+          </div>
+        </div>
+
+        <div class="course-table" id="courseTable">
+          <div class="course-row course-head">
+            <div></div>
+            <div>썸네일</div>
+            <div>강의명</div>
+            <div>카테고리</div>
+            <div>유형</div>
+            <div class="hide-mobile">조회</div>
+            <div>상태</div>
+            <div>관리</div>
+          </div>
+          <div id="courseList">
+            <div class="loading"><i class="fas fa-spinner"></i> 강의 불러오는 중...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 수강생 관리 탭 ===== -->
+      <div class="tab-panel" id="tabUsers">
+        <div class="stats-row" id="userStats">
+          <div class="stat-card">
+            <strong id="statTotalUsers">0</strong>
+            <span>총 수강생</span>
+          </div>
+          <div class="stat-card">
+            <strong id="statTotalWatches">0</strong>
+            <span>총 수강 횟수</span>
+          </div>
+          <div class="stat-card">
+            <strong id="statTodayWatches">0</strong>
+            <span>오늘 수강</span>
+          </div>
+        </div>
+        <div class="actions">
+          <h2><i class="fas fa-users"></i> 수강생 이력</h2>
+          <button class="btn btn-secondary" onclick="loadUsers()">
+            <i class="fas fa-sync-alt"></i> 새로고침
+          </button>
+        </div>
+        <div id="userList">
+          <div class="loading"><i class="fas fa-spinner"></i> 수강생 불러오는 중...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== 강의 추가/수정 모달 ===== -->
+  <div class="modal-overlay" id="courseModal">
+    <div class="modal-box">
+      <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> 새 강의 추가</h3>
+      <form id="courseForm" onsubmit="saveCourse(event)">
+        <input type="hidden" id="editId">
+
+        <div class="form-group">
+          <label>유튜브 영상 URL 또는 영상 ID *</label>
+          <input type="text" id="fVideoId" placeholder="https://youtu.be/xxxx 또는 영상ID" required oninput="previewVideo(this.value)">
+          <div class="help-text">유튜브 영상 URL을 붙여넣으면 자동으로 ID를 추출합니다</div>
+          <img class="preview-thumb" id="thumbPreview" src="" style="display:none" alt="미리보기">
+        </div>
+
+        <div class="form-group">
+          <label>강의 제목 *</label>
+          <input type="text" id="fTitle" placeholder="예: ChatGPT로 업무 효율 올리기" required>
+        </div>
+
+        <div class="form-group">
+          <label>강의 설명</label>
+          <textarea id="fDesc" placeholder="강의 내용을 설명해주세요"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>카테고리 *</label>
+            <select id="fCategory" required>
+              <option value="AI비즈니스활용">AI 비즈니스 활용</option>
+              <option value="AI스마트폰활용">AI 스마트폰 활용</option>
+              <option value="미리캔버스">미리캔버스</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>난이도</label>
+            <select id="fLevel">
+              <option value="입문">입문</option>
+              <option value="초급">초급</option>
+              <option value="중급">중급</option>
+              <option value="고급">고급</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>유형</label>
+            <select id="fIsPaid" onchange="togglePrice()">
+              <option value="false">무료</option>
+              <option value="true">유료</option>
+            </select>
+          </div>
+          <div class="form-group" id="priceGroup" style="display:none">
+            <label>가격 (원)</label>
+            <input type="number" id="fPrice" value="0" min="0" step="1000">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>수강 시간</label>
+            <input type="text" id="fDuration" placeholder="예: 45분, 1시간 20분">
+          </div>
+          <div class="form-group">
+            <label>공개 여부</label>
+            <select id="fPublished">
+              <option value="true">공개</option>
+              <option value="false">비공개</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <i class="fas fa-save"></i> 저장
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 삭제 확인 모달 ===== -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box" style="max-width:400px;text-align:center">
+      <i class="fas fa-exclamation-triangle" style="font-size:40px;color:#dc2626;margin-bottom:12px"></i>
+      <h3>강의를 삭제할까요?</h3>
+      <p style="color:#666;font-size:14px;margin:12px 0" id="deleteName"></p>
+      <p style="color:#999;font-size:12px">이 작업은 되돌릴 수 없습니다</p>
+      <div class="form-actions" style="justify-content:center;margin-top:20px">
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">취소</button>
+        <button class="btn btn-danger" onclick="confirmDelete()"><i class="fas fa-trash"></i> 삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth, signInWithPopup, GoogleAuthProvider,
+      onAuthStateChanged, signOut
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, collection, getDocs, doc,
+      setDoc, deleteDoc, updateDoc, orderBy, query, writeBatch, where
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    // Firebase 설정 (class.js와 동일)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCKn6pnMR5lDbJM6C2kLDN8XceByLkL5oU",
+      authDomain: "modoit-class.firebaseapp.com",
+      projectId: "modoit-class",
+      storageBucket: "modoit-class.firebasestorage.app",
+      messagingSenderId: "835548872571",
+      appId: "1:835548872571:web:a99d253820abf3b70887de",
+      measurementId: "G-ZXD2EBQWSX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 관리자 이메일 목록 (여기에 본인 이메일 추가)
+    const ADMIN_EMAILS = [
+      'anais0305.05@gmail.com',
+      'anais0305@naver.com',
+    ];
+
+    let courses = [];
+    let deleteTargetId = null;
+
+    // ============ 인증 ============
+    onAuthStateChanged(auth, async (user) => {
+      if (user && ADMIN_EMAILS.includes(user.email)) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('adminName').textContent = user.displayName || user.email;
+        if (user.photoURL) document.getElementById('adminPhoto').src = user.photoURL;
+        await loadCourses();
+      } else if (user) {
+        document.getElementById('loginErr').textContent = '관리자 권한이 없는 계정입니다: ' + user.email;
+        document.getElementById('loginErr').style.display = 'block';
+        await signOut(auth);
+      }
+    });
+
+    window.doLogin = async function () {
+      try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch (e) {
+        if (e.code !== 'auth/popup-closed-by-user') {
+          document.getElementById('loginErr').textContent = '로그인 오류: ' + e.message;
+          document.getElementById('loginErr').style.display = 'block';
+        }
+      }
+    };
+
+    window.doLogout = async function () {
+      await signOut(auth);
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    };
+
+    // ============ Firestore ============
+    async function loadCourses() {
+      try {
+        const q = query(collection(db, 'courses'), orderBy('order'));
+        const snap = await getDocs(q);
+        courses = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) {
+        courses = [];
+        console.warn('강의 로드 오류:', e);
+      }
+      renderTable();
+    }
+
+    function renderTable() {
+      const list = document.getElementById('courseList');
+      const count = document.getElementById('courseCount');
+      count.textContent = courses.length;
+
+      if (!courses.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>등록된 강의가 없습니다</p>
+            <p style="font-size:13px;margin-top:8px">"샘플 데이터 업로드" 또는 "새 강의 추가"를 해보세요</p>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = courses.map((c, i) => `
+        <div class="course-row" draggable="true" data-id="${c.id}" data-index="${i}">
+          <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+          <img class="course-thumb" src="https://img.youtube.com/vi/${c.videoId}/mqdefault.jpg"
+            onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#f3f4f6'" alt="">
+          <div class="course-title-cell">
+            <strong>${c.title || '(제목 없음)'}</strong>
+            <small>${c.videoId || ''}</small>
+          </div>
+          <div>${c.category || '-'}</div>
+          <div>${c.isPaid ? '<span class="badge-paid">유료</span>' : '<span class="badge-free">무료</span>'}</div>
+          <div class="hide-mobile">${(c.viewCount || 0).toLocaleString()}</div>
+          <div>${c.isPublished !== false ? '<span class="badge-published">공개</span>' : '<span class="badge-hidden">비공개</span>'}</div>
+          <div class="row-actions">
+            <button class="btn btn-secondary btn-sm" onclick="editCourse('${c.id}')" title="수정">
+              <i class="fas fa-pen"></i>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${c.id}','${(c.title||'').replace(/'/g,"\\'")}')" title="삭제">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // 드래그 이벤트
+      initDragDrop();
+    }
+
+    // ============ 드래그&드롭 순서 변경 ============
+    function initDragDrop() {
+      const rows = document.querySelectorAll('.course-row[draggable]');
+      let dragEl = null;
+
+      rows.forEach(row => {
+        row.addEventListener('dragstart', e => {
+          dragEl = row;
+          row.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        row.addEventListener('dragend', () => {
+          row.classList.remove('dragging');
+          document.querySelectorAll('.course-row').forEach(r => r.classList.remove('drag-over'));
+          dragEl = null;
+        });
+
+        row.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (row !== dragEl) row.classList.add('drag-over');
+        });
+
+        row.addEventListener('dragleave', () => {
+          row.classList.remove('drag-over');
+        });
+
+        row.addEventListener('drop', async e => {
+          e.preventDefault();
+          row.classList.remove('drag-over');
+          if (!dragEl || dragEl === row) return;
+
+          const fromIdx = parseInt(dragEl.dataset.index);
+          const toIdx = parseInt(row.dataset.index);
+
+          // 배열 순서 변경
+          const moved = courses.splice(fromIdx, 1)[0];
+          courses.splice(toIdx, 0, moved);
+
+          // order 값 재정렬 + Firestore 업데이트
+          const batch = writeBatch(db);
+          courses.forEach((c, i) => {
+            c.order = i + 1;
+            batch.update(doc(db, 'courses', c.id), { order: i + 1 });
+          });
+          await batch.commit();
+
+          renderTable();
+          showToast('순서가 변경되었습니다');
+        });
+      });
+    }
+
+    // ============ 유튜브 ID 추출 ============
+    function extractVideoId(input) {
+      if (!input) return '';
+      input = input.trim();
+      // 이미 ID인 경우 (11자, 특수문자 없음)
+      if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+      // URL에서 추출
+      try {
+        const url = new URL(input);
+        if (url.hostname.includes('youtu.be')) return url.pathname.slice(1).split('/')[0];
+        if (url.searchParams.has('v')) return url.searchParams.get('v');
+        if (url.pathname.includes('/embed/')) return url.pathname.split('/embed/')[1].split('?')[0];
+        if (url.pathname.includes('/shorts/')) return url.pathname.split('/shorts/')[1].split('?')[0];
+      } catch {}
+      return input;
+    }
+
+    window.previewVideo = function (val) {
+      const id = extractVideoId(val);
+      const img = document.getElementById('thumbPreview');
+      if (id && id.length >= 5) {
+        img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
+    };
+
+    // ============ 모달 ============
+    window.openModal = function (editData) {
+      const modal = document.getElementById('courseModal');
+      const form = document.getElementById('courseForm');
+      form.reset();
+      document.getElementById('thumbPreview').style.display = 'none';
+      document.getElementById('priceGroup').style.display = 'none';
+
+      if (editData) {
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-pen"></i> 강의 수정';
+        document.getElementById('editId').value = editData.id;
+        document.getElementById('fVideoId').value = editData.videoId || '';
+        document.getElementById('fTitle').value = editData.title || '';
+        document.getElementById('fDesc').value = editData.desc || '';
+        document.getElementById('fCategory').value = editData.category || 'AI비즈니스활용';
+        document.getElementById('fLevel').value = editData.level || '입문';
+        document.getElementById('fIsPaid').value = String(!!editData.isPaid);
+        document.getElementById('fPrice').value = editData.price || 0;
+        document.getElementById('fDuration').value = editData.duration || '';
+        document.getElementById('fPublished').value = String(editData.isPublished !== false);
+        if (editData.isPaid) document.getElementById('priceGroup').style.display = 'block';
+        previewVideo(editData.videoId);
+      } else {
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> 새 강의 추가';
+        document.getElementById('editId').value = '';
+      }
+
+      modal.classList.add('open');
+    };
+
+    window.closeModal = function () {
+      document.getElementById('courseModal').classList.remove('open');
+    };
+
+    window.togglePrice = function () {
+      document.getElementById('priceGroup').style.display =
+        document.getElementById('fIsPaid').value === 'true' ? 'block' : 'none';
+    };
+
+    window.editCourse = function (id) {
+      const c = courses.find(x => x.id === id);
+      if (c) openModal(c);
+    };
+
+    // ============ 저장 ============
+    window.saveCourse = async function (e) {
+      e.preventDefault();
+      const editId = document.getElementById('editId').value;
+      const videoId = extractVideoId(document.getElementById('fVideoId').value);
+      const isPaid = document.getElementById('fIsPaid').value === 'true';
+
+      const data = {
+        videoId,
+        title: document.getElementById('fTitle').value.trim(),
+        desc: document.getElementById('fDesc').value.trim(),
+        category: document.getElementById('fCategory').value,
+        level: document.getElementById('fLevel').value,
+        isPaid,
+        price: isPaid ? parseInt(document.getElementById('fPrice').value) || 0 : 0,
+        duration: document.getElementById('fDuration').value.trim(),
+        isPublished: document.getElementById('fPublished').value === 'true',
+      };
+
+      try {
+        if (editId) {
+          // 수정
+          await updateDoc(doc(db, 'courses', editId), data);
+          showToast('강의가 수정되었습니다');
+        } else {
+          // 새로 추가
+          const newId = 'c' + Date.now();
+          data.order = courses.length + 1;
+          data.viewCount = 0;
+          await setDoc(doc(db, 'courses', newId), data);
+          showToast('새 강의가 추가되었습니다');
+        }
+        closeModal();
+        await loadCourses();
+      } catch (e) {
+        alert('저장 오류: ' + e.message);
+      }
+    };
+
+    // ============ 삭제 ============
+    window.openDeleteModal = function (id, name) {
+      deleteTargetId = id;
+      document.getElementById('deleteName').textContent = name;
+      document.getElementById('deleteModal').classList.add('open');
+    };
+
+    window.closeDeleteModal = function () {
+      document.getElementById('deleteModal').classList.remove('open');
+      deleteTargetId = null;
+    };
+
+    window.confirmDelete = async function () {
+      if (!deleteTargetId) return;
+      try {
+        await deleteDoc(doc(db, 'courses', deleteTargetId));
+        showToast('강의가 삭제되었습니다');
+        closeDeleteModal();
+        await loadCourses();
+      } catch (e) {
+        alert('삭제 오류: ' + e.message);
+      }
+    };
+
+    // ============ 샘플 데이터 업로드 ============
+    window.syncSampleToFirestore = async function () {
+      if (!confirm('샘플 강의 8개를 Firestore에 업로드할까요?\n(기존 같은 ID의 데이터는 덮어씁니다)')) return;
+
+      const samples = [
+        { id:'c1', title:'ChatGPT로 업무 효율 200% 올리기', desc:'생성형 AI ChatGPT를 활용해 보고서 작성, 이메일 자동화, 데이터 분석까지 실무에 바로 적용하는 방법을 배웁니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:false, price:0, level:'입문', duration:'45분', viewCount:0, order:1, isPublished:true },
+        { id:'c2', title:'Gemini로 프레젠테이션 10분 만에 완성', desc:'구글 Gemini AI로 기획부터 디자인까지 10분 만에 전문적인 프레젠테이션을 완성하는 실전 강의입니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:false, price:0, level:'초급', duration:'40분', viewCount:0, order:2, isPublished:true },
+        { id:'c3', title:'클로바노트 & AI 회의록 자동화', desc:'네이버 클로바노트와 ChatGPT를 연동해 회의 내용을 자동으로 정리하고 액션 아이템까지 추출하는 방법을 배웁니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:false, price:0, level:'초급', duration:'35분', viewCount:0, order:3, isPublished:true },
+        { id:'c4', title:'ChatGPT x 미리캔버스 콘텐츠 자동화', desc:'ChatGPT로 기획하고 미리캔버스로 디자인하는 콘텐츠 자동화 워크플로우를 구축합니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:true, price:49000, level:'중급', duration:'1시간 20분', viewCount:0, order:4, isPublished:true },
+        { id:'c5', title:'미리캔버스로 SNS 콘텐츠 디자인하기', desc:'디자인 전문 지식 없이도 미리캔버스로 인스타그램, 유튜브 썸네일, 카드뉴스를 전문가처럼 만드는 방법을 익힙니다.', videoId:'YOUTUBE_VIDEO_ID', category:'미리캔버스', isPaid:false, price:0, level:'입문', duration:'38분', viewCount:0, order:5, isPublished:true },
+        { id:'c6', title:'미리캔버스 지도자 과정 - 강사 양성', desc:'미리캔버스 공인 강사로 활동하기 위한 전문 지도자 과정입니다.', videoId:'YOUTUBE_VIDEO_ID', category:'미리캔버스', isPaid:true, price:120000, level:'중급', duration:'3시간', viewCount:0, order:6, isPublished:true },
+        { id:'c7', title:'AI 스마트폰으로 숏폼 영상 만들기', desc:'스마트폰 하나로 릴스, 유튜브 쇼츠, 틱톡 영상을 AI 편집 도구와 함께 빠르게 제작하는 노하우를 공개합니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI스마트폰활용', isPaid:false, price:0, level:'초급', duration:'52분', viewCount:0, order:7, isPublished:true },
+        { id:'c8', title:'시니어를 위한 스마트폰 AI 활용 완전정복', desc:'스마트폰에서 AI 도구를 활용해 일상을 더 편리하게 만드는 방법을 쉽고 친절하게 알려드립니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI스마트폰활용', isPaid:false, price:0, level:'입문', duration:'60분', viewCount:0, order:8, isPublished:true },
+      ];
+
+      try {
+        const batch = writeBatch(db);
+        samples.forEach(s => {
+          batch.set(doc(db, 'courses', s.id), s);
+        });
+        await batch.commit();
+        showToast('샘플 데이터 업로드 완료!');
+        await loadCourses();
+      } catch (e) {
+        alert('업로드 오류: ' + e.message);
+      }
+    };
+
+    // ============ 토스트 ============
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+    window.showToast = showToast;
+
+    // 모달 바깥 클릭 닫기
+    document.getElementById('courseModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('courseModal')) closeModal();
+    });
+    document.getElementById('deleteModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('deleteModal')) closeDeleteModal();
+    });
+
+    // ============ 탭 전환 ============
+    window.switchTab = function (tab) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      if (tab === 'courses') {
+        document.querySelectorAll('.admin-tab')[0].classList.add('active');
+        document.getElementById('tabCourses').classList.add('active');
+      } else {
+        document.querySelectorAll('.admin-tab')[1].classList.add('active');
+        document.getElementById('tabUsers').classList.add('active');
+        loadUsers();
+      }
+    };
+
+    // ============ 수강생 관리 ============
+    window.loadUsers = async function () {
+      const list = document.getElementById('userList');
+      list.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> 수강생 불러오는 중...</div>';
+
+      try {
+        // 수강 이력 전체 로드
+        const histSnap = await getDocs(query(collection(db, 'watchHistory'), orderBy('watchedAt', 'desc')));
+        const allHistory = histSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (!allHistory.length) {
+          list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>아직 수강 이력이 없습니다</p></div>';
+          return;
+        }
+
+        // 통계
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const todayCount = allHistory.filter(h => {
+          const d = h.watchedAt?.toDate ? h.watchedAt.toDate() : null;
+          return d && d >= today;
+        }).length;
+
+        // 사용자별 그룹핑
+        const userMap = new Map();
+        allHistory.forEach(h => {
+          if (!userMap.has(h.userId)) {
+            userMap.set(h.userId, {
+              userName: h.userName || '(이름 없음)',
+              userEmail: h.userEmail || '',
+              userPhoto: h.userPhoto || '',
+              history: [],
+            });
+          }
+          userMap.get(h.userId).history.push(h);
+        });
+
+        document.getElementById('statTotalUsers').textContent = userMap.size;
+        document.getElementById('statTotalWatches').textContent = allHistory.length;
+        document.getElementById('statTodayWatches').textContent = todayCount;
+
+        // 렌더링
+        let html = '';
+        userMap.forEach((user, userId) => {
+          const uniqueCourses = new Set(user.history.map(h => h.courseId)).size;
+          html += `
+            <div class="user-card">
+              <div class="user-card-header">
+                <img src="${user.userPhoto || 'images/logo.png'}"
+                  onerror="this.src='images/logo.png'" alt="">
+                <div class="user-meta">
+                  <strong>${user.userName}</strong>
+                  <small>${user.userEmail}</small>
+                </div>
+                <span class="user-badge">${uniqueCourses}개 강의 · ${user.history.length}회 시청</span>
+              </div>`;
+
+          // 최근 수강 이력 (최대 5개)
+          user.history.slice(0, 5).forEach(h => {
+            const ts = h.watchedAt?.toDate ? h.watchedAt.toDate() : new Date();
+            const dateStr = `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')} ${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}`;
+            const course = courses.find(c => c.id === h.courseId);
+            const videoId = course?.videoId || h.courseId;
+            html += `
+              <div class="user-history-row">
+                <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg"
+                  onerror="this.src='images/logo.png';this.style.objectFit='contain'" alt="">
+                <span class="uh-title">${h.courseTitle || '(삭제된 강의)'}</span>
+                <span class="uh-cat">${h.category || ''}</span>
+                <span class="uh-date">${dateStr}</span>
+              </div>`;
+          });
+
+          if (user.history.length > 5) {
+            html += `<div style="text-align:center;padding:6px;color:#999;font-size:12px">외 ${user.history.length - 5}건 더...</div>`;
+          }
+
+          html += `</div>`;
+        });
+
+        list.innerHTML = html;
+      } catch (e) {
+        list.innerHTML = `<div class="empty-state"><p style="color:#e74c3c">로드 오류: ${e.message}</p></div>`;
+        console.error(e);
+      }
+    };
+  </script>
+</body>
+</html>

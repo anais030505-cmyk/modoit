@@ -10,7 +10,8 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getFirestore, collection, getDocs, doc,
-  setDoc, getDoc, updateDoc, increment, orderBy, query
+  setDoc, getDoc, updateDoc, increment, orderBy, query,
+  addDoc, where, serverTimestamp, deleteDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // =====================================================
@@ -274,6 +275,44 @@ async function addView(courseId) {
   } catch (e) {}
 }
 
+// 수강 이력 저장
+async function saveWatchHistory(courseId) {
+  if (!fbReady || !db || !currentUser) return;
+  try {
+    const course = allCourses.find(c => c.id === courseId);
+    await addDoc(collection(db, 'watchHistory'), {
+      userId: currentUser.uid,
+      userName: currentUser.name,
+      userEmail: currentUser.email || '',
+      userPhoto: currentUser.photo || '',
+      courseId: courseId,
+      courseTitle: course?.title || '',
+      category: course?.category || '',
+      isPaid: course?.isPaid || false,
+      watchedAt: serverTimestamp(),
+    });
+  } catch (e) {
+    console.warn('수강이력 저장 실패:', e);
+  }
+}
+
+// 내 수강 이력 불러오기
+async function loadMyHistory() {
+  if (!fbReady || !db || !currentUser) return [];
+  try {
+    const q = query(
+      collection(db, 'watchHistory'),
+      where('userId', '==', currentUser.uid),
+      orderBy('watchedAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) {
+    console.warn('수강이력 로드 실패:', e);
+    return [];
+  }
+}
+
 // =====================================================
 // 인증 함수
 // =====================================================
@@ -360,6 +399,76 @@ window.closeCourseModal = function (e) {
     document.getElementById('courseModal').classList.remove('open');
     document.getElementById('courseFrame').src = '';
   }
+};
+
+// 마이페이지
+window.openMyPage = async function () {
+  if (!currentUser) { openLoginModal(); return; }
+  const modal = document.getElementById('myPageModal');
+  if (!modal) return;
+
+  // 프로필 설정
+  const photo = document.getElementById('myPhoto');
+  const name = document.getElementById('myName');
+  const email = document.getElementById('myEmail');
+  if (photo) { photo.src = currentUser.photo || ''; photo.style.display = currentUser.photo ? 'block' : 'none'; }
+  if (name) name.textContent = currentUser.name;
+  if (email) email.textContent = currentUser.email || currentUser.provider;
+
+  // 로딩
+  const historyList = document.getElementById('myHistoryList');
+  historyList.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
+  modal.classList.add('open');
+
+  // 수강 이력 로드
+  const records = await loadMyHistory();
+
+  if (!records.length) {
+    historyList.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa"><i class="fas fa-play-circle" style="font-size:28px;margin-bottom:8px"></i><br>아직 수강 이력이 없어요<br><small>강의를 시청하면 여기에 기록됩니다</small></div>';
+  } else {
+    // 중복 제거 (같은 강의는 최신 1개만)
+    const seen = new Map();
+    records.forEach(r => {
+      if (!seen.has(r.courseId)) seen.set(r.courseId, r);
+    });
+    const unique = Array.from(seen.values());
+    const totalViews = records.length;
+
+    document.getElementById('myTotalCourses').textContent = unique.length;
+    document.getElementById('myTotalViews').textContent = totalViews;
+
+    historyList.innerHTML = unique.map(r => {
+      const ts = r.watchedAt?.toDate ? r.watchedAt.toDate() : new Date();
+      const dateStr = `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`;
+      const course = allCourses.find(c => c.id === r.courseId);
+      const videoId = course?.videoId || '';
+      return `
+        <div class="my-history-item" onclick="closeMypageAndOpen('${r.courseId}')">
+          <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg"
+            onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='8px'"
+            class="my-history-thumb" alt="">
+          <div class="my-history-info">
+            <div class="my-history-title">${r.courseTitle || '(삭제된 강의)'}</div>
+            <div class="my-history-meta">
+              <span>${r.category || ''}</span>
+              <span>${r.isPaid ? '유료' : '무료'}</span>
+              <span>${dateStr}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+};
+
+window.closeMyPage = function (e) {
+  if (!e || e.target === document.getElementById('myPageModal')) {
+    document.getElementById('myPageModal').classList.remove('open');
+  }
+};
+
+window.closeMypageAndOpen = function (courseId) {
+  document.getElementById('myPageModal').classList.remove('open');
+  setTimeout(() => window.openCourse(courseId), 200);
 };
 
 // =====================================================
@@ -453,9 +562,10 @@ window.openCourse = function (courseId) {
     return;
   }
 
-  // 조회수 카운트
+  // 조회수 카운트 + 수강 이력
   c.viewCount = (c.viewCount || 0) + 1;
   addView(courseId);
+  saveWatchHistory(courseId);
 
   // 영상 세팅
   document.getElementById('courseFrame').src =

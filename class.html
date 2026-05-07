@@ -48,6 +48,7 @@
         <div id="userArea" class="cls-user-area" style="display:none">
           <img id="userPhoto" src="" alt="" class="cls-user-photo">
           <span id="userName" class="cls-user-name"></span>
+          <button onclick="openMyPage()" class="cls-btn-mypage"><i class="fas fa-book-open"></i> 마이페이지</button>
           <button onclick="handleLogout()" class="cls-btn-logout">로그아웃</button>
         </div>
         <button class="cls-mobile-toggle" id="mobileToggle" onclick="toggleMobileNav()">
@@ -261,6 +262,32 @@
         <div id="courseDetailMeta" class="cls-course-meta"></div>
         <div id="courseDetailCta" class="cls-course-cta"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== MY PAGE MODAL ===== -->
+  <div class="cls-overlay" id="myPageModal" onclick="closeMyPage(event)">
+    <div class="cls-modal cls-mypage-modal" id="myPageModalBox">
+      <button class="cls-modal-close" onclick="closeMyPage()"><i class="fas fa-times"></i></button>
+      <div class="cls-mypage-header">
+        <img id="myPhoto" src="" alt="" class="cls-mypage-photo">
+        <div class="cls-mypage-info">
+          <h2 id="myName">사용자</h2>
+          <p id="myEmail" class="cls-mypage-email"></p>
+        </div>
+      </div>
+      <div class="cls-mypage-stats">
+        <div class="cls-mypage-stat">
+          <strong id="myTotalCourses">0</strong>
+          <span>수강 강의</span>
+        </div>
+        <div class="cls-mypage-stat">
+          <strong id="myTotalViews">0</strong>
+          <span>총 시청</span>
+        </div>
+      </div>
+      <h3 class="cls-mypage-section-title"><i class="fas fa-history"></i> 수강 이력</h3>
+      <div id="myHistoryList" class="cls-mypage-history"></div>
     </div>
   </div>
 
