@@ -121,6 +121,9 @@ ul { list-style: none; }
 .nav-youtube:hover { color: #ffcccc !important; }
 .nav.scrolled .nav-youtube { color: #FF0000 !important; }
 .nav.scrolled .nav-youtube:hover { color: #CC0000 !important; }
+.nav-class { background: linear-gradient(135deg, #7c3aed, #a855f7) !important; color: #fff !important; padding: 6px 14px !important; border-radius: 6px !important; font-weight: 600 !important; font-size: 13px !important; display: inline-flex !important; align-items: center; gap: 5px; transition: all 0.3s ease !important; }
+.nav-class:hover { background: linear-gradient(135deg, #6d28d9, #9333ea) !important; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4) !important; transform: translateY(-1px); }
+.nav.scrolled .nav-class { background: linear-gradient(135deg, #7c3aed, #a855f7) !important; }
 .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
 .nav-toggle span { width: 22px; height: 2px; background: rgba(255,255,255,0.8); border-radius: 2px; transition: all var(--transition); }
 .nav.scrolled .nav-toggle span { background: var(--gray-700); }
