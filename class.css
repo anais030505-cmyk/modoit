@@ -297,6 +297,43 @@ ul { list-style: none; }
   gap: 20px;
 }
 
+/* 더보기 버튼 */
+.cls-more-btn-wrap {
+  text-align: center;
+  margin-top: 20px;
+}
+.cls-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 32px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all var(--trans);
+}
+.cls-more-btn:hover {
+  border-color: var(--cp);
+  color: var(--cp);
+  background: var(--cp-bg);
+}
+.cls-more-btn i { font-size: 0.75rem; }
+.cls-more-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cp);
+  background: var(--cp-subtle);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.cls-more-wrap {
+  margin-top: 20px;
+}
+
 /* ===== SECTIONS ===== */
 .cls-section { padding: 64px 0; }
 .cls-reviews-section { background: var(--cp-bg); }

@@ -293,6 +293,24 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// 더보기 토글
+window.toggleMore = function (catIdx, catName) {
+  const moreWrap = document.getElementById('moreWrap_' + catIdx);
+  const btnWrap = document.getElementById('moreBtnWrap_' + catIdx);
+  if (!moreWrap) return;
+
+  if (moreWrap.style.display === 'none') {
+    moreWrap.style.display = 'block';
+    btnWrap.querySelector('.cls-more-btn').innerHTML =
+      '<span>접기</span> <i class="fas fa-chevron-up"></i>';
+  } else {
+    moreWrap.style.display = 'none';
+    const count = moreWrap.querySelectorAll('.cls-course-card').length;
+    btnWrap.querySelector('.cls-more-btn').innerHTML =
+      `<span>더보기</span> <span class="cls-more-count">+${count}개</span> <i class="fas fa-chevron-down"></i>`;
+  }
+};
+
 // =====================================================
 // 카테고리 탭 동적 생성
 // =====================================================
@@ -569,10 +587,15 @@ function renderCourses() {
     });
     categories.sort((a, b) => a.order - b.order);
 
-    grid.innerHTML = categories.map(cat => {
+    const PREVIEW_COUNT = 8;
+
+    grid.innerHTML = categories.map((cat, catIdx) => {
       let list = pub.filter(c => c.category === cat.name);
       sortList(list);
       if (!list.length) return '';
+      const hasMore = list.length > PREVIEW_COUNT;
+      const preview = list.slice(0, PREVIEW_COUNT);
+      const rest = list.slice(PREVIEW_COUNT);
       return `
         <div class="cls-category-section">
           <div class="cls-category-header">
@@ -580,8 +603,20 @@ function renderCourses() {
             <span class="cls-category-count">${list.length}개 강의</span>
           </div>
           <div class="cls-course-grid">
-            ${list.map(c => courseCardHtml(c)).join('')}
+            ${preview.map(c => courseCardHtml(c)).join('')}
           </div>
+          ${hasMore ? `
+            <div class="cls-more-wrap" id="moreWrap_${catIdx}" style="display:none">
+              <div class="cls-course-grid">
+                ${rest.map(c => courseCardHtml(c)).join('')}
+              </div>
+            </div>
+            <div class="cls-more-btn-wrap" id="moreBtnWrap_${catIdx}">
+              <button class="cls-more-btn" onclick="toggleMore(${catIdx}, '${cat.name}')">
+                <span>더보기</span> <span class="cls-more-count">+${rest.length}개</span> <i class="fas fa-chevron-down"></i>
+              </button>
+            </div>
+          ` : ''}
         </div>`;
     }).join('');
 
