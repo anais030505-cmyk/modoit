@@ -1,0 +1,27 @@
+# robots.txt - www.modoit.co.kr
+# 모두잇미래교육진흥협회
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+# AI 크롤러 허용
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yeti
+Allow: /
+
+Sitemap: https://www.modoit.co.kr/sitemap.xml

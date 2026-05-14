@@ -1,5 +1,6 @@
 // =====================================================
 // 모두잇 클래스 - 메인 스크립트
+// YouTube 플레이리스트 기반 강의 플랫폼
 // Firebase v10 (ES Module)
 // =====================================================
 
@@ -15,9 +16,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // =====================================================
-// ⚙️  FIREBASE 설정
-// console.firebase.google.com에서 프로젝트 생성 후
-// 아래 값을 교체하세요 (Authentication + Firestore 활성화 필요)
+// FIREBASE 설정
 // =====================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCKn6pnMR5lDbJM6C2kLDN8XceByLkL5oU",
@@ -29,149 +28,35 @@ const firebaseConfig = {
   measurementId: "G-ZXD2EBQWSX"
 };
 
-// =====================================================
-// ⚙️  카카오 앱 키
-// developers.kakao.com → 내 애플리케이션 → JavaScript 키
-// =====================================================
 const KAKAO_JS_KEY = 'b59c8052d94c133575b1f736da7a196d';
 
 // =====================================================
-// 📚  샘플 강의 데이터
-// Firebase 설정 전 미리보기용 / 이후 Firestore에서 관리
-// videoId: 유튜브 영상 URL의 v= 뒤 값으로 교체
+// YouTube 플레이리스트 정의 (카테고리)
 // =====================================================
-const SAMPLE_COURSES = [
-  {
-    id: 'c1',
-    title: 'ChatGPT로 업무 효율 200% 올리기',
-    desc: '생성형 AI ChatGPT를 활용해 보고서 작성, 이메일 자동화, 데이터 분석까지 실무에 바로 적용하는 방법을 배웁니다.',
-    videoId: 'UCv9JR_80V09Jq5_0odEHr_A', // ← 실제 영상 ID로 교체
-    category: 'AI비즈니스활용',
-    isPaid: false,
-    price: 0,
-    level: '입문',
-    duration: '45분',
-    viewCount: 1243,
-    order: 1,
-    isPublished: true,
-  },
-  {
-    id: 'c2',
-    title: 'Gemini로 프레젠테이션 10분 만에 완성',
-    desc: '구글 Gemini AI로 기획부터 디자인까지 10분 만에 전문적인 프레젠테이션을 완성하는 실전 강의입니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: 'AI비즈니스활용',
-    isPaid: false,
-    price: 0,
-    level: '초급',
-    duration: '40분',
-    viewCount: 634,
-    order: 2,
-    isPublished: true,
-  },
-  {
-    id: 'c3',
-    title: '클로바노트 & AI 회의록 자동화',
-    desc: '네이버 클로바노트와 ChatGPT를 연동해 회의 내용을 자동으로 정리하고 액션 아이템까지 추출하는 방법을 배웁니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: 'AI비즈니스활용',
-    isPaid: false,
-    price: 0,
-    level: '초급',
-    duration: '35분',
-    viewCount: 523,
-    order: 3,
-    isPublished: true,
-  },
-  {
-    id: 'c4',
-    title: 'ChatGPT × 미리캔버스 콘텐츠 자동화',
-    desc: 'ChatGPT로 기획하고 미리캔버스로 디자인하는 콘텐츠 자동화 워크플로우를 구축합니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: 'AI비즈니스활용',
-    isPaid: true,
-    price: 49000,
-    level: '중급',
-    duration: '1시간 20분',
-    viewCount: 412,
-    order: 4,
-    isPublished: true,
-  },
-  {
-    id: 'c5',
-    title: '미리캔버스로 SNS 콘텐츠 디자인하기',
-    desc: '디자인 전문 지식 없이도 미리캔버스로 인스타그램, 유튜브 썸네일, 카드뉴스를 전문가처럼 만드는 방법을 익힙니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: '미리캔버스',
-    isPaid: false,
-    price: 0,
-    level: '입문',
-    duration: '38분',
-    viewCount: 987,
-    order: 5,
-    isPublished: true,
-  },
-  {
-    id: 'c6',
-    title: '미리캔버스 지도자 과정 - 강사 양성',
-    desc: '미리캔버스 공인 강사로 활동하기 위한 전문 지도자 과정입니다. 커리큘럼 설계, 강의 운영 노하우까지 포함합니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: '미리캔버스',
-    isPaid: true,
-    price: 120000,
-    level: '중급',
-    duration: '3시간',
-    viewCount: 287,
-    order: 6,
-    isPublished: true,
-  },
-  {
-    id: 'c7',
-    title: 'AI 스마트폰으로 숏폼 영상 만들기',
-    desc: '스마트폰 하나로 릴스, 유튜브 쇼츠, 틱톡 영상을 AI 편집 도구와 함께 빠르게 제작하는 노하우를 공개합니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: 'AI스마트폰활용',
-    isPaid: false,
-    price: 0,
-    level: '초급',
-    duration: '52분',
-    viewCount: 756,
-    order: 7,
-    isPublished: true,
-  },
-  {
-    id: 'c8',
-    title: '시니어를 위한 스마트폰 AI 활용 완전정복',
-    desc: '스마트폰에서 AI 도구를 활용해 일상을 더 편리하게 만드는 방법을 쉽고 친절하게 알려드립니다.',
-    videoId: 'YOUTUBE_VIDEO_ID',
-    category: 'AI스마트폰활용',
-    isPaid: false,
-    price: 0,
-    level: '입문',
-    duration: '60분',
-    viewCount: 891,
-    order: 8,
-    isPublished: true,
-  },
+const PLAYLISTS = [
+  { id: 'PLzaIVWzQ-Ed-M6sDBE1jonxxafr39yGdr', name: '미리캔버스와 AI로 홍보 끝판왕' },
+  { id: 'PLzaIVWzQ-Ed_NxtAS7Op0e6QMCSpxe78-', name: 'AI 활용법' },
+  { id: 'PLzaIVWzQ-Ed-3Tx9ENBizYzutBHQ3t7nT', name: '미리캔버스 시작(초급)' },
 ];
 
+// 수강 후기
 const SAMPLE_REVIEWS = [
   {
     text: '강사님 설명이 너무 쉽고 친절해서 AI 도구를 처음 접하는 저도 따라갈 수 있었어요. 실무에 바로 적용했더니 업무 시간이 확 줄었습니다!',
     name: 'ㅇ**님',
-    course: 'ChatGPT로 업무 효율 200% 올리기',
+    course: 'AI 활용법',
     stars: 5,
   },
   {
     text: '미리캔버스 강의는 정말 최고예요. 디자인 전공도 아닌데 이제 혼자 SNS 콘텐츠 만들 수 있게 됐어요. 강의 내용이 정말 실용적이에요.',
     name: 'k**님',
-    course: '미리캔버스로 SNS 콘텐츠 디자인하기',
+    course: '미리캔버스 시작(초급)',
     stars: 5,
   },
   {
-    text: '60대인데도 선생님이 하나하나 친절하게 알려주셔서 따라가기 좋았습니다. 이제 혼자서도 스마트폰으로 영상을 편집할 수 있어요!',
+    text: '60대인데도 선생님이 하나하나 친절하게 알려주셔서 따라가기 좋았습니다. 이제 혼자서도 AI 도구를 활용할 수 있어요!',
     name: '박**님',
-    course: '시니어를 위한 스마트폰 AI 활용 완전정복',
+    course: '미리캔버스와 AI로 홍보 끝판왕',
     stars: 5,
   },
 ];
@@ -180,7 +65,7 @@ const SAMPLE_REVIEWS = [
 // 앱 상태
 // =====================================================
 let currentUser = null;
-let allCourses = [...SAMPLE_COURSES];
+let allCourses = [];
 let currentCat = 'all';
 let currentSort = 'order';
 let fbReady = false;
@@ -190,42 +75,36 @@ let auth, db;
 // Firebase 초기화
 // =====================================================
 try {
-  if (firebaseConfig.apiKey !== 'YOUR_API_KEY') {
-    const app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-    fbReady = true;
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  fbReady = true;
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = {
-          uid: user.uid,
-          name: user.displayName || '사용자',
-          email: user.email,
-          photo: user.photoURL || '',
-          provider: 'google',
-        };
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = {
+        uid: user.uid,
+        name: user.displayName || '사용자',
+        email: user.email,
+        photo: user.photoURL || '',
+        provider: 'google',
+      };
+      updateUserUI(currentUser);
+      await saveUser(currentUser);
+      await loadCourses();
+    } else {
+      const kakaoSession = localStorage.getItem('cls_kakao_user');
+      if (kakaoSession) {
+        currentUser = JSON.parse(kakaoSession);
         updateUserUI(currentUser);
-        await saveUser(currentUser);
         await loadCourses();
       } else {
-        const kakaoSession = localStorage.getItem('cls_kakao_user');
-        if (kakaoSession) {
-          currentUser = JSON.parse(kakaoSession);
-          updateUserUI(currentUser);
-          await loadCourses();
-        } else {
-          currentUser = null;
-          updateUserUI(null);
-          renderCourses();
-        }
+        currentUser = null;
+        updateUserUI(null);
+        await loadCourses();
       }
-    });
-  } else {
-    console.info('ℹ️ Firebase 미설정 - 샘플 데이터로 실행 중');
-    renderCourses();
-    updateStats();
-  }
+    }
+  });
 } catch (e) {
   console.warn('Firebase 초기화 오류:', e.message);
   renderCourses();
@@ -245,14 +124,14 @@ async function loadCourses() {
   try {
     const q = query(collection(db, 'courses'), orderBy('order'));
     const snap = await getDocs(q);
-    if (!snap.empty) {
-      allCourses = snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(c => c.isPublished !== false);
-    }
+    allCourses = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(c => c.isPublished !== false);
   } catch (e) {
-    console.warn('강의 로드 실패, 샘플 데이터 사용');
+    console.warn('강의 로드 실패:', e);
+    allCourses = [];
   }
+  buildCategoryTabs();
   renderCourses();
   updateStats();
 }
@@ -288,7 +167,7 @@ async function saveWatchHistory(courseId) {
       courseId: courseId,
       courseTitle: course?.title || '',
       category: course?.category || '',
-      isPaid: course?.isPaid || false,
+      isPaid: false,
       watchedAt: serverTimestamp(),
     });
   } catch (e) {
@@ -314,6 +193,42 @@ async function loadMyHistory() {
 }
 
 // =====================================================
+// 카테고리 탭 동적 생성
+// =====================================================
+function buildCategoryTabs() {
+  const tabsEl = document.getElementById('catTabs');
+  if (!tabsEl) return;
+
+  // 데이터에서 카테고리 추출 (플레이리스트 순서 유지)
+  const categories = [];
+  const seen = new Set();
+  allCourses.forEach(c => {
+    if (c.category && !seen.has(c.category)) {
+      seen.add(c.category);
+      const plIdx = PLAYLISTS.findIndex(p => p.name === c.category);
+      categories.push({ name: c.category, order: plIdx >= 0 ? plIdx : 99 });
+    }
+  });
+  categories.sort((a, b) => a.order - b.order);
+
+  tabsEl.innerHTML =
+    `<button class="cls-tab ${currentCat === 'all' ? 'active' : ''}" data-cat="all">전체</button>` +
+    categories.map(cat =>
+      `<button class="cls-tab ${currentCat === cat.name ? 'active' : ''}" data-cat="${cat.name}">${cat.name}</button>`
+    ).join('');
+
+  // 클릭 이벤트 연결
+  tabsEl.querySelectorAll('.cls-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabsEl.querySelectorAll('.cls-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentCat = tab.dataset.cat;
+      renderCourses();
+    });
+  });
+}
+
+// =====================================================
 // 인증 함수
 // =====================================================
 window.loginWithGoogle = async function () {
@@ -329,7 +244,7 @@ window.loginWithGoogle = async function () {
 
 window.loginWithKakao = function () {
   if (typeof Kakao === 'undefined' || KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') {
-    alert('카카오 앱 키 설정이 필요합니다.\nclass.js 상단의 KAKAO_JS_KEY를 입력해주세요.');
+    alert('카카오 앱 키 설정이 필요합니다.');
     return;
   }
   Kakao.Auth.login({
@@ -407,7 +322,6 @@ window.openMyPage = async function () {
   const modal = document.getElementById('myPageModal');
   if (!modal) return;
 
-  // 프로필 설정
   const photo = document.getElementById('myPhoto');
   const name = document.getElementById('myName');
   const email = document.getElementById('myEmail');
@@ -415,22 +329,17 @@ window.openMyPage = async function () {
   if (name) name.textContent = currentUser.name;
   if (email) email.textContent = currentUser.email || currentUser.provider;
 
-  // 로딩
   const historyList = document.getElementById('myHistoryList');
   historyList.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
   modal.classList.add('open');
 
-  // 수강 이력 로드
   const records = await loadMyHistory();
 
   if (!records.length) {
     historyList.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa"><i class="fas fa-play-circle" style="font-size:28px;margin-bottom:8px"></i><br>아직 수강 이력이 없어요<br><small>강의를 시청하면 여기에 기록됩니다</small></div>';
   } else {
-    // 중복 제거 (같은 강의는 최신 1개만)
     const seen = new Map();
-    records.forEach(r => {
-      if (!seen.has(r.courseId)) seen.set(r.courseId, r);
-    });
+    records.forEach(r => { if (!seen.has(r.courseId)) seen.set(r.courseId, r); });
     const unique = Array.from(seen.values());
     const totalViews = records.length;
 
@@ -451,7 +360,6 @@ window.openMyPage = async function () {
             <div class="my-history-title">${r.courseTitle || '(삭제된 강의)'}</div>
             <div class="my-history-meta">
               <span>${r.category || ''}</span>
-              <span>${r.isPaid ? '유료' : '무료'}</span>
               <span>${dateStr}</span>
             </div>
           </div>
@@ -486,16 +394,41 @@ function fmtViews(n) {
 
 function getCourses() {
   let list = allCourses.filter(c => c.isPublished !== false);
-  // 카테고리
   if (currentCat !== 'all') list = list.filter(c => c.category === currentCat);
-  // URL 필터
-  const p = new URLSearchParams(window.location.search).get('filter');
-  if (p === 'free') list = list.filter(c => !c.isPaid);
-  if (p === 'paid') list = list.filter(c => c.isPaid);
-  // 정렬
   if (currentSort === 'popular') list.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
-  else if (currentSort === 'latest') list.sort((a, b) => (b.order || 0) - (a.order || 0));
-  else if (currentSort === 'free') list.sort((a, b) => Number(a.isPaid) - Number(b.isPaid));
+  else if (currentSort === 'latest') list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+  else list.sort((a, b) => (a.order || 99) - (b.order || 99));
+  return list;
+}
+
+function courseCardHtml(c) {
+  return `
+    <div class="cls-course-card" onclick="openCourse('${c.id}')">
+      <div class="cls-card-thumb">
+        <img
+          src="${c.thumbnail || thumb(c.videoId)}"
+          alt="${c.title}"
+          loading="lazy"
+          onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='24px';this.style.background='#f3f4f6'">
+        <div class="cls-card-play"><i class="fas fa-play-circle"></i></div>
+        <div class="cls-card-badges">
+          <span class="cls-badge-free">무료</span>
+        </div>
+      </div>
+      <div class="cls-card-body">
+        <div class="cls-card-cat">${c.category || ''}</div>
+        <div class="cls-card-title">${c.title}</div>
+        <div class="cls-card-meta">
+          <span class="cls-card-views"><i class="fas fa-eye"></i>${fmtViews(c.viewCount || 0)}회</span>
+          <span class="cls-card-price is-free">무료</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function sortList(list) {
+  if (currentSort === 'popular') list.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+  else if (currentSort === 'latest') list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
   else list.sort((a, b) => (a.order || 99) - (b.order || 99));
   return list;
 }
@@ -504,48 +437,78 @@ function renderCourses() {
   const grid = document.getElementById('courseGrid');
   const empty = document.getElementById('emptyState');
   if (!grid) return;
-  const list = getCourses();
-  if (!list.length) {
+
+  const pub = allCourses.filter(c => c.isPublished !== false);
+
+  if (!pub.length) {
+    grid.className = 'cls-course-grid';
     grid.innerHTML = '';
+    empty.innerHTML = `
+      <i class="fas fa-video"></i>
+      <p>강의가 준비 중입니다</p>
+      <p style="font-size:0.82rem;margin-top:8px;color:var(--gray-400)">곧 멋진 강의들이 업로드될 예정이에요!</p>
+    `;
     empty.style.display = 'block';
     return;
   }
-  empty.style.display = 'none';
-  grid.innerHTML = list.map(c => `
-    <div class="cls-course-card" onclick="openCourse('${c.id}')">
-      <div class="cls-card-thumb">
-        <img
-          src="${thumb(c.videoId)}"
-          alt="${c.title}"
-          loading="lazy"
-          onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='24px';this.style.background='#f3f4f6'">
-        <div class="cls-card-play"><i class="fas fa-play-circle"></i></div>
-        <div class="cls-card-badges">
-          ${c.isPaid
-            ? '<span class="cls-badge-paid">유료</span>'
-            : '<span class="cls-badge-free">무료</span>'}
-          <span class="cls-badge-level">${c.level || '입문'}</span>
-        </div>
-      </div>
-      <div class="cls-card-body">
-        <div class="cls-card-cat">${c.category}</div>
-        <div class="cls-card-title">${c.title}</div>
-        <div class="cls-card-meta">
-          <span class="cls-card-views"><i class="fas fa-eye"></i>${fmtViews(c.viewCount || 0)}회</span>
-          ${c.isPaid
-            ? `<span class="cls-card-price">${c.price.toLocaleString()}원</span>`
-            : `<span class="cls-card-price is-free">무료</span>`}
-        </div>
-      </div>
-    </div>
-  `).join('');
+
+  if (currentCat === 'all') {
+    // === 전체 보기: 카테고리별 섹션으로 분리 ===
+    grid.className = 'cls-course-sections';
+    empty.style.display = 'none';
+
+    const categories = [];
+    const seen = new Set();
+    pub.forEach(c => {
+      if (c.category && !seen.has(c.category)) {
+        seen.add(c.category);
+        const plIdx = PLAYLISTS.findIndex(p => p.name === c.category);
+        categories.push({ name: c.category, order: plIdx >= 0 ? plIdx : 99 });
+      }
+    });
+    categories.sort((a, b) => a.order - b.order);
+
+    grid.innerHTML = categories.map(cat => {
+      let list = pub.filter(c => c.category === cat.name);
+      sortList(list);
+      if (!list.length) return '';
+      return `
+        <div class="cls-category-section">
+          <div class="cls-category-header">
+            <h2 class="cls-category-title">${cat.name}</h2>
+            <span class="cls-category-count">${list.length}개 강의</span>
+          </div>
+          <div class="cls-course-grid">
+            ${list.map(c => courseCardHtml(c)).join('')}
+          </div>
+        </div>`;
+    }).join('');
+
+  } else {
+    // === 단일 카테고리 보기 ===
+    grid.className = 'cls-course-grid';
+    let list = pub.filter(c => c.category === currentCat);
+    sortList(list);
+
+    if (!list.length) {
+      grid.innerHTML = '';
+      empty.innerHTML = `
+        <i class="fas fa-search"></i>
+        <p>해당 카테고리에 강의가 없습니다</p>
+      `;
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.innerHTML = list.map(c => courseCardHtml(c)).join('');
+  }
 }
 
 function updateStats() {
   const pub = allCourses.filter(c => c.isPublished !== false);
   const el = id => document.getElementById(id);
   if (el('totalCourseCount')) el('totalCourseCount').textContent = pub.length;
-  if (el('freeCourseCount')) el('freeCourseCount').textContent = pub.filter(c => !c.isPaid).length;
+  if (el('freeCourseCount')) el('freeCourseCount').textContent = pub.length;
   if (el('totalViewsCount')) el('totalViewsCount').textContent = fmtViews(pub.reduce((s, c) => s + (c.viewCount || 0), 0));
 }
 
@@ -556,13 +519,7 @@ window.openCourse = function (courseId) {
   const c = allCourses.find(x => x.id === courseId);
   if (!c) return;
 
-  // 유료 강의: 로그인 유도
-  if (c.isPaid && !currentUser) {
-    openLoginModal();
-    return;
-  }
-
-  // 조회수 카운트 + 수강 이력
+  // 조회수 + 수강 이력
   c.viewCount = (c.viewCount || 0) + 1;
   addView(courseId);
   saveWatchHistory(courseId);
@@ -573,35 +530,26 @@ window.openCourse = function (courseId) {
 
   // 배지
   document.getElementById('courseDetailBadges').innerHTML = `
-    <span class="cls-course-badge ${c.isPaid ? 'paid' : 'free'}">${c.isPaid ? '유료' : '무료'}</span>
-    <span class="cls-course-badge cat">${c.category}</span>
-    <span class="cls-course-badge lv">${c.level || '입문'}</span>
+    <span class="cls-course-badge free">무료</span>
+    <span class="cls-course-badge cat">${c.category || ''}</span>
   `;
 
   document.getElementById('courseDetailTitle').textContent = c.title;
-  document.getElementById('courseDetailDesc').textContent = c.desc;
+  document.getElementById('courseDetailDesc').textContent = c.desc || '';
   document.getElementById('courseDetailMeta').innerHTML = `
-    <span><i class="fas fa-clock"></i>${c.duration || '-'}</span>
     <span><i class="fas fa-eye"></i>${fmtViews(c.viewCount)}회 수강</span>
-    ${c.isPaid ? `<span><i class="fas fa-won-sign"></i>${c.price.toLocaleString()}원</span>` : ''}
+    <span><i class="fas fa-folder"></i>${c.category || ''}</span>
   `;
 
   // CTA 버튼
-  const cta = document.getElementById('courseDetailCta');
-  if (c.isPaid) {
-    cta.innerHTML = `
-      <button class="cls-btn-enroll soon-btn" disabled>
-        <i class="fas fa-lock"></i> 결제 기능 오픈 예정
-      </button>
-      <a href="index.html#contact" class="cls-contact-link">문의하기 →</a>
-    `;
-  } else {
-    cta.innerHTML = `
-      <button class="cls-btn-enroll free-btn">
-        <i class="fas fa-play"></i> 무료 수강 중
-      </button>
-    `;
-  }
+  document.getElementById('courseDetailCta').innerHTML = `
+    <button class="cls-btn-enroll free-btn">
+      <i class="fas fa-play"></i> 무료 수강 중
+    </button>
+    <a href="https://www.youtube.com/watch?v=${c.videoId}" target="_blank" class="cls-contact-link">
+      YouTube에서 보기 <i class="fas fa-external-link-alt"></i>
+    </a>
+  `;
 
   document.getElementById('courseModal').classList.add('open');
 };
@@ -632,16 +580,6 @@ function renderReviews() {
 // =====================================================
 document.addEventListener('DOMContentLoaded', () => {
 
-  // 카테고리 탭
-  document.querySelectorAll('.cls-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.cls-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      currentCat = tab.dataset.cat;
-      renderCourses();
-    });
-  });
-
   // 정렬
   const sortEl = document.getElementById('sortSelect');
   if (sortEl) sortEl.addEventListener('change', e => { currentSort = e.target.value; renderCourses(); });
@@ -666,16 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('clsNav').classList.toggle('open');
   };
 
-  // URL 필터에 따른 네비 활성화
-  const filter = new URLSearchParams(window.location.search).get('filter');
-  if (filter === 'free') {
-    document.getElementById('navFree')?.classList.add('active');
-    document.getElementById('navAll')?.classList.remove('active');
-  } else if (filter === 'paid') {
-    document.getElementById('navPaid')?.classList.add('active');
-    document.getElementById('navAll')?.classList.remove('active');
-  }
-
   // 헤더 스크롤 효과
   window.addEventListener('scroll', () => {
     const header = document.getElementById('clsHeader');
@@ -684,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderReviews();
 
-  // Firebase 미설정 시 샘플 데이터로 렌더
+  // Firebase 미설정 시
   if (!fbReady) {
     renderCourses();
     updateStats();

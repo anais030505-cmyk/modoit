@@ -65,16 +65,7 @@
     /* --- 메인 --- */
     .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
 
-    /* 액션바 */
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .actions h2 { font-size: 20px; }
+    /* 버튼 */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -86,6 +77,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: .2s;
+      font-family: inherit;
     }
     .btn-primary { background: #7c3aed; color: #fff; }
     .btn-primary:hover { background: #6d28d9; }
@@ -94,8 +86,10 @@
     .btn-danger { background: #fee2e2; color: #dc2626; }
     .btn-danger:hover { background: #fecaca; }
     .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .btn-youtube { background: #ff0000; color: #fff; }
+    .btn-youtube:hover { background: #cc0000; }
 
-    /* 안내 */
+    /* 안내박스 */
     .info-box {
       background: #ede9fe;
       border-radius: 10px;
@@ -104,9 +98,22 @@
       font-size: 13px;
       color: #5b21b6;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
+      line-height: 1.6;
     }
+    .info-box i { margin-top: 2px; flex-shrink: 0; }
+
+    /* 액션바 */
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .actions h2 { font-size: 20px; }
 
     /* 테이블 */
     .course-table {
@@ -117,154 +124,189 @@
     }
     .course-row {
       display: grid;
-      grid-template-columns: 40px 80px 1fr 120px 70px 70px 60px 100px;
+      grid-template-columns: 22px 28px 48px 1fr 46px 48px;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
+      gap: 6px;
+      padding: 3px 10px;
       border-bottom: 1px solid #f0f0f0;
-      transition: background .15s;
+      transition: background .12s;
       cursor: grab;
+      min-height: 34px;
     }
     .course-row:active { cursor: grabbing; }
     .course-row:hover { background: #faf5ff; }
     .course-row.dragging { opacity: .4; background: #ede9fe; }
     .course-row.drag-over { border-top: 3px solid #7c3aed; }
     .course-head {
-      font-size: 12px;
+      font-size: 11px;
       color: #888;
       font-weight: 600;
-      text-transform: uppercase;
       cursor: default;
       background: #fafafa;
+      min-height: 28px;
     }
     .course-head:hover { background: #fafafa; }
-    .drag-handle { color: #ccc; font-size: 16px; text-align: center; }
+    .drag-handle { color: #ccc; font-size: 12px; text-align: center; }
+    .order-num { font-size: 11px; color: #aaa; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
     .course-thumb {
-      width: 72px;
-      height: 40px;
-      border-radius: 4px;
+      width: 42px;
+      height: 24px;
+      border-radius: 3px;
       object-fit: cover;
       background: #f3f4f6;
     }
     .course-title-cell {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 1px;
       min-width: 0;
     }
     .course-title-cell strong {
-      font-size: 14px;
+      font-size: 12px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 500;
+      line-height: 1.3;
     }
-    .course-title-cell small { color: #999; font-size: 11px; }
-    .badge-free { background: #dcfce7; color: #166534; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-    .badge-paid { background: #fef3c7; color: #92400e; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-    .badge-hidden { background: #fee2e2; color: #991b1b; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-    .badge-published { background: #dcfce7; color: #166534; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-    .row-actions { display: flex; gap: 4px; }
-
-    /* 모달 */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.5);
-      z-index: 200;
-      display: none;
+    .course-title-cell small { color: #999; font-size: 10px; line-height: 1.2; }
+    .badge-cat {
+      display: inline-block;
+      background: #ede9fe; color: #7c3aed;
+      font-size: 9px; padding: 1px 5px;
+      border-radius: 3px; font-weight: 600;
+      max-width: 120px; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+      vertical-align: middle;
+    }
+    .badge-hidden { background: #fee2e2; color: #991b1b; font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 600; }
+    .badge-published { background: #dcfce7; color: #166534; font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 600; }
+    .move-btns { display: flex; gap: 2px; justify-content: center; }
+    .move-btn {
+      width: 20px; height: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      background: #fff;
+      color: #999;
+      cursor: pointer;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      font-size: 9px;
+      transition: .12s;
+      padding: 0;
+      line-height: 1;
     }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: #fff;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 620px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 28px;
-    }
-    .modal-box h3 { font-size: 18px; margin-bottom: 20px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555; }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      transition: border .2s;
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus { border-color: #7c3aed; outline: none; }
-    .form-group textarea { resize: vertical; min-height: 70px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-    .preview-thumb {
-      width: 100%;
-      max-width: 320px;
-      aspect-ratio: 16/9;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #f3f4f6;
-      margin-top: 8px;
-    }
-    .help-text { font-size: 11px; color: #999; margin-top: 4px; }
-
-    /* 빈 상태 */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #888;
-    }
-    .empty-state i { font-size: 48px; margin-bottom: 12px; color: #ddd; }
-    .empty-state p { font-size: 15px; }
-
-    /* 반응형 */
-    @media (max-width: 768px) {
-      .course-row {
-        grid-template-columns: 30px 60px 1fr 60px;
-        font-size: 12px;
-      }
-      .course-row .hide-mobile { display: none; }
-      .modal-box { padding: 20px; }
-      .form-row { grid-template-columns: 1fr; }
-    }
-
-    /* 토스트 */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #1a1a2e;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      z-index: 999;
-      transition: transform .3s ease, opacity .3s ease;
-      opacity: 0;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-    /* 로딩 */
-    .loading {
+    .move-btn:hover { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+    .move-btn:disabled { opacity: .25; cursor: default; pointer-events: none; }
+    .row-views { font-size: 11px; color: #999; text-align: center; }
+    .cat-section-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 40px;
-      color: #aaa;
+      gap: 8px;
+      padding: 10px 12px 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #7c3aed;
+      background: linear-gradient(90deg, #f5f3ff 0%, #fff 100%);
+      border-bottom: 2px solid #ede9fe;
+      border-top: 1px solid #e5e7eb;
+      position: sticky;
+      top: 48px;
+      z-index: 5;
+    }
+    .cat-section-header:first-child { border-top: none; }
+    .cat-section-header i { font-size: 11px; }
+    .cat-section-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      background: #f0f0f0;
+      padding: 1px 8px;
+      border-radius: 10px;
+    }
+
+    /* 카테고리 필터 */
+    .cat-filter {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .cat-filter-btn {
+      padding: 6px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 20px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      transition: .2s;
+      font-family: inherit;
+    }
+    .cat-filter-btn:hover { border-color: #7c3aed; color: #7c3aed; }
+    .cat-filter-btn.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+
+    /* YouTube 동기화 섹션 */
+    .sync-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .sync-section h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
-    .loading i { animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .sync-section h3 i { color: #ff0000; }
+    .playlist-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .playlist-card {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .playlist-card .pl-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    .playlist-card .pl-meta {
+      font-size: 12px;
+      color: #888;
+    }
+    .playlist-card .pl-id {
+      font-size: 11px;
+      color: #aaa;
+      word-break: break-all;
+    }
+    .sync-status {
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #f9fafb;
+      font-size: 13px;
+      color: #555;
+      min-height: 40px;
+      line-height: 1.6;
+    }
+    .sync-status a { color: #7c3aed; font-weight: 600; }
+    .sync-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
 
     /* 탭 */
     .admin-tabs {
@@ -288,13 +330,14 @@
       color: #888;
       cursor: pointer;
       transition: .2s;
+      font-family: inherit;
     }
     .admin-tab.active { background: #7c3aed; color: #fff; }
     .admin-tab:hover:not(.active) { background: #f3f4f6; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* 수강생 테이블 */
+    /* 수강생 관리 */
     .user-card {
       background: #fff;
       border-radius: 12px;
@@ -361,6 +404,102 @@
     }
     .stat-card strong { display: block; font-size: 28px; color: #7c3aed; }
     .stat-card span { font-size: 12px; color: #888; }
+
+    /* 모달 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    .modal-box h3 { font-size: 18px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border .2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: #7c3aed; outline: none; }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* 빈 상태 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+    .empty-state i { font-size: 48px; margin-bottom: 12px; color: #ddd; }
+    .empty-state p { font-size: 15px; }
+
+    /* 토스트 */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a2e;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 999;
+      transition: transform .3s ease, opacity .3s ease;
+      opacity: 0;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* 로딩 */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      color: #aaa;
+      gap: 8px;
+    }
+    .loading i { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .course-row {
+        grid-template-columns: 20px 24px 36px 1fr 40px;
+        font-size: 11px;
+        gap: 4px;
+        padding: 3px 6px;
+      }
+      .course-row .hide-mobile { display: none; }
+      .course-thumb { width: 32px; height: 18px; }
+      .move-btn { width: 17px; height: 17px; font-size: 8px; }
+      .modal-box { padding: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .playlist-cards { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -401,33 +540,64 @@
 
       <!-- ===== 강의 관리 탭 ===== -->
       <div class="tab-panel active" id="tabCourses">
+
+        <!-- YouTube 동기화 섹션 -->
+        <div class="sync-section">
+          <h3><i class="fab fa-youtube"></i> YouTube 플레이리스트 동기화</h3>
+          <div class="playlist-cards">
+            <div class="playlist-card">
+              <div class="pl-name">미리캔버스와 AI로 홍보 끝판왕</div>
+              <div class="pl-meta"><i class="fas fa-list"></i> 14개 강의</div>
+              <div class="pl-id">PLzaIVWzQ-Ed-M6sDBE1jonxxafr39yGdr</div>
+            </div>
+            <div class="playlist-card">
+              <div class="pl-name">AI 활용법</div>
+              <div class="pl-meta"><i class="fas fa-list"></i> 27개 강의</div>
+              <div class="pl-id">PLzaIVWzQ-Ed_NxtAS7Op0e6QMCSpxe78-</div>
+            </div>
+            <div class="playlist-card">
+              <div class="pl-name">미리캔버스 시작(초급)</div>
+              <div class="pl-meta"><i class="fas fa-list"></i> 13개 강의</div>
+              <div class="pl-id">PLzaIVWzQ-Ed-3Tx9ENBizYzutBHQ3t7nT</div>
+            </div>
+          </div>
+          <div class="sync-actions">
+            <button class="btn btn-youtube" onclick="syncFromYouTube()">
+              <i class="fab fa-youtube"></i> YouTube에서 전체 동기화
+            </button>
+            <button class="btn btn-secondary" onclick="clearAllCourses()">
+              <i class="fas fa-trash-alt"></i> 전체 초기화
+            </button>
+          </div>
+          <div class="sync-status" id="syncStatus" style="margin-top:12px">
+            <i class="fas fa-info-circle" style="color:#7c3aed"></i>
+            "YouTube에서 전체 동기화" 버튼을 클릭하면 플레이리스트의 모든 영상을 Firestore에 가져옵니다.
+          </div>
+        </div>
+
+        <!-- 강의 목록 -->
         <div class="info-box">
-          <i class="fas fa-info-circle"></i>
-          드래그하여 강의 순서를 변경하세요. 변경 사항은 즉시 Firestore에 저장됩니다.
+          <i class="fas fa-arrows-alt"></i>
+          드래그 또는 ↑↓ 버튼으로 강의 순서를 변경할 수 있습니다. 변경 사항은 즉시 저장됩니다.
+        </div>
+
+        <!-- 카테고리 필터 -->
+        <div class="cat-filter" id="catFilter">
+          <button class="cat-filter-btn active" data-cat="all" onclick="filterCategory('all', this)">전체</button>
         </div>
 
         <div class="actions">
-          <h2><i class="fas fa-graduation-cap"></i> 강의 관리 (<span id="courseCount">0</span>개)</h2>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-secondary" onclick="syncSampleToFirestore()">
-              <i class="fas fa-upload"></i> 샘플 데이터 업로드
-            </button>
-            <button class="btn btn-primary" onclick="openModal()">
-              <i class="fas fa-plus"></i> 새 강의 추가
-            </button>
-          </div>
+          <h2><i class="fas fa-graduation-cap"></i> 강의 목록 (<span id="courseCount">0</span>개)</h2>
         </div>
 
         <div class="course-table" id="courseTable">
           <div class="course-row course-head">
             <div></div>
-            <div>썸네일</div>
+            <div>#</div>
+            <div></div>
             <div>강의명</div>
-            <div>카테고리</div>
-            <div>유형</div>
             <div class="hide-mobile">조회</div>
-            <div>상태</div>
-            <div>관리</div>
+            <div>순서</div>
           </div>
           <div id="courseList">
             <div class="loading"><i class="fas fa-spinner"></i> 강의 불러오는 중...</div>
@@ -465,99 +635,16 @@
     </div>
   </div>
 
-  <!-- ===== 강의 추가/수정 모달 ===== -->
-  <div class="modal-overlay" id="courseModal">
-    <div class="modal-box">
-      <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> 새 강의 추가</h3>
-      <form id="courseForm" onsubmit="saveCourse(event)">
-        <input type="hidden" id="editId">
-
-        <div class="form-group">
-          <label>유튜브 영상 URL 또는 영상 ID *</label>
-          <input type="text" id="fVideoId" placeholder="https://youtu.be/xxxx 또는 영상ID" required oninput="previewVideo(this.value)">
-          <div class="help-text">유튜브 영상 URL을 붙여넣으면 자동으로 ID를 추출합니다</div>
-          <img class="preview-thumb" id="thumbPreview" src="" style="display:none" alt="미리보기">
-        </div>
-
-        <div class="form-group">
-          <label>강의 제목 *</label>
-          <input type="text" id="fTitle" placeholder="예: ChatGPT로 업무 효율 올리기" required>
-        </div>
-
-        <div class="form-group">
-          <label>강의 설명</label>
-          <textarea id="fDesc" placeholder="강의 내용을 설명해주세요"></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>카테고리 *</label>
-            <select id="fCategory" required>
-              <option value="AI비즈니스활용">AI 비즈니스 활용</option>
-              <option value="AI스마트폰활용">AI 스마트폰 활용</option>
-              <option value="미리캔버스">미리캔버스</option>
-              <option value="기타">기타</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>난이도</label>
-            <select id="fLevel">
-              <option value="입문">입문</option>
-              <option value="초급">초급</option>
-              <option value="중급">중급</option>
-              <option value="고급">고급</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>유형</label>
-            <select id="fIsPaid" onchange="togglePrice()">
-              <option value="false">무료</option>
-              <option value="true">유료</option>
-            </select>
-          </div>
-          <div class="form-group" id="priceGroup" style="display:none">
-            <label>가격 (원)</label>
-            <input type="number" id="fPrice" value="0" min="0" step="1000">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>수강 시간</label>
-            <input type="text" id="fDuration" placeholder="예: 45분, 1시간 20분">
-          </div>
-          <div class="form-group">
-            <label>공개 여부</label>
-            <select id="fPublished">
-              <option value="true">공개</option>
-              <option value="false">비공개</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
-          <button type="submit" class="btn btn-primary" id="submitBtn">
-            <i class="fas fa-save"></i> 저장
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- ===== 삭제 확인 모달 ===== -->
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-box" style="max-width:400px;text-align:center">
       <i class="fas fa-exclamation-triangle" style="font-size:40px;color:#dc2626;margin-bottom:12px"></i>
-      <h3>강의를 삭제할까요?</h3>
+      <h3 id="deleteTitle">강의를 삭제할까요?</h3>
       <p style="color:#666;font-size:14px;margin:12px 0" id="deleteName"></p>
       <p style="color:#999;font-size:12px">이 작업은 되돌릴 수 없습니다</p>
       <div class="form-actions" style="justify-content:center;margin-top:20px">
         <button class="btn btn-secondary" onclick="closeDeleteModal()">취소</button>
-        <button class="btn btn-danger" onclick="confirmDelete()"><i class="fas fa-trash"></i> 삭제</button>
+        <button class="btn btn-danger" id="deleteConfirmBtn" onclick="confirmDelete()"><i class="fas fa-trash"></i> 삭제</button>
       </div>
     </div>
   </div>
@@ -577,7 +664,7 @@
       setDoc, deleteDoc, updateDoc, orderBy, query, writeBatch, where
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    // Firebase 설정 (class.js와 동일)
+    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyCKn6pnMR5lDbJM6C2kLDN8XceByLkL5oU",
       authDomain: "modoit-class.firebaseapp.com",
@@ -588,11 +675,20 @@
       measurementId: "G-ZXD2EBQWSX"
     };
 
+    const YOUTUBE_API_KEY = firebaseConfig.apiKey;
+
+    // YouTube 플레이리스트 정의
+    const PLAYLISTS = [
+      { id: 'PLzaIVWzQ-Ed-M6sDBE1jonxxafr39yGdr', name: '미리캔버스와 AI로 홍보 끝판왕' },
+      { id: 'PLzaIVWzQ-Ed_NxtAS7Op0e6QMCSpxe78-', name: 'AI 활용법' },
+      { id: 'PLzaIVWzQ-Ed-3Tx9ENBizYzutBHQ3t7nT', name: '미리캔버스 시작(초급)' },
+    ];
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // 관리자 이메일 목록 (여기에 본인 이메일 추가)
+    // 관리자 이메일 목록
     const ADMIN_EMAILS = [
       'anais0305.05@gmail.com',
       'anais0305@naver.com',
@@ -600,6 +696,8 @@
 
     let courses = [];
     let deleteTargetId = null;
+    let deleteMode = 'single'; // 'single' or 'all'
+    let currentFilter = 'all';
 
     // ============ 인증 ============
     onAuthStateChanged(auth, async (user) => {
@@ -633,6 +731,139 @@
       document.getElementById('loginScreen').style.display = 'flex';
     };
 
+    // ============ YouTube 동기화 ============
+    async function fetchPlaylistVideos(playlistId) {
+      let videos = [];
+      let pageToken = '';
+
+      do {
+        const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}${pageToken ? '&pageToken=' + pageToken : ''}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData.error?.message || `HTTP ${res.status}`;
+          throw new Error(errMsg);
+        }
+        const data = await res.json();
+
+        for (const item of data.items) {
+          if (item.snippet.resourceId.kind !== 'youtube#video') continue;
+          if (item.snippet.title === 'Private video' || item.snippet.title === 'Deleted video') continue;
+
+          videos.push({
+            videoId: item.snippet.resourceId.videoId,
+            title: item.snippet.title,
+            desc: (item.snippet.description || '').substring(0, 300),
+            thumbnail: item.snippet.thumbnails?.high?.url ||
+                       item.snippet.thumbnails?.medium?.url ||
+                       item.snippet.thumbnails?.default?.url || '',
+            position: item.snippet.position,
+            publishedAt: item.snippet.publishedAt || '',
+          });
+        }
+
+        pageToken = data.nextPageToken || '';
+      } while (pageToken);
+
+      return videos;
+    }
+
+    window.syncFromYouTube = async function () {
+      const statusEl = document.getElementById('syncStatus');
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> YouTube에서 영상을 가져오는 중... 잠시 기다려주세요.';
+
+      try {
+        // 기존 데이터 로드 (order, viewCount 보존용)
+        const existingSnap = await getDocs(collection(db, 'courses'));
+        const existingMap = new Map();
+        existingSnap.docs.forEach(d => {
+          existingMap.set(d.id, d.data());
+        });
+
+        let globalOrder = 1;
+        let totalNew = 0;
+        let totalUpdated = 0;
+
+        for (let pIdx = 0; pIdx < PLAYLISTS.length; pIdx++) {
+          const pl = PLAYLISTS[pIdx];
+          statusEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> "${pl.name}" 가져오는 중... (${pIdx + 1}/${PLAYLISTS.length})`;
+
+          const videos = await fetchPlaylistVideos(pl.id);
+
+          const batch = writeBatch(db);
+
+          for (const video of videos) {
+            const docId = 'yt_' + video.videoId;
+            const existing = existingMap.get(docId);
+
+            if (existing) {
+              // 기존 영상: 메타데이터만 업데이트 (order, viewCount 보존)
+              batch.update(doc(db, 'courses', docId), {
+                title: video.title,
+                desc: video.desc,
+                thumbnail: video.thumbnail,
+                publishedAt: video.publishedAt,
+                category: pl.name,
+                playlistId: pl.id,
+                syncedAt: new Date().toISOString(),
+              });
+              totalUpdated++;
+            } else {
+              // 새 영상
+              batch.set(doc(db, 'courses', docId), {
+                videoId: video.videoId,
+                title: video.title,
+                desc: video.desc,
+                category: pl.name,
+                playlistId: pl.id,
+                isPaid: false,
+                price: 0,
+                level: '',
+                duration: '',
+                viewCount: 0,
+                order: globalOrder,
+                isPublished: true,
+                thumbnail: video.thumbnail,
+                publishedAt: video.publishedAt,
+                syncedAt: new Date().toISOString(),
+              });
+              totalNew++;
+            }
+            globalOrder++;
+          }
+
+          await batch.commit();
+        }
+
+        statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#059669"></i> 동기화 완료! 새 영상 ${totalNew}개 추가, ${totalUpdated}개 업데이트됨. (${new Date().toLocaleString('ko-KR')})`;
+        await loadCourses();
+        showToast(`YouTube 동기화 완료! (${totalNew}개 추가, ${totalUpdated}개 업데이트)`);
+
+      } catch (e) {
+        console.error('YouTube sync error:', e);
+        if (e.message.includes('API key') || e.message.includes('forbidden') || e.message.includes('403') || e.message.includes('not enabled')) {
+          statusEl.innerHTML = `
+            <i class="fas fa-exclamation-triangle" style="color:#dc2626"></i>
+            <strong>YouTube Data API v3가 활성화되지 않았습니다.</strong><br>
+            Google Cloud Console에서 YouTube Data API v3를 활성화해야 합니다:<br>
+            <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com?project=modoit-class" target="_blank">
+              <i class="fas fa-external-link-alt"></i> YouTube Data API v3 활성화하기 (클릭)
+            </a><br>
+            <small style="color:#999">활성화 후 이 페이지를 새로고침하고 다시 동기화하세요.</small>
+          `;
+        } else {
+          statusEl.innerHTML = `<i class="fas fa-exclamation-circle" style="color:#dc2626"></i> 동기화 오류: ${e.message}`;
+        }
+      }
+    };
+
+    window.clearAllCourses = async function () {
+      deleteMode = 'all';
+      document.getElementById('deleteTitle').textContent = '전체 강의를 삭제할까요?';
+      document.getElementById('deleteName').textContent = `총 ${courses.length}개의 강의가 모두 삭제됩니다`;
+      document.getElementById('deleteModal').classList.add('open');
+    };
+
     // ============ Firestore ============
     async function loadCourses() {
       try {
@@ -643,49 +874,112 @@
         courses = [];
         console.warn('강의 로드 오류:', e);
       }
+      buildCatFilter();
       renderTable();
+    }
+
+    function buildCatFilter() {
+      const filterEl = document.getElementById('catFilter');
+      if (!filterEl) return;
+
+      const cats = new Set();
+      courses.forEach(c => { if (c.category) cats.add(c.category); });
+
+      // Maintain playlist order
+      const orderedCats = PLAYLISTS
+        .filter(pl => cats.has(pl.name))
+        .map(pl => pl.name);
+
+      filterEl.innerHTML =
+        `<button class="cat-filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-cat="all" onclick="filterCategory('all', this)">전체 (${courses.length})</button>` +
+        orderedCats.map(cat => {
+          const count = courses.filter(c => c.category === cat).length;
+          return `<button class="cat-filter-btn ${currentFilter === cat ? 'active' : ''}" data-cat="${cat}" onclick="filterCategory('${cat}', this)">${cat} (${count})</button>`;
+        }).join('');
+    }
+
+    window.filterCategory = function (cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTable();
+    };
+
+    function courseRowHtml(c, i, filtered) {
+      return `
+        <div class="course-row" draggable="true" data-id="${c.id}" data-index="${courses.indexOf(c)}">
+          <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+          <div class="order-num">${i + 1}</div>
+          <img class="course-thumb" src="${c.thumbnail || 'https://img.youtube.com/vi/' + c.videoId + '/mqdefault.jpg'}"
+            onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='4px';this.style.background='#f3f4f6'" alt="">
+          <div class="course-title-cell">
+            <strong>${c.title || '(제목 없음)'}</strong>
+            <small><span class="badge-cat">${c.category || '-'}</span></small>
+          </div>
+          <div class="row-views hide-mobile">${(c.viewCount || 0).toLocaleString()}</div>
+          <div class="move-btns">
+            <button class="move-btn" onclick="event.stopPropagation();moveItem('${c.id}',-1)" ${i === 0 ? 'disabled' : ''} title="위로"><i class="fas fa-chevron-up"></i></button>
+            <button class="move-btn" onclick="event.stopPropagation();moveItem('${c.id}',1)" ${i === filtered.length - 1 ? 'disabled' : ''} title="아래로"><i class="fas fa-chevron-down"></i></button>
+          </div>
+        </div>`;
     }
 
     function renderTable() {
       const list = document.getElementById('courseList');
       const count = document.getElementById('courseCount');
-      count.textContent = courses.length;
 
       if (!courses.length) {
+        count.textContent = 0;
         list.innerHTML = `
           <div class="empty-state">
             <i class="fas fa-inbox"></i>
             <p>등록된 강의가 없습니다</p>
-            <p style="font-size:13px;margin-top:8px">"샘플 데이터 업로드" 또는 "새 강의 추가"를 해보세요</p>
+            <p style="font-size:13px;margin-top:8px">위의 "YouTube에서 전체 동기화" 버튼을 클릭하세요</p>
           </div>`;
         return;
       }
 
-      list.innerHTML = courses.map((c, i) => `
-        <div class="course-row" draggable="true" data-id="${c.id}" data-index="${i}">
-          <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
-          <img class="course-thumb" src="https://img.youtube.com/vi/${c.videoId}/mqdefault.jpg"
-            onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#f3f4f6'" alt="">
-          <div class="course-title-cell">
-            <strong>${c.title || '(제목 없음)'}</strong>
-            <small>${c.videoId || ''}</small>
-          </div>
-          <div>${c.category || '-'}</div>
-          <div>${c.isPaid ? '<span class="badge-paid">유료</span>' : '<span class="badge-free">무료</span>'}</div>
-          <div class="hide-mobile">${(c.viewCount || 0).toLocaleString()}</div>
-          <div>${c.isPublished !== false ? '<span class="badge-published">공개</span>' : '<span class="badge-hidden">비공개</span>'}</div>
-          <div class="row-actions">
-            <button class="btn btn-secondary btn-sm" onclick="editCourse('${c.id}')" title="수정">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${c.id}','${(c.title||'').replace(/'/g,"\\'")}')" title="삭제">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
+      if (currentFilter === 'all') {
+        // === 전체 보기: 카테고리별 그룹으로 분리 ===
+        count.textContent = courses.length;
 
-      // 드래그 이벤트
+        const categories = [];
+        const seen = new Set();
+        courses.forEach(c => {
+          if (c.category && !seen.has(c.category)) {
+            seen.add(c.category);
+            const plIdx = PLAYLISTS.findIndex(p => p.name === c.category);
+            categories.push({ name: c.category, order: plIdx >= 0 ? plIdx : 99 });
+          }
+        });
+        categories.sort((a, b) => a.order - b.order);
+
+        let html = '';
+        categories.forEach(cat => {
+          const catCourses = courses.filter(c => c.category === cat.name);
+          if (!catCourses.length) return;
+          html += `<div class="cat-section-header"><i class="fas fa-folder-open"></i> ${cat.name} <span class="cat-section-count">${catCourses.length}개</span></div>`;
+          html += catCourses.map((c, i) => courseRowHtml(c, i, catCourses)).join('');
+        });
+
+        list.innerHTML = html;
+      } else {
+        // === 단일 카테고리 보기 ===
+        const filtered = courses.filter(c => c.category === currentFilter);
+        count.textContent = filtered.length;
+
+        if (!filtered.length) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>해당 카테고리에 강의가 없습니다</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = filtered.map((c, i) => courseRowHtml(c, i, filtered)).join('');
+      }
+
       initDragDrop();
     }
 
@@ -725,7 +1019,6 @@
           const fromIdx = parseInt(dragEl.dataset.index);
           const toIdx = parseInt(row.dataset.index);
 
-          // 배열 순서 변경
           const moved = courses.splice(fromIdx, 1)[0];
           courses.splice(toIdx, 0, moved);
 
@@ -743,166 +1036,81 @@
       });
     }
 
-    // ============ 유튜브 ID 추출 ============
-    function extractVideoId(input) {
-      if (!input) return '';
-      input = input.trim();
-      // 이미 ID인 경우 (11자, 특수문자 없음)
-      if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
-      // URL에서 추출
-      try {
-        const url = new URL(input);
-        if (url.hostname.includes('youtu.be')) return url.pathname.slice(1).split('/')[0];
-        if (url.searchParams.has('v')) return url.searchParams.get('v');
-        if (url.pathname.includes('/embed/')) return url.pathname.split('/embed/')[1].split('?')[0];
-        if (url.pathname.includes('/shorts/')) return url.pathname.split('/shorts/')[1].split('?')[0];
-      } catch {}
-      return input;
-    }
-
-    window.previewVideo = function (val) {
-      const id = extractVideoId(val);
-      const img = document.getElementById('thumbPreview');
-      if (id && id.length >= 5) {
-        img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-        img.style.display = 'block';
-      } else {
-        img.style.display = 'none';
-      }
-    };
-
-    // ============ 모달 ============
-    window.openModal = function (editData) {
-      const modal = document.getElementById('courseModal');
-      const form = document.getElementById('courseForm');
-      form.reset();
-      document.getElementById('thumbPreview').style.display = 'none';
-      document.getElementById('priceGroup').style.display = 'none';
-
-      if (editData) {
-        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-pen"></i> 강의 수정';
-        document.getElementById('editId').value = editData.id;
-        document.getElementById('fVideoId').value = editData.videoId || '';
-        document.getElementById('fTitle').value = editData.title || '';
-        document.getElementById('fDesc').value = editData.desc || '';
-        document.getElementById('fCategory').value = editData.category || 'AI비즈니스활용';
-        document.getElementById('fLevel').value = editData.level || '입문';
-        document.getElementById('fIsPaid').value = String(!!editData.isPaid);
-        document.getElementById('fPrice').value = editData.price || 0;
-        document.getElementById('fDuration').value = editData.duration || '';
-        document.getElementById('fPublished').value = String(editData.isPublished !== false);
-        if (editData.isPaid) document.getElementById('priceGroup').style.display = 'block';
-        previewVideo(editData.videoId);
-      } else {
-        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> 새 강의 추가';
-        document.getElementById('editId').value = '';
+    // ============ 순서 변경 (↑↓ 버튼) ============
+    window.moveItem = async function (courseId, direction) {
+      let filtered = courses;
+      if (currentFilter !== 'all') {
+        filtered = courses.filter(c => c.category === currentFilter);
       }
 
-      modal.classList.add('open');
-    };
+      const idx = filtered.findIndex(c => c.id === courseId);
+      if (idx < 0) return;
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= filtered.length) return;
 
-    window.closeModal = function () {
-      document.getElementById('courseModal').classList.remove('open');
-    };
+      const a = filtered[idx];
+      const b = filtered[targetIdx];
 
-    window.togglePrice = function () {
-      document.getElementById('priceGroup').style.display =
-        document.getElementById('fIsPaid').value === 'true' ? 'block' : 'none';
-    };
+      // order 값 교환
+      const tmpOrder = a.order;
+      a.order = b.order;
+      b.order = tmpOrder;
 
-    window.editCourse = function (id) {
-      const c = courses.find(x => x.id === id);
-      if (c) openModal(c);
-    };
+      // Firestore 업데이트
+      const batch = writeBatch(db);
+      batch.update(doc(db, 'courses', a.id), { order: a.order });
+      batch.update(doc(db, 'courses', b.id), { order: b.order });
+      await batch.commit();
 
-    // ============ 저장 ============
-    window.saveCourse = async function (e) {
-      e.preventDefault();
-      const editId = document.getElementById('editId').value;
-      const videoId = extractVideoId(document.getElementById('fVideoId').value);
-      const isPaid = document.getElementById('fIsPaid').value === 'true';
-
-      const data = {
-        videoId,
-        title: document.getElementById('fTitle').value.trim(),
-        desc: document.getElementById('fDesc').value.trim(),
-        category: document.getElementById('fCategory').value,
-        level: document.getElementById('fLevel').value,
-        isPaid,
-        price: isPaid ? parseInt(document.getElementById('fPrice').value) || 0 : 0,
-        duration: document.getElementById('fDuration').value.trim(),
-        isPublished: document.getElementById('fPublished').value === 'true',
-      };
-
-      try {
-        if (editId) {
-          // 수정
-          await updateDoc(doc(db, 'courses', editId), data);
-          showToast('강의가 수정되었습니다');
-        } else {
-          // 새로 추가
-          const newId = 'c' + Date.now();
-          data.order = courses.length + 1;
-          data.viewCount = 0;
-          await setDoc(doc(db, 'courses', newId), data);
-          showToast('새 강의가 추가되었습니다');
-        }
-        closeModal();
-        await loadCourses();
-      } catch (e) {
-        alert('저장 오류: ' + e.message);
-      }
+      // 글로벌 배열 재정렬
+      courses.sort((x, y) => (x.order || 99) - (y.order || 99));
+      renderTable();
+      showToast('순서가 변경되었습니다');
     };
 
     // ============ 삭제 ============
-    window.openDeleteModal = function (id, name) {
-      deleteTargetId = id;
-      document.getElementById('deleteName').textContent = name;
-      document.getElementById('deleteModal').classList.add('open');
-    };
-
     window.closeDeleteModal = function () {
       document.getElementById('deleteModal').classList.remove('open');
       deleteTargetId = null;
+      deleteMode = 'single';
     };
 
     window.confirmDelete = async function () {
-      if (!deleteTargetId) return;
-      try {
-        await deleteDoc(doc(db, 'courses', deleteTargetId));
-        showToast('강의가 삭제되었습니다');
-        closeDeleteModal();
-        await loadCourses();
-      } catch (e) {
-        alert('삭제 오류: ' + e.message);
-      }
-    };
+      if (deleteMode === 'all') {
+        // 전체 삭제
+        try {
+          const snap = await getDocs(collection(db, 'courses'));
+          const batchSize = 500;
+          let batch = writeBatch(db);
+          let count = 0;
 
-    // ============ 샘플 데이터 업로드 ============
-    window.syncSampleToFirestore = async function () {
-      if (!confirm('샘플 강의 8개를 Firestore에 업로드할까요?\n(기존 같은 ID의 데이터는 덮어씁니다)')) return;
+          for (const d of snap.docs) {
+            batch.delete(doc(db, 'courses', d.id));
+            count++;
+            if (count % batchSize === 0) {
+              await batch.commit();
+              batch = writeBatch(db);
+            }
+          }
+          if (count % batchSize !== 0) await batch.commit();
 
-      const samples = [
-        { id:'c1', title:'ChatGPT로 업무 효율 200% 올리기', desc:'생성형 AI ChatGPT를 활용해 보고서 작성, 이메일 자동화, 데이터 분석까지 실무에 바로 적용하는 방법을 배웁니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:false, price:0, level:'입문', duration:'45분', viewCount:0, order:1, isPublished:true },
-        { id:'c2', title:'Gemini로 프레젠테이션 10분 만에 완성', desc:'구글 Gemini AI로 기획부터 디자인까지 10분 만에 전문적인 프레젠테이션을 완성하는 실전 강의입니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:false, price:0, level:'초급', duration:'40분', viewCount:0, order:2, isPublished:true },
-        { id:'c3', title:'클로바노트 & AI 회의록 자동화', desc:'네이버 클로바노트와 ChatGPT를 연동해 회의 내용을 자동으로 정리하고 액션 아이템까지 추출하는 방법을 배웁니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:false, price:0, level:'초급', duration:'35분', viewCount:0, order:3, isPublished:true },
-        { id:'c4', title:'ChatGPT x 미리캔버스 콘텐츠 자동화', desc:'ChatGPT로 기획하고 미리캔버스로 디자인하는 콘텐츠 자동화 워크플로우를 구축합니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI비즈니스활용', isPaid:true, price:49000, level:'중급', duration:'1시간 20분', viewCount:0, order:4, isPublished:true },
-        { id:'c5', title:'미리캔버스로 SNS 콘텐츠 디자인하기', desc:'디자인 전문 지식 없이도 미리캔버스로 인스타그램, 유튜브 썸네일, 카드뉴스를 전문가처럼 만드는 방법을 익힙니다.', videoId:'YOUTUBE_VIDEO_ID', category:'미리캔버스', isPaid:false, price:0, level:'입문', duration:'38분', viewCount:0, order:5, isPublished:true },
-        { id:'c6', title:'미리캔버스 지도자 과정 - 강사 양성', desc:'미리캔버스 공인 강사로 활동하기 위한 전문 지도자 과정입니다.', videoId:'YOUTUBE_VIDEO_ID', category:'미리캔버스', isPaid:true, price:120000, level:'중급', duration:'3시간', viewCount:0, order:6, isPublished:true },
-        { id:'c7', title:'AI 스마트폰으로 숏폼 영상 만들기', desc:'스마트폰 하나로 릴스, 유튜브 쇼츠, 틱톡 영상을 AI 편집 도구와 함께 빠르게 제작하는 노하우를 공개합니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI스마트폰활용', isPaid:false, price:0, level:'초급', duration:'52분', viewCount:0, order:7, isPublished:true },
-        { id:'c8', title:'시니어를 위한 스마트폰 AI 활용 완전정복', desc:'스마트폰에서 AI 도구를 활용해 일상을 더 편리하게 만드는 방법을 쉽고 친절하게 알려드립니다.', videoId:'YOUTUBE_VIDEO_ID', category:'AI스마트폰활용', isPaid:false, price:0, level:'입문', duration:'60분', viewCount:0, order:8, isPublished:true },
-      ];
-
-      try {
-        const batch = writeBatch(db);
-        samples.forEach(s => {
-          batch.set(doc(db, 'courses', s.id), s);
-        });
-        await batch.commit();
-        showToast('샘플 데이터 업로드 완료!');
-        await loadCourses();
-      } catch (e) {
-        alert('업로드 오류: ' + e.message);
+          showToast(`${count}개 강의가 삭제되었습니다`);
+          closeDeleteModal();
+          await loadCourses();
+        } catch (e) {
+          alert('삭제 오류: ' + e.message);
+        }
+      } else {
+        // 단일 삭제
+        if (!deleteTargetId) return;
+        try {
+          await deleteDoc(doc(db, 'courses', deleteTargetId));
+          showToast('강의가 삭제되었습니다');
+          closeDeleteModal();
+          await loadCourses();
+        } catch (e) {
+          alert('삭제 오류: ' + e.message);
+        }
       }
     };
 
@@ -916,9 +1124,6 @@
     window.showToast = showToast;
 
     // 모달 바깥 클릭 닫기
-    document.getElementById('courseModal').addEventListener('click', e => {
-      if (e.target === document.getElementById('courseModal')) closeModal();
-    });
     document.getElementById('deleteModal').addEventListener('click', e => {
       if (e.target === document.getElementById('deleteModal')) closeDeleteModal();
     });
@@ -943,7 +1148,6 @@
       list.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> 수강생 불러오는 중...</div>';
 
       try {
-        // 수강 이력 전체 로드
         const histSnap = await getDocs(query(collection(db, 'watchHistory'), orderBy('watchedAt', 'desc')));
         const allHistory = histSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
@@ -952,7 +1156,6 @@
           return;
         }
 
-        // 통계
         const today = new Date();
         today.setHours(0,0,0,0);
         const todayCount = allHistory.filter(h => {
@@ -960,7 +1163,6 @@
           return d && d >= today;
         }).length;
 
-        // 사용자별 그룹핑
         const userMap = new Map();
         allHistory.forEach(h => {
           if (!userMap.has(h.userId)) {
@@ -978,7 +1180,6 @@
         document.getElementById('statTotalWatches').textContent = allHistory.length;
         document.getElementById('statTodayWatches').textContent = todayCount;
 
-        // 렌더링
         let html = '';
         userMap.forEach((user, userId) => {
           const uniqueCourses = new Set(user.history.map(h => h.courseId)).size;
@@ -994,7 +1195,6 @@
                 <span class="user-badge">${uniqueCourses}개 강의 · ${user.history.length}회 시청</span>
               </div>`;
 
-          // 최근 수강 이력 (최대 5개)
           user.history.slice(0, 5).forEach(h => {
             const ts = h.watchedAt?.toDate ? h.watchedAt.toDate() : new Date();
             const dateStr = `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')} ${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}`;
