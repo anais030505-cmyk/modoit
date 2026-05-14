@@ -70,6 +70,7 @@ let currentCat = 'all';
 let currentSort = 'order';
 let fbReady = false;
 let auth, db;
+let myEnrollments = new Set();
 
 // =====================================================
 // Firebase 초기화
@@ -92,14 +93,17 @@ try {
       updateUserUI(currentUser);
       await saveUser(currentUser);
       await loadCourses();
+      await loadMyEnrollments();
     } else {
       const kakaoSession = localStorage.getItem('cls_kakao_user');
       if (kakaoSession) {
         currentUser = JSON.parse(kakaoSession);
         updateUserUI(currentUser);
         await loadCourses();
+        await loadMyEnrollments();
       } else {
         currentUser = null;
+        myEnrollments = new Set();
         updateUserUI(null);
         await loadCourses();
       }
@@ -190,6 +194,76 @@ async function loadMyHistory() {
     console.warn('수강이력 로드 실패:', e);
     return [];
   }
+}
+
+// =====================================================
+// 수강신청 시스템
+// =====================================================
+async function loadMyEnrollments() {
+  if (!fbReady || !db || !currentUser) { myEnrollments = new Set(); return; }
+  try {
+    const q = query(collection(db, 'enrollments'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+    myEnrollments = new Set(snap.docs.map(d => d.data().courseId));
+  } catch (e) {
+    myEnrollments = new Set();
+  }
+}
+
+async function enrollCourse(courseId) {
+  if (!fbReady || !db || !currentUser) return false;
+  const course = allCourses.find(c => c.id === courseId);
+  if (!course) return false;
+  if (myEnrollments.has(courseId)) return true;
+  try {
+    await addDoc(collection(db, 'enrollments'), {
+      userId: currentUser.uid,
+      userName: currentUser.name,
+      userEmail: currentUser.email || '',
+      courseId,
+      courseTitle: course.title || '',
+      category: course.category || '',
+      enrolledAt: serverTimestamp(),
+    });
+    await updateDoc(doc(db, 'courses', courseId), { enrollCount: increment(1) });
+    myEnrollments.add(courseId);
+    course.enrollCount = (course.enrollCount || 0) + 1;
+    return true;
+  } catch (e) {
+    console.warn('수강신청 실패:', e);
+    return false;
+  }
+}
+
+window.handleEnroll = async function (courseId) {
+  if (!currentUser) {
+    openLoginModal();
+    return;
+  }
+  const btn = document.querySelector('.cls-btn-enroll-action');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...'; }
+  const ok = await enrollCourse(courseId);
+  if (ok) {
+    showToast('수강신청이 완료되었습니다! 🎉');
+    window.openCourse(courseId);
+    renderCourses();
+  } else {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> 수강신청 (무료)'; }
+    showToast('수강신청에 실패했습니다. 다시 시도해주세요.');
+  }
+};
+
+function showToast(msg) {
+  let t = document.getElementById('clsToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'clsToast';
+    t.className = 'cls-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 // =====================================================
@@ -419,8 +493,8 @@ function courseCardHtml(c) {
         <div class="cls-card-cat">${c.category || ''}</div>
         <div class="cls-card-title">${c.title}</div>
         <div class="cls-card-meta">
-          <span class="cls-card-views"><i class="fas fa-eye"></i>${fmtViews(c.viewCount || 0)}회</span>
-          <span class="cls-card-price is-free">무료</span>
+          <span class="cls-card-views"><i class="fas fa-users"></i> ${(c.enrollCount || 0).toLocaleString()}명 수강</span>
+          <span class="cls-card-period"><i class="fas fa-infinity"></i> 무제한</span>
         </div>
       </div>
     </div>`;
@@ -519,37 +593,57 @@ window.openCourse = function (courseId) {
   const c = allCourses.find(x => x.id === courseId);
   if (!c) return;
 
-  // 조회수 + 수강 이력
-  c.viewCount = (c.viewCount || 0) + 1;
-  addView(courseId);
-  saveWatchHistory(courseId);
-
-  // 영상 세팅
-  document.getElementById('courseFrame').src =
-    `https://www.youtube-nocookie.com/embed/${c.videoId}?autoplay=1&rel=0&modestbranding=1`;
+  const isEnrolled = currentUser && myEnrollments.has(courseId);
+  const videoWrap = document.getElementById('courseVideoWrap');
+  const enrollPreview = document.getElementById('courseEnrollPreview');
+  const frame = document.getElementById('courseFrame');
 
   // 배지
   document.getElementById('courseDetailBadges').innerHTML = `
     <span class="cls-course-badge free">무료</span>
     <span class="cls-course-badge cat">${c.category || ''}</span>
+    <span class="cls-course-badge period"><i class="fas fa-infinity"></i> 무제한</span>
   `;
 
   document.getElementById('courseDetailTitle').textContent = c.title;
   document.getElementById('courseDetailDesc').textContent = c.desc || '';
   document.getElementById('courseDetailMeta').innerHTML = `
-    <span><i class="fas fa-eye"></i>${fmtViews(c.viewCount)}회 수강</span>
-    <span><i class="fas fa-folder"></i>${c.category || ''}</span>
+    <span><i class="fas fa-users"></i> 수강생 ${(c.enrollCount || 0).toLocaleString()}명</span>
+    <span><i class="fas fa-folder"></i> ${c.category || ''}</span>
+    <span><i class="fas fa-clock"></i> 수강기간 무제한</span>
   `;
 
-  // CTA 버튼
-  document.getElementById('courseDetailCta').innerHTML = `
-    <button class="cls-btn-enroll free-btn">
-      <i class="fas fa-play"></i> 무료 수강 중
-    </button>
-    <a href="https://www.youtube.com/watch?v=${c.videoId}" target="_blank" class="cls-contact-link">
-      YouTube에서 보기 <i class="fas fa-external-link-alt"></i>
-    </a>
-  `;
+  if (isEnrolled) {
+    // === 수강 중: 영상 재생 ===
+    videoWrap.style.display = 'block';
+    enrollPreview.style.display = 'none';
+    frame.src = `https://www.youtube-nocookie.com/embed/${c.videoId}?autoplay=1&rel=0&modestbranding=1`;
+
+    c.viewCount = (c.viewCount || 0) + 1;
+    addView(courseId);
+    saveWatchHistory(courseId);
+
+    document.getElementById('courseDetailCta').innerHTML = `
+      <button class="cls-btn-enroll free-btn">
+        <i class="fas fa-play"></i> 수강 중
+      </button>
+      <a href="https://www.youtube.com/watch?v=${c.videoId}" target="_blank" class="cls-contact-link">
+        YouTube에서 보기 <i class="fas fa-external-link-alt"></i>
+      </a>
+    `;
+  } else {
+    // === 미수강: 수강신청 필요 ===
+    videoWrap.style.display = 'none';
+    enrollPreview.style.display = 'block';
+    frame.src = '';
+    document.getElementById('enrollThumb').src = c.thumbnail || `https://img.youtube.com/vi/${c.videoId}/hqdefault.jpg`;
+
+    document.getElementById('courseDetailCta').innerHTML = `
+      <button class="cls-btn-enroll cls-btn-enroll-action paid-btn" onclick="handleEnroll('${courseId}')">
+        <i class="fas fa-check"></i> 수강신청 (무료)
+      </button>
+    `;
+  }
 
   document.getElementById('courseModal').classList.add('open');
 };

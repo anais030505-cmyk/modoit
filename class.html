@@ -368,10 +368,17 @@
   <div class="cls-overlay" id="courseModal" onclick="closeCourseModal(event)">
     <div class="cls-modal cls-course-modal" id="courseModalBox">
       <button class="cls-modal-close" onclick="closeCourseModal()"><i class="fas fa-times"></i></button>
-      <div class="cls-video-wrap">
+      <div class="cls-video-wrap" id="courseVideoWrap">
         <iframe id="courseFrame" src="" frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
+      </div>
+      <div class="cls-enroll-preview" id="courseEnrollPreview" style="display:none">
+        <img id="enrollThumb" src="" alt="">
+        <div class="cls-enroll-overlay">
+          <i class="fas fa-lock"></i>
+          <p>수강신청 후 시청할 수 있습니다</p>
+        </div>
       </div>
       <div class="cls-course-info">
         <div class="cls-course-badges" id="courseDetailBadges"></div>
