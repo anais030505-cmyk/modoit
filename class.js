@@ -293,22 +293,19 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// 더보기 토글
+// 더보기 → 해당 카테고리 탭으로 이동
 window.toggleMore = function (catIdx, catName) {
-  const moreWrap = document.getElementById('moreWrap_' + catIdx);
-  const btnWrap = document.getElementById('moreBtnWrap_' + catIdx);
-  if (!moreWrap) return;
-
-  if (moreWrap.style.display === 'none') {
-    moreWrap.style.display = 'block';
-    btnWrap.querySelector('.cls-more-btn').innerHTML =
-      '<span>접기</span> <i class="fas fa-chevron-up"></i>';
-  } else {
-    moreWrap.style.display = 'none';
-    const count = moreWrap.querySelectorAll('.cls-course-card').length;
-    btnWrap.querySelector('.cls-more-btn').innerHTML =
-      `<span>더보기</span> <span class="cls-more-count">+${count}개</span> <i class="fas fa-chevron-down"></i>`;
+  const tabsEl = document.getElementById('catTabs');
+  if (tabsEl) {
+    tabsEl.querySelectorAll('.cls-tab').forEach(t => t.classList.remove('active'));
+    const target = [...tabsEl.querySelectorAll('.cls-tab')].find(t => t.dataset.cat === catName);
+    if (target) target.classList.add('active');
   }
+  currentCat = catName;
+  renderCourses();
+  // 필터바 위치로 스크롤
+  const filterBar = document.getElementById('filterBar');
+  if (filterBar) filterBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 // =====================================================
@@ -606,14 +603,9 @@ function renderCourses() {
             ${preview.map(c => courseCardHtml(c)).join('')}
           </div>
           ${hasMore ? `
-            <div class="cls-more-wrap" id="moreWrap_${catIdx}" style="display:none">
-              <div class="cls-course-grid">
-                ${rest.map(c => courseCardHtml(c)).join('')}
-              </div>
-            </div>
-            <div class="cls-more-btn-wrap" id="moreBtnWrap_${catIdx}">
+            <div class="cls-more-btn-wrap">
               <button class="cls-more-btn" onclick="toggleMore(${catIdx}, '${cat.name}')">
-                <span>더보기</span> <span class="cls-more-count">+${rest.length}개</span> <i class="fas fa-chevron-down"></i>
+                <span>더보기</span> <span class="cls-more-count">+${rest.length}개</span> <i class="fas fa-chevron-right"></i>
               </button>
             </div>
           ` : ''}
