@@ -185,13 +185,40 @@ async function loadMyHistory() {
   try {
     const q = query(
       collection(db, 'watchHistory'),
-      where('userId', '==', currentUser.uid),
-      orderBy('watchedAt', 'desc')
+      where('userId', '==', currentUser.uid)
     );
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    list.sort((a, b) => {
+      const ta = a.watchedAt?.toDate ? a.watchedAt.toDate().getTime() : 0;
+      const tb = b.watchedAt?.toDate ? b.watchedAt.toDate().getTime() : 0;
+      return tb - ta;
+    });
+    return list;
   } catch (e) {
     console.warn('수강이력 로드 실패:', e);
+    return [];
+  }
+}
+
+// 내 수강신청 목록 불러오기
+async function loadMyEnrolledCourses() {
+  if (!fbReady || !db || !currentUser) return [];
+  try {
+    const q = query(
+      collection(db, 'enrollments'),
+      where('userId', '==', currentUser.uid)
+    );
+    const snap = await getDocs(q);
+    const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    list.sort((a, b) => {
+      const ta = a.enrolledAt?.toDate ? a.enrolledAt.toDate().getTime() : 0;
+      const tb = b.enrolledAt?.toDate ? b.enrolledAt.toDate().getTime() : 0;
+      return tb - ta;
+    });
+    return list;
+  } catch (e) {
+    console.warn('수강신청 목록 로드 실패:', e);
     return [];
   }
 }
@@ -407,21 +434,20 @@ window.openMyPage = async function () {
   historyList.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
   modal.classList.add('open');
 
-  const records = await loadMyHistory();
+  // 수강신청 목록 + 시청 이력 동시 로드
+  const [enrollments, watchRecords] = await Promise.all([
+    loadMyEnrolledCourses(),
+    loadMyHistory()
+  ]);
 
-  if (!records.length) {
-    historyList.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa"><i class="fas fa-play-circle" style="font-size:28px;margin-bottom:8px"></i><br>아직 수강 이력이 없어요<br><small>강의를 시청하면 여기에 기록됩니다</small></div>';
+  document.getElementById('myTotalCourses').textContent = enrollments.length;
+  document.getElementById('myTotalViews').textContent = watchRecords.length;
+
+  if (!enrollments.length) {
+    historyList.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa"><i class="fas fa-book-open" style="font-size:28px;margin-bottom:8px"></i><br>아직 수강신청한 강의가 없어요<br><small>강의를 수강신청하면 여기에 기록됩니다</small></div>';
   } else {
-    const seen = new Map();
-    records.forEach(r => { if (!seen.has(r.courseId)) seen.set(r.courseId, r); });
-    const unique = Array.from(seen.values());
-    const totalViews = records.length;
-
-    document.getElementById('myTotalCourses').textContent = unique.length;
-    document.getElementById('myTotalViews').textContent = totalViews;
-
-    historyList.innerHTML = unique.map(r => {
-      const ts = r.watchedAt?.toDate ? r.watchedAt.toDate() : new Date();
+    historyList.innerHTML = enrollments.map(r => {
+      const ts = r.enrolledAt?.toDate ? r.enrolledAt.toDate() : new Date();
       const dateStr = `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`;
       const course = allCourses.find(c => c.id === r.courseId);
       const videoId = course?.videoId || '';
@@ -434,9 +460,10 @@ window.openMyPage = async function () {
             <div class="my-history-title">${r.courseTitle || '(삭제된 강의)'}</div>
             <div class="my-history-meta">
               <span>${r.category || ''}</span>
-              <span>${dateStr}</span>
+              <span>${dateStr} 수강신청</span>
             </div>
           </div>
+          <div class="my-history-play"><i class="fas fa-play-circle"></i></div>
         </div>`;
     }).join('');
   }

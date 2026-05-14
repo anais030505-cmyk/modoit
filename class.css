@@ -658,3 +658,11 @@ ul { list-style: none; }
   color: #999;
 }
 .my-history-meta span { display: inline-flex; align-items: center; }
+.my-history-play {
+  flex-shrink: 0;
+  color: #7c3aed;
+  font-size: 24px;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.my-history-item:hover .my-history-play { opacity: 1; }
