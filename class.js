@@ -303,9 +303,8 @@ window.toggleMore = function (catIdx, catName) {
   }
   currentCat = catName;
   renderCourses();
-  // 필터바 위치로 스크롤
-  const filterBar = document.getElementById('filterBar');
-  if (filterBar) filterBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // 렌더 후 페이지 최상단으로 스크롤
+  setTimeout(() => window.scrollTo(0, 0), 50);
 };
 
 // =====================================================
