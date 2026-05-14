@@ -764,4 +764,136 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCourses();
     updateStats();
   }
+
+  // =====================================================
+  // 히어로 캔버스 — 뉴럴 네트워크 파티클 애니메이션
+  // =====================================================
+  const hCanvas = document.getElementById('clsHeroCanvas');
+  if (hCanvas) {
+    const hCtx = hCanvas.getContext('2d');
+    let hNodes = [];
+    let hMouse = { x: 0, y: 0 };
+    let hWaves = [];
+
+    function hResize() {
+      const hero = document.getElementById('clsHero');
+      hCanvas.width = hero.offsetWidth;
+      hCanvas.height = hero.offsetHeight;
+      hMouse.x = hCanvas.width / 2;
+      hMouse.y = hCanvas.height / 2;
+    }
+
+    function hCreateNodes() {
+      hNodes = [];
+      const count = Math.min(Math.floor(hCanvas.width * hCanvas.height / 8000), 140);
+      for (let i = 0; i < count; i++) {
+        const isStar = Math.random() < 0.12;
+        hNodes.push({
+          x: Math.random() * hCanvas.width,
+          y: Math.random() * hCanvas.height,
+          size: isStar ? Math.random() * 3 + 2.5 : Math.random() * 2 + 0.5,
+          sx: (Math.random() - 0.5) * 0.5,
+          sy: (Math.random() - 0.5) * 0.5,
+          op: isStar ? Math.random() * 0.5 + 0.4 : Math.random() * 0.5 + 0.15,
+          ps: Math.random() * 0.02 + 0.008,
+          po: Math.random() * Math.PI * 2,
+          isStar,
+          hue: isStar ? (Math.random() < 0.5 ? 270 : 300) : 265,
+        });
+      }
+    }
+
+    setInterval(() => {
+      hWaves.push({ x: hCanvas.width / 2, y: hCanvas.height / 2, r: 0, max: Math.max(hCanvas.width, hCanvas.height) * 0.6, op: 0.15 });
+    }, 4000);
+
+    function hDraw() {
+      hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
+      const t = Date.now() * 0.001;
+
+      // Pulse waves
+      hWaves.forEach((w, i) => {
+        w.r += 1.5; w.op *= 0.995;
+        if (w.op < 0.005) { hWaves.splice(i, 1); return; }
+        hCtx.beginPath(); hCtx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
+        hCtx.strokeStyle = `rgba(139,92,246,${w.op})`; hCtx.lineWidth = 1; hCtx.stroke();
+      });
+
+      // Connections
+      for (let i = 0; i < hNodes.length; i++) {
+        for (let j = i + 1; j < hNodes.length; j++) {
+          const dx = hNodes[i].x - hNodes[j].x, dy = hNodes[i].y - hNodes[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 160) {
+            const a = 0.1 * (1 - d / 160);
+            hCtx.beginPath(); hCtx.moveTo(hNodes[i].x, hNodes[i].y); hCtx.lineTo(hNodes[j].x, hNodes[j].y);
+            if (hNodes[i].isStar || hNodes[j].isStar) {
+              hCtx.strokeStyle = `rgba(167,139,250,${a * 1.5})`; hCtx.lineWidth = 0.8;
+            } else {
+              hCtx.strokeStyle = `rgba(139,92,246,${a})`; hCtx.lineWidth = 0.5;
+            }
+            hCtx.stroke();
+          }
+        }
+      }
+
+      // Mouse connections
+      hNodes.forEach(n => {
+        const dx = hMouse.x - n.x, dy = hMouse.y - n.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 280) {
+          const a = 0.18 * (1 - d / 280);
+          hCtx.beginPath(); hCtx.moveTo(n.x, n.y); hCtx.lineTo(hMouse.x, hMouse.y);
+          hCtx.strokeStyle = `rgba(217,70,239,${a})`; hCtx.lineWidth = 0.8; hCtx.stroke();
+        }
+      });
+
+      // Draw nodes
+      hNodes.forEach(n => {
+        const pulse = Math.sin(t * n.ps * 60 + n.po) * 0.5 + 0.5;
+        const dx = hMouse.x - n.x, dy = hMouse.y - n.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 180) { const f = (180 - d) / 180 * 0.25; n.x -= dx * f * 0.015; n.y -= dy * f * 0.015; }
+        n.x += n.sx; n.y += n.sy;
+        if (n.x < 0 || n.x > hCanvas.width) n.sx *= -1;
+        if (n.y < 0 || n.y > hCanvas.height) n.sy *= -1;
+        n.x = Math.max(0, Math.min(hCanvas.width, n.x));
+        n.y = Math.max(0, Math.min(hCanvas.height, n.y));
+        const cs = n.size * (0.8 + pulse * 0.4);
+
+        if (n.isStar) {
+          const gr = cs * 6;
+          const g = hCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, gr);
+          const c = n.hue === 270 ? '139,92,246' : '217,70,239';
+          g.addColorStop(0, `rgba(${c},${0.12 * pulse})`);
+          g.addColorStop(0.5, `rgba(${c},${0.04 * pulse})`);
+          g.addColorStop(1, 'transparent');
+          hCtx.beginPath(); hCtx.arc(n.x, n.y, gr, 0, Math.PI * 2); hCtx.fillStyle = g; hCtx.fill();
+          hCtx.beginPath(); hCtx.arc(n.x, n.y, cs, 0, Math.PI * 2);
+          hCtx.fillStyle = `rgba(255,255,255,${n.op * (0.7 + pulse * 0.3)})`; hCtx.fill();
+          hCtx.beginPath(); hCtx.arc(n.x, n.y, cs * 1.5, 0, Math.PI * 2);
+          hCtx.strokeStyle = `rgba(${n.hue === 270 ? '167,139,250' : '217,70,239'},${0.3 * pulse})`;
+          hCtx.lineWidth = 0.5; hCtx.stroke();
+        } else {
+          hCtx.beginPath(); hCtx.arc(n.x, n.y, cs, 0, Math.PI * 2);
+          hCtx.fillStyle = `rgba(167,139,250,${n.op * (0.5 + pulse * 0.5)})`; hCtx.fill();
+        }
+      });
+
+      requestAnimationFrame(hDraw);
+    }
+
+    hResize(); hCreateNodes(); hDraw();
+    window.addEventListener('resize', () => { hResize(); hCreateNodes(); });
+
+    const heroEl = document.getElementById('clsHero');
+    const heroGlow = document.getElementById('clsHeroMouseGlow');
+    heroEl.addEventListener('mousemove', (e) => {
+      const r = heroEl.getBoundingClientRect();
+      hMouse.x = e.clientX - r.left; hMouse.y = e.clientY - r.top;
+      heroGlow.style.left = hMouse.x + 'px'; heroGlow.style.top = hMouse.y + 'px';
+    });
+    heroEl.addEventListener('mouseleave', () => {
+      hMouse.x = hCanvas.width / 2; hMouse.y = hCanvas.height / 2;
+      heroGlow.style.left = '50%'; heroGlow.style.top = '50%';
+    });
+  }
 });
