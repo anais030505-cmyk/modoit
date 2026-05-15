@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프롬프트 모음 | 모두잇 클래스</title>
+  <meta name="description" content="AI 프롬프트 공유 게시판. ChatGPT, Gemini, 미리캔버스 등 실무에서 바로 쓸 수 있는 프롬프트를 공유하고 복사해서 사용하세요.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="prompt.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="cls-header" id="clsHeader">
+    <div class="cls-container">
+      <a href="class.html" class="cls-logo">
+        <img src="images/logo.png" alt="모두잇 로고">
+        <div class="cls-logo-text">
+          <span class="cls-logo-main">모두잇</span>
+          <span class="cls-logo-sub">CLASS</span>
+        </div>
+      </a>
+
+      <nav class="cls-nav" id="clsNav">
+        <a href="class.html" class="cls-nav-link">전체강의</a>
+        <a href="prompt.html" class="cls-nav-link active">프롬프트 모음</a>
+        <a href="#" class="cls-nav-link cls-coming" onclick="return false">
+          멤버십강의 <span class="cls-badge-soon">준비중</span>
+        </a>
+        <a href="class.html#reviews" class="cls-nav-link">수강후기</a>
+        <a href="class.html#faq" class="cls-nav-link">FAQ</a>
+        <a href="index.html" class="cls-nav-link"><i class="fas fa-home"></i> 협회 홈</a>
+      </nav>
+
+      <div class="cls-header-right">
+        <button id="loginBtn" class="cls-btn-login" onclick="openLoginModal()">
+          <i class="fas fa-user"></i> 로그인
+        </button>
+        <div id="userArea" class="cls-user-area" style="display:none">
+          <img id="userPhoto" src="" alt="" class="cls-user-photo">
+          <span id="userName" class="cls-user-name"></span>
+          <button onclick="handleLogout()" class="cls-btn-logout">로그아웃</button>
+        </div>
+        <button class="cls-mobile-toggle" id="mobileToggle" onclick="toggleMobileNav()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="pmt-hero">
+    <div class="pmt-hero-bg">
+      <div class="pmt-hero-orb pmt-hero-orb-1"></div>
+      <div class="pmt-hero-orb pmt-hero-orb-2"></div>
+    </div>
+    <div class="cls-container pmt-hero-inner">
+      <span class="pmt-hero-chip"><i class="fas fa-lightbulb"></i> AI Prompt Library</span>
+      <h1 class="pmt-hero-title">
+        AI <span class="pmt-gradient">프롬프트</span> 모음
+      </h1>
+      <p class="pmt-hero-desc">실무에서 바로 쓸 수 있는 AI 프롬프트를 공유하고, 복사해서 활용해보세요</p>
+      <div class="pmt-hero-stats">
+        <div class="pmt-hero-stat">
+          <strong id="totalPrompts">0</strong>
+          <span>전체 프롬프트</span>
+        </div>
+        <div class="pmt-hero-stat-div"></div>
+        <div class="pmt-hero-stat">
+          <strong id="totalCopies">0</strong>
+          <span>총 복사</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FILTER & WRITE BAR ===== -->
+  <div class="pmt-toolbar">
+    <div class="cls-container pmt-toolbar-inner">
+      <div class="pmt-tabs" id="catTabs">
+        <button class="pmt-tab active" data-cat="all">전체</button>
+        <button class="pmt-tab" data-cat="ChatGPT">ChatGPT</button>
+        <button class="pmt-tab" data-cat="Gemini">Gemini</button>
+        <button class="pmt-tab" data-cat="미리캔버스">미리캔버스</button>
+        <button class="pmt-tab" data-cat="이미지생성">이미지생성</button>
+        <button class="pmt-tab" data-cat="영상제작">영상제작</button>
+        <button class="pmt-tab" data-cat="업무자동화">업무자동화</button>
+        <button class="pmt-tab" data-cat="기타">기타</button>
+      </div>
+      <div class="pmt-toolbar-right">
+        <div class="pmt-search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" class="pmt-search" placeholder="프롬프트 검색...">
+        </div>
+        <button class="pmt-write-btn" id="writeBtn" onclick="openWriteModal()">
+          <i class="fas fa-pen"></i> <span>글쓰기</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROMPT GRID ===== -->
+  <main class="pmt-main">
+    <div class="cls-container">
+      <div class="pmt-grid" id="promptGrid">
+        <!-- JS로 렌더링 -->
+      </div>
+      <div class="pmt-empty" id="emptyState" style="display:none">
+        <i class="fas fa-lightbulb"></i>
+        <p>아직 프롬프트가 없어요</p>
+        <p class="pmt-empty-sub">첫 번째 프롬프트를 공유해보세요!</p>
+      </div>
+      <div class="pmt-loading" id="loadingState">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>프롬프트 불러오는 중...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="cls-footer">
+    <div class="cls-container">
+      <div class="cls-footer-top">
+        <div class="cls-footer-brand">
+          <div class="cls-footer-logo-wrap">
+            <img src="images/logo.png" alt="모두잇">
+            <span>모두잇 클래스</span>
+          </div>
+          <p>AI 프롬프트를 공유하고 함께 성장하세요</p>
+        </div>
+        <div class="cls-footer-links">
+          <strong>바로가기</strong>
+          <a href="class.html">전체 강의</a>
+          <a href="index.html">협회 홈페이지</a>
+          <a href="index.html#contact">문의하기</a>
+        </div>
+        <div class="cls-footer-contact">
+          <strong>연락처</strong>
+          <p><i class="fas fa-phone"></i> 010-9376-8061</p>
+          <p><i class="fas fa-envelope"></i> anais0305@naver.com</p>
+        </div>
+      </div>
+      <div class="cls-footer-bottom">
+        <p>&copy; 2025 모두잇미래교육진흥협회. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="cls-overlay" id="loginModal" onclick="closeLoginModal(event)">
+    <div class="cls-modal" id="loginModalBox">
+      <button class="cls-modal-close" onclick="closeLoginModal()"><i class="fas fa-times"></i></button>
+      <div class="cls-modal-logo">
+        <img src="images/logo.png" alt="모두잇">
+        <div><span class="cls-modal-brand">모두잇 클래스</span></div>
+      </div>
+      <h2 class="cls-modal-title">로그인</h2>
+      <p class="cls-modal-sub">프롬프트를 공유하려면 로그인해주세요</p>
+      <div class="cls-login-btns">
+        <button class="cls-btn-google" onclick="loginWithGoogle()">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+          구글로 로그인
+        </button>
+        <button class="cls-btn-kakao" onclick="loginWithKakao()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.74 1.72 5.15 4.32 6.59l-1.1 4.05 4.73-3.13c.65.09 1.33.14 2.05.14 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>
+          카카오로 로그인
+        </button>
+      </div>
+      <p class="cls-modal-terms">
+        로그인 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== WRITE MODAL ===== -->
+  <div class="cls-overlay" id="writeModal" onclick="closeWriteModal(event)">
+    <div class="cls-modal pmt-write-modal" id="writeModalBox">
+      <button class="cls-modal-close" onclick="closeWriteModal()"><i class="fas fa-times"></i></button>
+      <h2 class="pmt-write-title"><i class="fas fa-pen-fancy"></i> 프롬프트 공유하기</h2>
+      <div class="pmt-form">
+        <div class="pmt-form-field">
+          <label>제목 <span class="pmt-required">*</span></label>
+          <input type="text" id="writeTitle" maxlength="60" placeholder="프롬프트 제목을 입력하세요">
+        </div>
+        <div class="pmt-form-field">
+          <label>카테고리 <span class="pmt-required">*</span></label>
+          <select id="writeCat">
+            <option value="">선택하세요</option>
+            <option value="ChatGPT">ChatGPT</option>
+            <option value="Gemini">Gemini</option>
+            <option value="미리캔버스">미리캔버스</option>
+            <option value="이미지생성">이미지생성</option>
+            <option value="영상제작">영상제작</option>
+            <option value="업무자동화">업무자동화</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="pmt-form-field">
+          <label>프롬프트 내용 <span class="pmt-required">*</span></label>
+          <textarea id="writeContent" rows="6" maxlength="2000" placeholder="프롬프트 내용을 입력하세요&#10;&#10;예) 당신은 마케팅 전문가입니다. 다음 제품에 대한 SNS 홍보 문구를 3가지 작성해주세요..."></textarea>
+          <div class="pmt-char-count"><span id="charCount">0</span>/2000</div>
+        </div>
+        <div class="pmt-form-field">
+          <label>설명 (선택)</label>
+          <input type="text" id="writeDesc" maxlength="100" placeholder="이 프롬프트를 어떤 상황에서 쓰면 좋은지 설명해주세요">
+        </div>
+        <div class="pmt-form-field">
+          <label>태그 (선택)</label>
+          <input type="text" id="writeTags" maxlength="60" placeholder="쉼표로 구분 (예: 마케팅, SNS, 홍보)">
+        </div>
+        <button class="pmt-submit-btn" id="submitBtn" onclick="submitPrompt()">
+          <i class="fas fa-paper-plane"></i> 공유하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL MODAL ===== -->
+  <div class="cls-overlay" id="detailModal" onclick="closeDetailModal(event)">
+    <div class="cls-modal pmt-detail-modal" id="detailModalBox">
+      <button class="cls-modal-close" onclick="closeDetailModal()"><i class="fas fa-times"></i></button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (v10) -->
+  <script type="module" src="prompt.js"></script>
+  <!-- Kakao SDK -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+</body>
+</html>
