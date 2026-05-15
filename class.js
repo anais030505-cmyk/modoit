@@ -62,6 +62,123 @@ const SAMPLE_REVIEWS = [
 ];
 
 // =====================================================
+// 픽셀아트 아바타 시스템
+// =====================================================
+const PIXEL_AVATARS = [
+  {
+    id: 1, name: '로봇',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <circle fill="#EDE9FE" cx="50" cy="50" r="50"/>
+      <rect fill="#FCD34D" x="46" y="8" width="8" height="8" rx="2"/>
+      <rect fill="#7C3AED" x="46" y="16" width="8" height="6"/>
+      <rect fill="#7C3AED" x="26" y="22" width="48" height="34"/>
+      <rect fill="#FFF" x="32" y="30" width="12" height="11" rx="2"/>
+      <rect fill="#FFF" x="56" y="30" width="12" height="11" rx="2"/>
+      <rect fill="#1F1145" x="38" y="33" width="5" height="5" rx="1"/>
+      <rect fill="#1F1145" x="60" y="33" width="5" height="5" rx="1"/>
+      <rect fill="#F9A8D4" x="28" y="41" width="6" height="4" rx="2" opacity="0.5"/>
+      <rect fill="#F9A8D4" x="66" y="41" width="6" height="4" rx="2" opacity="0.5"/>
+      <rect fill="#FCD34D" x="38" y="47" width="24" height="4" rx="2"/>
+      <rect fill="#A78BFA" x="30" y="58" width="40" height="22" rx="3"/>
+      <rect fill="#C4B5FD" x="38" y="62" width="24" height="10" rx="2"/>
+      <rect fill="#7C3AED" x="32" y="80" width="12" height="10" rx="2"/>
+      <rect fill="#7C3AED" x="56" y="80" width="12" height="10" rx="2"/>
+    </svg>`
+  },
+  {
+    id: 2, name: '냥이',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <circle fill="#FFF7ED" cx="50" cy="50" r="50"/>
+      <polygon fill="#F97316" points="22,30 22,12 36,28"/>
+      <polygon fill="#FDBA74" points="25,28 25,17 33,27"/>
+      <polygon fill="#F97316" points="78,30 78,12 64,28"/>
+      <polygon fill="#FDBA74" points="75,28 75,17 67,27"/>
+      <rect fill="#F97316" x="22" y="28" width="56" height="38" rx="8"/>
+      <rect fill="#FFF" x="30" y="36" width="12" height="11" rx="3"/>
+      <rect fill="#FFF" x="58" y="36" width="12" height="11" rx="3"/>
+      <rect fill="#374151" x="35" y="39" width="5" height="5" rx="2"/>
+      <rect fill="#374151" x="62" y="39" width="5" height="5" rx="2"/>
+      <ellipse fill="#FB923C" cx="50" cy="52" rx="4" ry="3"/>
+      <line x1="14" y1="48" x2="28" y2="50" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="14" y1="54" x2="27" y2="54" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="72" y1="50" x2="86" y2="48" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="73" y1="54" x2="86" y2="54" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
+      <rect fill="#F97316" x="30" y="68" width="40" height="18" rx="6"/>
+      <rect fill="#FDBA74" x="38" y="70" width="24" height="10" rx="4"/>
+      <rect fill="#F97316" x="34" y="86" width="10" height="6" rx="2"/>
+      <rect fill="#F97316" x="56" y="86" width="10" height="6" rx="2"/>
+    </svg>`
+  },
+  {
+    id: 3, name: '곰돌이',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <circle fill="#FEF3C7" cx="50" cy="50" r="50"/>
+      <circle fill="#92400E" cx="22" cy="22" r="12"/>
+      <circle fill="#D97706" cx="22" cy="22" r="6"/>
+      <circle fill="#92400E" cx="78" cy="22" r="12"/>
+      <circle fill="#D97706" cx="78" cy="22" r="6"/>
+      <rect fill="#92400E" x="20" y="24" width="60" height="42" rx="12"/>
+      <rect fill="#FFF" x="30" y="34" width="12" height="11" rx="3"/>
+      <rect fill="#FFF" x="58" y="34" width="12" height="11" rx="3"/>
+      <rect fill="#374151" x="35" y="37" width="5" height="5" rx="2"/>
+      <rect fill="#374151" x="62" y="37" width="5" height="5" rx="2"/>
+      <rect fill="#D97706" x="38" y="48" width="24" height="14" rx="6"/>
+      <ellipse fill="#374151" cx="50" cy="52" rx="4" ry="3"/>
+      <rect fill="#F9A8D4" x="26" y="46" width="6" height="4" rx="2" opacity="0.4"/>
+      <rect fill="#F9A8D4" x="68" y="46" width="6" height="4" rx="2" opacity="0.4"/>
+      <rect fill="#92400E" x="28" y="68" width="44" height="18" rx="8"/>
+      <rect fill="#92400E" x="32" y="86" width="12" height="6" rx="2"/>
+      <rect fill="#92400E" x="56" y="86" width="12" height="6" rx="2"/>
+    </svg>`
+  },
+  {
+    id: 4, name: '펭귄',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <circle fill="#E0F2FE" cx="50" cy="50" r="50"/>
+      <rect fill="#1F2937" x="24" y="14" width="52" height="40" rx="12"/>
+      <rect fill="#FFF" x="32" y="24" width="12" height="11" rx="3"/>
+      <rect fill="#FFF" x="56" y="24" width="12" height="11" rx="3"/>
+      <rect fill="#111827" x="37" y="28" width="5" height="5" rx="2"/>
+      <rect fill="#111827" x="60" y="28" width="5" height="5" rx="2"/>
+      <polygon fill="#FCD34D" points="42,40 58,40 50,48"/>
+      <rect fill="#1F2937" x="24" y="54" width="52" height="28" rx="10"/>
+      <ellipse fill="#FFF" cx="50" cy="64" rx="18" ry="14"/>
+      <rect fill="#FCD34D" x="26" y="82" width="16" height="8" rx="3"/>
+      <rect fill="#FCD34D" x="58" y="82" width="16" height="8" rx="3"/>
+      <rect fill="#F9A8D4" x="30" y="38" width="5" height="3" rx="1" opacity="0.5"/>
+      <rect fill="#F9A8D4" x="65" y="38" width="5" height="3" rx="1" opacity="0.5"/>
+    </svg>`
+  },
+  {
+    id: 5, name: '토끼',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <circle fill="#FCE7F3" cx="50" cy="50" r="50"/>
+      <rect fill="#EC4899" x="28" y="4" width="14" height="30" rx="7"/>
+      <rect fill="#F9A8D4" x="32" y="8" width="6" height="22" rx="3"/>
+      <rect fill="#EC4899" x="58" y="4" width="14" height="30" rx="7"/>
+      <rect fill="#F9A8D4" x="62" y="8" width="6" height="22" rx="3"/>
+      <rect fill="#EC4899" x="22" y="30" width="56" height="38" rx="14"/>
+      <rect fill="#FFF" x="30" y="38" width="12" height="12" rx="3"/>
+      <rect fill="#FFF" x="58" y="38" width="12" height="12" rx="3"/>
+      <rect fill="#374151" x="35" y="42" width="5" height="5" rx="2"/>
+      <rect fill="#374151" x="62" y="42" width="5" height="5" rx="2"/>
+      <ellipse fill="#FB7185" cx="50" cy="54" rx="4" ry="3"/>
+      <rect fill="#F9A8D4" x="28" y="52" width="6" height="4" rx="2" opacity="0.5"/>
+      <rect fill="#F9A8D4" x="66" y="52" width="6" height="4" rx="2" opacity="0.5"/>
+      <rect fill="#EC4899" x="30" y="70" width="40" height="16" rx="8"/>
+      <rect fill="#EC4899" x="34" y="86" width="10" height="6" rx="2"/>
+      <rect fill="#EC4899" x="56" y="86" width="10" height="6" rx="2"/>
+      <circle fill="#FFF" cx="72" cy="74" r="6"/>
+    </svg>`
+  }
+];
+
+function getAvatarDataUri(avatarId) {
+  const a = PIXEL_AVATARS.find(x => x.id === avatarId) || PIXEL_AVATARS[0];
+  return 'data:image/svg+xml,' + encodeURIComponent(a.svg);
+}
+
+// =====================================================
 // 앱 상태
 // =====================================================
 let currentUser = null;
@@ -71,6 +188,8 @@ let currentSort = 'order';
 let fbReady = false;
 let auth, db;
 let myEnrollments = new Set();
+let userProfile = { nickname: '', avatarId: 1 };
+let selectedAvatarId = 1;
 
 // =====================================================
 // Firebase 초기화
@@ -94,6 +213,7 @@ try {
       await saveUser(currentUser);
       await loadCourses();
       await loadMyEnrollments();
+      await loadUserProfile();
     } else {
       const kakaoSession = localStorage.getItem('cls_kakao_user');
       if (kakaoSession) {
@@ -101,6 +221,7 @@ try {
         updateUserUI(currentUser);
         await loadCourses();
         await loadMyEnrollments();
+        await loadUserProfile();
       } else {
         currentUser = null;
         myEnrollments = new Set();
@@ -146,9 +267,40 @@ async function saveUser(user) {
     const ref = doc(db, 'users', user.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      await setDoc(ref, { ...user, createdAt: new Date().toISOString(), isAdmin: false, watchCount: 0 });
+      await setDoc(ref, { ...user, createdAt: new Date().toISOString(), isAdmin: false, watchCount: 0, nickname: user.name || '사용자', avatarId: 1 });
     }
   } catch (e) {}
+}
+
+async function loadUserProfile() {
+  if (!fbReady || !db || !currentUser) return;
+  try {
+    const ref = doc(db, 'users', currentUser.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      userProfile.nickname = data.nickname || currentUser.name || '사용자';
+      userProfile.avatarId = data.avatarId || 1;
+      updateUserUI(currentUser);
+    }
+  } catch (e) {
+    console.warn('프로필 로드 실패:', e);
+  }
+}
+
+async function saveUserProfile(nickname, avatarId) {
+  if (!fbReady || !db || !currentUser) return false;
+  try {
+    const ref = doc(db, 'users', currentUser.uid);
+    await updateDoc(ref, { nickname, avatarId });
+    userProfile.nickname = nickname;
+    userProfile.avatarId = avatarId;
+    updateUserUI(currentUser);
+    return true;
+  } catch (e) {
+    console.warn('프로필 저장 실패:', e);
+    return false;
+  }
 }
 
 async function addView(courseId) {
@@ -404,9 +556,9 @@ function updateUserUI(user) {
   if (user) {
     loginBtn.style.display = 'none';
     userArea.style.display = 'flex';
-    userName.textContent = user.name;
-    if (user.photo) { userPhoto.src = user.photo; userPhoto.style.display = 'block'; }
-    else userPhoto.style.display = 'none';
+    userName.textContent = userProfile.nickname || user.name;
+    userPhoto.src = getAvatarDataUri(userProfile.avatarId);
+    userPhoto.style.display = 'block';
   } else {
     loginBtn.style.display = 'inline-flex';
     userArea.style.display = 'none';
@@ -437,12 +589,34 @@ window.openMyPage = async function () {
   const modal = document.getElementById('myPageModal');
   if (!modal) return;
 
-  const photo = document.getElementById('myPhoto');
+  // 아바타 설정
+  const avatar = document.getElementById('myAvatar');
+  if (avatar) avatar.src = getAvatarDataUri(userProfile.avatarId);
+
+  // 이름 & 이메일
   const name = document.getElementById('myName');
   const email = document.getElementById('myEmail');
-  if (photo) { photo.src = currentUser.photo || ''; photo.style.display = currentUser.photo ? 'block' : 'none'; }
-  if (name) name.textContent = currentUser.name;
+  if (name) name.textContent = userProfile.nickname || currentUser.name;
   if (email) email.textContent = currentUser.email || currentUser.provider;
+
+  // 닉네임 입력 필드
+  const nicknameInput = document.getElementById('nicknameInput');
+  if (nicknameInput) nicknameInput.value = userProfile.nickname || currentUser.name || '';
+
+  // 현재 선택된 아바타 ID 세팅
+  selectedAvatarId = userProfile.avatarId;
+
+  // 아바타 선택 그리드 렌더링
+  const avatarGrid = document.getElementById('avatarGrid');
+  if (avatarGrid) {
+    avatarGrid.innerHTML = PIXEL_AVATARS.map(a => `
+      <div class="cls-avatar-option ${a.id === userProfile.avatarId ? 'selected' : ''}"
+           onclick="selectAvatar(${a.id})" data-avatar-id="${a.id}">
+        <img src="${getAvatarDataUri(a.id)}" alt="${a.name}">
+        <span>${a.name}</span>
+      </div>
+    `).join('');
+  }
 
   const historyList = document.getElementById('myHistoryList');
   historyList.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
@@ -492,6 +666,37 @@ window.closeMyPage = function (e) {
 window.closeMypageAndOpen = function (courseId) {
   document.getElementById('myPageModal').classList.remove('open');
   setTimeout(() => window.openCourse(courseId), 200);
+};
+
+window.selectAvatar = function (id) {
+  selectedAvatarId = id;
+  document.querySelectorAll('.cls-avatar-option').forEach(el => {
+    el.classList.toggle('selected', parseInt(el.dataset.avatarId) === id);
+  });
+};
+
+window.saveProfile = async function () {
+  const nicknameInput = document.getElementById('nicknameInput');
+  const nickname = nicknameInput?.value?.trim();
+  if (!nickname) { showToast('닉네임을 입력해주세요'); return; }
+  if (nickname.length > 12) { showToast('닉네임은 12자 이내로 입력해주세요'); return; }
+
+  const btn = document.getElementById('profileSaveBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...'; }
+
+  const ok = await saveUserProfile(nickname, selectedAvatarId);
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> 저장'; }
+
+  if (ok) {
+    showToast('프로필이 저장되었습니다! ✨');
+    const myName = document.getElementById('myName');
+    const myAvatar = document.getElementById('myAvatar');
+    if (myName) myName.textContent = nickname;
+    if (myAvatar) myAvatar.src = getAvatarDataUri(selectedAvatarId);
+  } else {
+    showToast('저장에 실패했습니다. 다시 시도해주세요.');
+  }
 };
 
 // =====================================================
