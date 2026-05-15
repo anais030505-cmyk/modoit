@@ -93,6 +93,7 @@ function getAvatarDataUri(avatarId) {
 let currentUser = null;
 let userProfile = { nickname: '', avatarId: 1 };
 let isAdmin = false;
+let selectedAvatarId = 1;
 let allPrompts = [];
 let currentCat = 'all';
 let searchQuery = '';
@@ -380,6 +381,157 @@ window.closeWriteModal = function (e) {
 window.closeDetailModal = function (e) {
   if (!e || e.target === document.getElementById('detailModal')) {
     document.getElementById('detailModal').classList.remove('open');
+  }
+};
+
+// =====================================================
+// 마이페이지
+// =====================================================
+async function saveUserProfile(nickname, avatarId) {
+  if (!fbReady || !db || !currentUser) return false;
+  try {
+    const ref = doc(db, 'users', currentUser.uid);
+    await updateDoc(ref, { nickname, avatarId });
+    userProfile.nickname = nickname;
+    userProfile.avatarId = avatarId;
+    updateUserUI(currentUser);
+    return true;
+  } catch (e) {
+    console.warn('프로필 저장 실패:', e);
+    return false;
+  }
+}
+
+async function loadMyEnrolledCourses() {
+  if (!fbReady || !db || !currentUser) return [];
+  try {
+    const q = query(collection(db, 'enrollments'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+    const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    list.sort((a, b) => {
+      const ta = a.enrolledAt?.toDate ? a.enrolledAt.toDate().getTime() : 0;
+      const tb = b.enrolledAt?.toDate ? b.enrolledAt.toDate().getTime() : 0;
+      return tb - ta;
+    });
+    return list;
+  } catch (e) { return []; }
+}
+
+async function loadMyHistory() {
+  if (!fbReady || !db || !currentUser) return [];
+  try {
+    const q = query(collection(db, 'watchHistory'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+    const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    list.sort((a, b) => {
+      const ta = a.watchedAt?.toDate ? a.watchedAt.toDate().getTime() : 0;
+      const tb = b.watchedAt?.toDate ? b.watchedAt.toDate().getTime() : 0;
+      return tb - ta;
+    });
+    return list;
+  } catch (e) { return []; }
+}
+
+window.openMyPage = async function () {
+  if (!currentUser) { openLoginModal(); return; }
+  const modal = document.getElementById('myPageModal');
+  if (!modal) return;
+
+  const avatar = document.getElementById('myAvatar');
+  if (avatar) avatar.src = getAvatarDataUri(userProfile.avatarId);
+
+  const name = document.getElementById('myName');
+  const email = document.getElementById('myEmail');
+  if (name) name.textContent = userProfile.nickname || currentUser.name;
+  if (email) email.textContent = currentUser.email || currentUser.provider;
+
+  const nicknameInput = document.getElementById('nicknameInput');
+  if (nicknameInput) nicknameInput.value = userProfile.nickname || currentUser.name || '';
+
+  selectedAvatarId = userProfile.avatarId;
+
+  const avatarGrid = document.getElementById('avatarGrid');
+  if (avatarGrid) {
+    avatarGrid.innerHTML = PIXEL_AVATARS.map(a => `
+      <div class="cls-avatar-option ${a.id === userProfile.avatarId ? 'selected' : ''}"
+           onclick="selectAvatar(${a.id})" data-avatar-id="${a.id}">
+        <img src="${getAvatarDataUri(a.id)}" alt="${a.name}">
+        <span>${a.name}</span>
+      </div>
+    `).join('');
+  }
+
+  const historyList = document.getElementById('myHistoryList');
+  historyList.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
+  modal.classList.add('open');
+
+  const [enrollments, watchRecords] = await Promise.all([
+    loadMyEnrolledCourses(),
+    loadMyHistory()
+  ]);
+
+  document.getElementById('myTotalCourses').textContent = enrollments.length;
+  document.getElementById('myTotalViews').textContent = watchRecords.length;
+
+  if (!enrollments.length) {
+    historyList.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa"><i class="fas fa-book-open" style="font-size:28px;margin-bottom:8px"></i><br>아직 수강신청한 강의가 없어요<br><small>강의를 수강신청하면 여기에 기록됩니다</small></div>';
+  } else {
+    historyList.innerHTML = enrollments.map(r => {
+      const ts = r.enrolledAt?.toDate ? r.enrolledAt.toDate() : new Date();
+      const dateStr = `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`;
+      return `
+        <div class="my-history-item" onclick="goToCourse('${r.courseId}')">
+          <div class="my-history-info">
+            <div class="my-history-title">${r.courseTitle || '(삭제된 강의)'}</div>
+            <div class="my-history-meta">
+              <span>${r.category || ''}</span>
+              <span>${dateStr} 수강신청</span>
+            </div>
+          </div>
+          <div class="my-history-play"><i class="fas fa-play-circle"></i></div>
+        </div>`;
+    }).join('');
+  }
+};
+
+window.closeMyPage = function (e) {
+  if (!e || e.target === document.getElementById('myPageModal')) {
+    document.getElementById('myPageModal').classList.remove('open');
+  }
+};
+
+window.goToCourse = function (courseId) {
+  window.location.href = 'class.html';
+};
+
+window.selectAvatar = function (id) {
+  selectedAvatarId = id;
+  document.querySelectorAll('.cls-avatar-option').forEach(el => {
+    el.classList.toggle('selected', parseInt(el.dataset.avatarId) === id);
+  });
+};
+
+window.saveProfile = async function () {
+  const nicknameInput = document.getElementById('nicknameInput');
+  const nickname = nicknameInput?.value?.trim();
+  if (!nickname) { showToast('닉네임을 입력해주세요'); return; }
+  if (nickname.length > 12) { showToast('닉네임은 12자 이내로 입력해주세요'); return; }
+
+  const btn = document.getElementById('profileSaveBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...'; }
+
+  const ok = await saveUserProfile(nickname, selectedAvatarId);
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> 저장'; }
+
+  if (ok) {
+    showToast('프로필이 저장되었습니다! ✨');
+    const myName = document.getElementById('myName');
+    const myAvatar = document.getElementById('myAvatar');
+    if (myName) myName.textContent = nickname;
+    if (myAvatar) myAvatar.src = getAvatarDataUri(selectedAvatarId);
+  } else {
+    showToast('저장에 실패했습니다. 다시 시도해주세요.');
   }
 };
 

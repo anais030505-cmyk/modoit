@@ -46,6 +46,7 @@
         <div id="userArea" class="cls-user-area" style="display:none">
           <img id="userPhoto" src="" alt="" class="cls-user-photo">
           <span id="userName" class="cls-user-name"></span>
+          <button onclick="openMyPage()" class="cls-btn-mypage"><i class="fas fa-book-open"></i> 마이페이지</button>
           <button onclick="handleLogout()" class="cls-btn-logout">로그아웃</button>
         </div>
         <button class="cls-mobile-toggle" id="mobileToggle" onclick="toggleMobileNav()">
@@ -176,6 +177,48 @@
       <p class="cls-modal-terms">
         로그인 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다
       </p>
+    </div>
+  </div>
+
+  <!-- ===== MY PAGE MODAL ===== -->
+  <div class="cls-overlay" id="myPageModal" onclick="closeMyPage(event)">
+    <div class="cls-modal cls-mypage-modal" id="myPageModalBox">
+      <button class="cls-modal-close" onclick="closeMyPage()"><i class="fas fa-times"></i></button>
+      <div class="cls-mypage-header">
+        <img id="myAvatar" src="" alt="" class="cls-mypage-avatar">
+        <div class="cls-mypage-info">
+          <h2 id="myName">사용자</h2>
+          <p id="myEmail" class="cls-mypage-email"></p>
+        </div>
+      </div>
+      <div class="cls-mypage-profile">
+        <h3 class="cls-mypage-section-title"><i class="fas fa-palette"></i> 프로필 수정</h3>
+        <div class="cls-profile-field">
+          <label class="cls-profile-label">닉네임</label>
+          <div class="cls-nickname-row">
+            <input type="text" id="nicknameInput" class="cls-nickname-input" maxlength="12" placeholder="닉네임을 입력하세요">
+          </div>
+        </div>
+        <div class="cls-profile-field">
+          <label class="cls-profile-label">캐릭터 선택</label>
+          <div class="cls-avatar-grid" id="avatarGrid"></div>
+        </div>
+        <button class="cls-profile-save-btn" id="profileSaveBtn" onclick="saveProfile()">
+          <i class="fas fa-check"></i> 저장
+        </button>
+      </div>
+      <div class="cls-mypage-stats">
+        <div class="cls-mypage-stat">
+          <strong id="myTotalCourses">0</strong>
+          <span>수강신청</span>
+        </div>
+        <div class="cls-mypage-stat">
+          <strong id="myTotalViews">0</strong>
+          <span>총 시청</span>
+        </div>
+      </div>
+      <h3 class="cls-mypage-section-title"><i class="fas fa-book-open"></i> 수강신청 강의</h3>
+      <div id="myHistoryList" class="cls-mypage-history"></div>
     </div>
   </div>
 
