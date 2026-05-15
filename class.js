@@ -67,115 +67,111 @@ const SAMPLE_REVIEWS = [
 const PIXEL_AVATARS = [
   {
     id: 1, name: '로봇',
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <circle fill="#EDE9FE" cx="50" cy="50" r="50"/>
-      <rect fill="#FCD34D" x="46" y="8" width="8" height="8" rx="2"/>
-      <rect fill="#7C3AED" x="46" y="16" width="8" height="6"/>
-      <rect fill="#7C3AED" x="26" y="22" width="48" height="34"/>
-      <rect fill="#FFF" x="32" y="30" width="12" height="11" rx="2"/>
-      <rect fill="#FFF" x="56" y="30" width="12" height="11" rx="2"/>
-      <rect fill="#1F1145" x="38" y="33" width="5" height="5" rx="1"/>
-      <rect fill="#1F1145" x="60" y="33" width="5" height="5" rx="1"/>
-      <rect fill="#F9A8D4" x="28" y="41" width="6" height="4" rx="2" opacity="0.5"/>
-      <rect fill="#F9A8D4" x="66" y="41" width="6" height="4" rx="2" opacity="0.5"/>
-      <rect fill="#FCD34D" x="38" y="47" width="24" height="4" rx="2"/>
-      <rect fill="#A78BFA" x="30" y="58" width="40" height="22" rx="3"/>
-      <rect fill="#C4B5FD" x="38" y="62" width="24" height="10" rx="2"/>
-      <rect fill="#7C3AED" x="32" y="80" width="12" height="10" rx="2"/>
-      <rect fill="#7C3AED" x="56" y="80" width="12" height="10" rx="2"/>
-    </svg>`
+    bg: '#EDE9FE',
+    palette: { P:'#7C3AED', L:'#A78BFA', W:'#FFFFFF', D:'#1F1145', Y:'#FCD34D', B:'#F9A8D4' },
+    grid: [
+      '....YY....',
+      '..PPPPPP..',
+      '.PPPPPPPP.',
+      '.PWWPPWWP.',
+      '.PDDPPDDP.',
+      '.PBPPPPBP.',
+      '.PPYYYYPP.',
+      '..PPPPPP..',
+      '...PPPP...',
+      '..........',
+    ]
   },
   {
     id: 2, name: '냥이',
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <circle fill="#FFF7ED" cx="50" cy="50" r="50"/>
-      <polygon fill="#F97316" points="22,30 22,12 36,28"/>
-      <polygon fill="#FDBA74" points="25,28 25,17 33,27"/>
-      <polygon fill="#F97316" points="78,30 78,12 64,28"/>
-      <polygon fill="#FDBA74" points="75,28 75,17 67,27"/>
-      <rect fill="#F97316" x="22" y="28" width="56" height="38" rx="8"/>
-      <rect fill="#FFF" x="30" y="36" width="12" height="11" rx="3"/>
-      <rect fill="#FFF" x="58" y="36" width="12" height="11" rx="3"/>
-      <rect fill="#374151" x="35" y="39" width="5" height="5" rx="2"/>
-      <rect fill="#374151" x="62" y="39" width="5" height="5" rx="2"/>
-      <ellipse fill="#FB923C" cx="50" cy="52" rx="4" ry="3"/>
-      <line x1="14" y1="48" x2="28" y2="50" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="14" y1="54" x2="27" y2="54" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="72" y1="50" x2="86" y2="48" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="73" y1="54" x2="86" y2="54" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
-      <rect fill="#F97316" x="30" y="68" width="40" height="18" rx="6"/>
-      <rect fill="#FDBA74" x="38" y="70" width="24" height="10" rx="4"/>
-      <rect fill="#F97316" x="34" y="86" width="10" height="6" rx="2"/>
-      <rect fill="#F97316" x="56" y="86" width="10" height="6" rx="2"/>
-    </svg>`
+    bg: '#FFF7ED',
+    palette: { O:'#F97316', W:'#FFFFFF', D:'#374151', N:'#FB923C', L:'#FDBA74' },
+    grid: [
+      'O........O',
+      'OO......OO',
+      'OOOOOOOOOO',
+      'OOWWOOWWOO',
+      'OODDOODDOO',
+      'OOOONNOOOO',
+      '.OOOOOOOO.',
+      '..OOOOOO..',
+      '..........',
+      '..........',
+    ]
   },
   {
     id: 3, name: '곰돌이',
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <circle fill="#FEF3C7" cx="50" cy="50" r="50"/>
-      <circle fill="#92400E" cx="22" cy="22" r="12"/>
-      <circle fill="#D97706" cx="22" cy="22" r="6"/>
-      <circle fill="#92400E" cx="78" cy="22" r="12"/>
-      <circle fill="#D97706" cx="78" cy="22" r="6"/>
-      <rect fill="#92400E" x="20" y="24" width="60" height="42" rx="12"/>
-      <rect fill="#FFF" x="30" y="34" width="12" height="11" rx="3"/>
-      <rect fill="#FFF" x="58" y="34" width="12" height="11" rx="3"/>
-      <rect fill="#374151" x="35" y="37" width="5" height="5" rx="2"/>
-      <rect fill="#374151" x="62" y="37" width="5" height="5" rx="2"/>
-      <rect fill="#D97706" x="38" y="48" width="24" height="14" rx="6"/>
-      <ellipse fill="#374151" cx="50" cy="52" rx="4" ry="3"/>
-      <rect fill="#F9A8D4" x="26" y="46" width="6" height="4" rx="2" opacity="0.4"/>
-      <rect fill="#F9A8D4" x="68" y="46" width="6" height="4" rx="2" opacity="0.4"/>
-      <rect fill="#92400E" x="28" y="68" width="44" height="18" rx="8"/>
-      <rect fill="#92400E" x="32" y="86" width="12" height="6" rx="2"/>
-      <rect fill="#92400E" x="56" y="86" width="12" height="6" rx="2"/>
-    </svg>`
+    bg: '#FEF3C7',
+    palette: { B:'#92400E', W:'#FFFFFF', D:'#374151', N:'#D97706', K:'#4B2508' },
+    grid: [
+      'BB......BB',
+      'BBBBBBBBBB',
+      'BBWWBBWWBB',
+      'BBDDBBDDBB',
+      'BBBBBBBBBB',
+      'BBBNNNNBBB',
+      'BBBBKKBBBB',
+      '..BBBBBB..',
+      '..........',
+      '..........',
+    ]
   },
   {
     id: 4, name: '펭귄',
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <circle fill="#E0F2FE" cx="50" cy="50" r="50"/>
-      <rect fill="#1F2937" x="24" y="14" width="52" height="40" rx="12"/>
-      <rect fill="#FFF" x="32" y="24" width="12" height="11" rx="3"/>
-      <rect fill="#FFF" x="56" y="24" width="12" height="11" rx="3"/>
-      <rect fill="#111827" x="37" y="28" width="5" height="5" rx="2"/>
-      <rect fill="#111827" x="60" y="28" width="5" height="5" rx="2"/>
-      <polygon fill="#FCD34D" points="42,40 58,40 50,48"/>
-      <rect fill="#1F2937" x="24" y="54" width="52" height="28" rx="10"/>
-      <ellipse fill="#FFF" cx="50" cy="64" rx="18" ry="14"/>
-      <rect fill="#FCD34D" x="26" y="82" width="16" height="8" rx="3"/>
-      <rect fill="#FCD34D" x="58" y="82" width="16" height="8" rx="3"/>
-      <rect fill="#F9A8D4" x="30" y="38" width="5" height="3" rx="1" opacity="0.5"/>
-      <rect fill="#F9A8D4" x="65" y="38" width="5" height="3" rx="1" opacity="0.5"/>
-    </svg>`
+    bg: '#E0F2FE',
+    palette: { K:'#1F2937', W:'#FFFFFF', D:'#111827', Y:'#FCD34D' },
+    grid: [
+      '..KKKKKK..',
+      '.KKKKKKKK.',
+      '.KWWKKWWK.',
+      '.KDDKKDDK.',
+      '.KKKKKKKK.',
+      '..KKYYKK..',
+      '..KKKKKK..',
+      '...KKKK...',
+      '..........',
+      '..........',
+    ]
   },
   {
     id: 5, name: '토끼',
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <circle fill="#FCE7F3" cx="50" cy="50" r="50"/>
-      <rect fill="#EC4899" x="28" y="4" width="14" height="30" rx="7"/>
-      <rect fill="#F9A8D4" x="32" y="8" width="6" height="22" rx="3"/>
-      <rect fill="#EC4899" x="58" y="4" width="14" height="30" rx="7"/>
-      <rect fill="#F9A8D4" x="62" y="8" width="6" height="22" rx="3"/>
-      <rect fill="#EC4899" x="22" y="30" width="56" height="38" rx="14"/>
-      <rect fill="#FFF" x="30" y="38" width="12" height="12" rx="3"/>
-      <rect fill="#FFF" x="58" y="38" width="12" height="12" rx="3"/>
-      <rect fill="#374151" x="35" y="42" width="5" height="5" rx="2"/>
-      <rect fill="#374151" x="62" y="42" width="5" height="5" rx="2"/>
-      <ellipse fill="#FB7185" cx="50" cy="54" rx="4" ry="3"/>
-      <rect fill="#F9A8D4" x="28" y="52" width="6" height="4" rx="2" opacity="0.5"/>
-      <rect fill="#F9A8D4" x="66" y="52" width="6" height="4" rx="2" opacity="0.5"/>
-      <rect fill="#EC4899" x="30" y="70" width="40" height="16" rx="8"/>
-      <rect fill="#EC4899" x="34" y="86" width="10" height="6" rx="2"/>
-      <rect fill="#EC4899" x="56" y="86" width="10" height="6" rx="2"/>
-      <circle fill="#FFF" cx="72" cy="74" r="6"/>
-    </svg>`
+    bg: '#FCE7F3',
+    palette: { P:'#EC4899', L:'#F9A8D4', W:'#FFFFFF', D:'#374151', N:'#FB7185' },
+    grid: [
+      '..PP..PP..',
+      '..PL..LP..',
+      '..PP..PP..',
+      '.PPPPPPPP.',
+      '.PWWPPWWP.',
+      '.PDDPPDDP.',
+      '.PPPPPPPP.',
+      '..PPNNPP..',
+      '..........',
+      '..........',
+    ]
   }
 ];
 
 function getAvatarDataUri(avatarId) {
   const a = PIXEL_AVATARS.find(x => x.id === avatarId) || PIXEL_AVATARS[0];
-  return 'data:image/svg+xml,' + encodeURIComponent(a.svg);
+  const rows = a.grid.length;
+  const cols = a.grid[0].length;
+  const cell = 8;
+  const ox = (100 - cols * cell) / 2;
+  const oy = (100 - rows * cell) / 2;
+  let rects = '';
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < a.grid[y].length; x++) {
+      const ch = a.grid[y][x];
+      if (ch === '.') continue;
+      const color = a.palette[ch];
+      if (!color) continue;
+      rects += `<rect fill="${color}" x="${ox+x*cell}" y="${oy+y*cell}" width="${cell}" height="${cell}"/>`;
+    }
+  }
+  return 'data:image/svg+xml,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="${a.bg}" cx="50" cy="50" r="50"/>${rects}</svg>`
+  );
 }
 
 // =====================================================
