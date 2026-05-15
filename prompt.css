@@ -226,6 +226,29 @@ ul { list-style: none; }
   word-break: break-all;
 }
 
+/* 비로그인 시 프롬프트 내용 블러 */
+.pmt-card-content.pmt-blurred {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  -webkit-line-clamp: unset;
+  background: linear-gradient(135deg, #f3f0ff 0%, #ede9fe 100%);
+  border: 1px dashed var(--cp-light);
+  user-select: none;
+}
+.pmt-lock-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cp);
+}
+.pmt-lock-msg i { font-size: 0.85rem; }
+
 .pmt-card-desc {
   font-size: 0.78rem; color: var(--gray-400); line-height: 1.5;
   margin-bottom: 12px;

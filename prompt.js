@@ -92,6 +92,7 @@ function getAvatarDataUri(avatarId) {
 // =====================================================
 let currentUser = null;
 let userProfile = { nickname: '', avatarId: 1 };
+let isAdmin = false;
 let allPrompts = [];
 let currentCat = 'all';
 let searchQuery = '';
@@ -158,8 +159,15 @@ async function loadUserProfile() {
       const data = snap.data();
       userProfile.nickname = data.nickname || currentUser.name || '사용자';
       userProfile.avatarId = data.avatarId || 1;
+      isAdmin = data.isAdmin === true;
     }
   } catch (e) { console.warn('프로필 로드 실패:', e); }
+  updateWriteBtn();
+}
+
+function updateWriteBtn() {
+  const btn = document.getElementById('writeBtn');
+  if (btn) btn.style.display = isAdmin ? 'inline-flex' : 'none';
 }
 
 async function loadPrompts() {
@@ -315,8 +323,10 @@ window.handleLogout = async function () {
   if (fbReady && auth?.currentUser) await signOut(auth);
   localStorage.removeItem('cls_kakao_user');
   currentUser = null;
+  isAdmin = false;
   myLikes = new Set();
   updateUserUI(null);
+  updateWriteBtn();
   renderPrompts();
 };
 
@@ -352,6 +362,7 @@ window.closeLoginModal = function (e) {
 
 window.openWriteModal = function () {
   if (!currentUser) { openLoginModal(); return; }
+  if (!isAdmin) { showToast('관리자만 프롬프트를 등록할 수 있습니다'); return; }
   document.getElementById('writeTitle').value = '';
   document.getElementById('writeCat').value = '';
   document.getElementById('writeContent').value = '';
@@ -430,16 +441,21 @@ function renderPrompts() {
   empty.style.display = 'none';
   grid.style.display = 'grid';
 
+  const loggedIn = !!currentUser;
+
   grid.innerHTML = list.map(p => {
     const liked = myLikes.has(p.id);
     const tags = (p.tags || []).slice(0, 3);
+    const contentHtml = loggedIn
+      ? `<div class="pmt-card-content">${escapeHtml(p.content || '')}</div>`
+      : `<div class="pmt-card-content pmt-blurred"><span class="pmt-lock-msg"><i class="fas fa-lock"></i> 로그인 후 확인할 수 있습니다</span></div>`;
     return `
       <div class="pmt-card" onclick="openDetail('${p.id}')">
         <div class="pmt-card-top">
           <span class="pmt-card-cat ${p.category || ''}">${p.category || '기타'}</span>
         </div>
         <div class="pmt-card-title">${escapeHtml(p.title || '')}</div>
-        <div class="pmt-card-content">${escapeHtml(p.content || '')}</div>
+        ${contentHtml}
         ${p.description ? `<div class="pmt-card-desc">${escapeHtml(p.description)}</div>` : ''}
         ${tags.length ? `<div class="pmt-card-tags">${tags.map(t => `<span class="pmt-card-tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
         <div class="pmt-card-footer">
@@ -474,6 +490,11 @@ function updateStats() {
 // 상세보기
 // =====================================================
 window.openDetail = function (promptId) {
+  if (!currentUser) {
+    showToast('프롬프트를 보려면 로그인이 필요합니다');
+    openLoginModal();
+    return;
+  }
   const p = allPrompts.find(x => x.id === promptId);
   if (!p) return;
 
@@ -573,6 +594,7 @@ window.handleDelete = async function (promptId, e) {
 
 window.submitPrompt = async function () {
   if (!currentUser) { openLoginModal(); return; }
+  if (!isAdmin) { showToast('관리자만 프롬프트를 등록할 수 있습니다'); return; }
 
   const title = document.getElementById('writeTitle').value.trim();
   const category = document.getElementById('writeCat').value;
@@ -665,6 +687,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.getElementById('clsHeader');
     if (header) header.classList.toggle('scrolled', window.scrollY > 20);
   });
+
+  // 초기에 글쓰기 버튼 숨김 (관리자만 표시)
+  updateWriteBtn();
 
   // Firebase 미설정 시
   if (!fbReady) {
