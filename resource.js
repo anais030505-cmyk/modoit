@@ -93,10 +93,23 @@ try {
     } else {
       const kakaoSession = localStorage.getItem('cls_kakao_user');
       if (kakaoSession) {
-        currentUser = JSON.parse(kakaoSession);
-        await loadUserProfile();
-        updateUserUI(currentUser);
-        await loadMyLikes();
+        try {
+          const parsed = JSON.parse(kakaoSession);
+          if (parsed && parsed.uid && /^kakao_\d+$/.test(parsed.uid) && parsed.provider === 'kakao') {
+            currentUser = parsed;
+          } else {
+            localStorage.removeItem('cls_kakao_user');
+            currentUser = null;
+          }
+        } catch (e) {
+          localStorage.removeItem('cls_kakao_user');
+          currentUser = null;
+        }
+        if (currentUser) {
+          await loadUserProfile();
+          updateUserUI(currentUser);
+          await loadMyLikes();
+        }
         await loadResources();
       } else {
         currentUser = null;
@@ -272,6 +285,8 @@ window.handleImageSelect = function (e) {
   const file = e.target.files[0];
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) { showToast('이미지는 5MB 이하만 가능합니다'); e.target.value = ''; return; }
+  // 보안: 이미지 MIME 타입 검증
+  if (!file.type.startsWith('image/')) { showToast('이미지 파일만 업로드할 수 있습니다'); e.target.value = ''; return; }
   pendingImage = file;
   renderImagePreview();
 };
@@ -307,6 +322,14 @@ window.handleFileSelect = function (e) {
   const file = e.target.files[0];
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) { showToast('파일은 5MB 이하만 가능합니다'); e.target.value = ''; return; }
+  // 보안: 허용된 파일 확장자만 업로드 허용
+  const allowedExts = ['pdf','doc','docx','ppt','pptx','xls','xlsx','zip','hwp','hwpx','txt','csv'];
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!allowedExts.includes(ext)) {
+    showToast('허용되지 않은 파일 형식입니다');
+    e.target.value = '';
+    return;
+  }
   pendingFile = file;
   renderFileInfo();
 };
@@ -337,8 +360,8 @@ function renderFileInfo() {
   info.innerHTML = `
     <div class="res-file-icon"><i class="fas fa-file-${getFileIcon(ext)}"></i></div>
     <div class="res-file-detail">
-      <span class="res-file-name">${pendingFile.name}</span>
-      <span class="res-file-size">${ext} / ${sizeStr}</span>
+      <span class="res-file-name">${escapeHtml(pendingFile.name)}</span>
+      <span class="res-file-size">${escapeHtml(ext)} / ${sizeStr}</span>
     </div>
     <button class="res-file-remove" onclick="removeFile()"><i class="fas fa-times"></i></button>`;
 }
@@ -572,7 +595,15 @@ function formatDate(ts) {
   return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 }
 
-function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+
+function sanitizeUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('data:image/')) return url;
+  if (url.startsWith('https://')) return url;
+  if (url.startsWith('http://')) return url;
+  return '';
+}
 
 function formatFileSize(bytes) {
   if (!bytes) return '';
@@ -778,8 +809,13 @@ window.submitResource = async function () {
   const tagsRaw = document.getElementById('writeTags').value.trim();
 
   if (!title) { showToast('제목을 입력해주세요'); return; }
+  if (title.length > 60) { showToast('제목은 60자 이내로 입력해주세요'); return; }
   if (!category) { showToast('카테고리를 선택해주세요'); return; }
   if (!content) { showToast('설명을 입력해주세요'); return; }
+  if (content.length > 1000) { showToast('설명은 1000자 이내로 입력해주세요'); return; }
+  // 보안: 허용된 카테고리 값만 허용
+  const allowedCats = ['강의자료','템플릿','가이드','도구','기타'];
+  if (!allowedCats.includes(category)) { showToast('올바른 카테고리를 선택해주세요'); return; }
 
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean).slice(0, 5) : [];
 
@@ -851,7 +887,9 @@ window.openImageViewer = function (url, e) {
     viewer.onclick = () => viewer.classList.remove('open');
     document.body.appendChild(viewer);
   }
-  viewer.innerHTML = `<img src="${url}" alt="확대 이미지"><button class="res-img-viewer-close"><i class="fas fa-times"></i></button>`;
+  const safeUrl = sanitizeUrl(url);
+  if (!safeUrl) return;
+  viewer.innerHTML = `<img src="${safeUrl}" alt="확대 이미지"><button class="res-img-viewer-close"><i class="fas fa-times"></i></button>`;
   viewer.classList.add('open');
 };
 

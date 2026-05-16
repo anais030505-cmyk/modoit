@@ -175,6 +175,25 @@ function getAvatarDataUri(avatarId) {
 }
 
 // =====================================================
+// 보안: HTML 이스케이프
+// =====================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function sanitizeUrl(url) {
+  if (!url) return '';
+  // base64 data URL 또는 https:// URL만 허용
+  if (url.startsWith('data:image/')) return url;
+  if (url.startsWith('https://')) return url;
+  if (url.startsWith('http://')) return url;
+  return '';
+}
+
+// =====================================================
 // 앱 상태
 // =====================================================
 let currentUser = null;
@@ -213,11 +232,23 @@ try {
     } else {
       const kakaoSession = localStorage.getItem('cls_kakao_user');
       if (kakaoSession) {
-        currentUser = JSON.parse(kakaoSession);
-        updateUserUI(currentUser);
+        try {
+          const parsed = JSON.parse(kakaoSession);
+          // 보안: uid 형식 검증 (kakao_ 접두사 + 숫자만 허용)
+          if (parsed && parsed.uid && /^kakao_\d+$/.test(parsed.uid) && parsed.provider === 'kakao') {
+            currentUser = parsed;
+          } else {
+            localStorage.removeItem('cls_kakao_user');
+            currentUser = null;
+          }
+        } catch (e) {
+          localStorage.removeItem('cls_kakao_user');
+          currentUser = null;
+        }
+        if (currentUser) updateUserUI(currentUser);
         await loadCourses();
         await loadMyEnrollments();
-        await loadUserProfile();
+        if (currentUser) await loadUserProfile();
       } else {
         currentUser = null;
         myEnrollments = new Set();
@@ -635,15 +666,16 @@ window.openMyPage = async function () {
       const dateStr = `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`;
       const course = allCourses.find(c => c.id === r.courseId);
       const videoId = course?.videoId || '';
+      const safeCourseId = escapeHtml(r.courseId);
       return `
-        <div class="my-history-item" onclick="closeMypageAndOpen('${r.courseId}')">
-          <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg"
+        <div class="my-history-item" onclick="closeMypageAndOpen('${safeCourseId}')">
+          <img src="https://img.youtube.com/vi/${escapeHtml(videoId)}/mqdefault.jpg"
             onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='8px'"
             class="my-history-thumb" alt="">
           <div class="my-history-info">
-            <div class="my-history-title">${r.courseTitle || '(삭제된 강의)'}</div>
+            <div class="my-history-title">${escapeHtml(r.courseTitle || '(삭제된 강의)')}</div>
             <div class="my-history-meta">
-              <span>${r.category || ''}</span>
+              <span>${escapeHtml(r.category || '')}</span>
               <span>${dateStr} 수강신청</span>
             </div>
           </div>
@@ -673,9 +705,11 @@ window.selectAvatar = function (id) {
 
 window.saveProfile = async function () {
   const nicknameInput = document.getElementById('nicknameInput');
-  const nickname = nicknameInput?.value?.trim();
+  let nickname = nicknameInput?.value?.trim();
   if (!nickname) { showToast('닉네임을 입력해주세요'); return; }
   if (nickname.length > 12) { showToast('닉네임은 12자 이내로 입력해주세요'); return; }
+  // 보안: 특수문자 제거 (HTML/스크립트 인젝션 방지)
+  nickname = nickname.replace(/[<>"'&]/g, '');
 
   const btn = document.getElementById('profileSaveBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...'; }
@@ -718,12 +752,16 @@ function getCourses() {
 }
 
 function courseCardHtml(c) {
+  const safeId = escapeHtml(c.id);
+  const safeTitle = escapeHtml(c.title);
+  const safeCat = escapeHtml(c.category || '');
+  const safeSrc = sanitizeUrl(c.thumbnail || thumb(c.videoId));
   return `
-    <div class="cls-course-card" onclick="openCourse('${c.id}')">
+    <div class="cls-course-card" onclick="openCourse('${safeId}')">
       <div class="cls-card-thumb">
         <img
-          src="${c.thumbnail || thumb(c.videoId)}"
-          alt="${c.title}"
+          src="${safeSrc}"
+          alt="${safeTitle}"
           loading="lazy"
           onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='24px';this.style.background='#f3f4f6'">
         <div class="cls-card-play"><i class="fas fa-play-circle"></i></div>
@@ -732,8 +770,8 @@ function courseCardHtml(c) {
         </div>
       </div>
       <div class="cls-card-body">
-        <div class="cls-card-cat">${c.category || ''}</div>
-        <div class="cls-card-title">${c.title}</div>
+        <div class="cls-card-cat">${safeCat}</div>
+        <div class="cls-card-title">${safeTitle}</div>
         <div class="cls-card-meta">
           <span class="cls-card-views"><i class="fas fa-users"></i> ${(c.enrollCount || 0).toLocaleString()}명 수강</span>
           <span class="cls-card-period"><i class="fas fa-infinity"></i> 무제한</span>
@@ -855,7 +893,7 @@ window.openCourse = function (courseId) {
   // 배지
   document.getElementById('courseDetailBadges').innerHTML = `
     <span class="cls-course-badge free">무료</span>
-    <span class="cls-course-badge cat">${c.category || ''}</span>
+    <span class="cls-course-badge cat">${escapeHtml(c.category || '')}</span>
     <span class="cls-course-badge period"><i class="fas fa-infinity"></i> 무제한</span>
   `;
 
@@ -863,7 +901,7 @@ window.openCourse = function (courseId) {
   document.getElementById('courseDetailDesc').textContent = c.desc || '';
   document.getElementById('courseDetailMeta').innerHTML = `
     <span><i class="fas fa-users"></i> 수강생 ${(c.enrollCount || 0).toLocaleString()}명</span>
-    <span><i class="fas fa-folder"></i> ${c.category || ''}</span>
+    <span><i class="fas fa-folder"></i> ${escapeHtml(c.category || '')}</span>
     <span><i class="fas fa-clock"></i> 수강기간 무제한</span>
   `;
 
@@ -893,7 +931,7 @@ window.openCourse = function (courseId) {
     document.getElementById('enrollThumb').src = c.thumbnail || `https://img.youtube.com/vi/${c.videoId}/hqdefault.jpg`;
 
     document.getElementById('courseDetailCta').innerHTML = `
-      <button class="cls-btn-enroll cls-btn-enroll-action paid-btn" onclick="handleEnroll('${courseId}')">
+      <button class="cls-btn-enroll cls-btn-enroll-action paid-btn" onclick="handleEnroll('${escapeHtml(courseId)}')">
         <i class="fas fa-check"></i> 수강신청 (무료)
       </button>
     `;

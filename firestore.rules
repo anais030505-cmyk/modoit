@@ -1,0 +1,159 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =====================================================
+    // 헬퍼 함수
+    // =====================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    function validString(field, maxLen) {
+      return field is string && field.size() <= maxLen;
+    }
+
+    // =====================================================
+    // users 컬렉션 - 사용자 프로필
+    // =====================================================
+    match /users/{userId} {
+      // 본인 프로필만 읽기 가능
+      allow read: if isAuthenticated();
+
+      // 신규 생성: 본인만, isAdmin은 false로만 설정 가능
+      allow create: if isOwner(userId) &&
+        request.resource.data.isAdmin == false;
+
+      // 수정: 본인만, isAdmin 필드는 변경 불가
+      allow update: if isOwner(userId) &&
+        request.resource.data.isAdmin == resource.data.isAdmin;
+
+      // 삭제 불가
+      allow delete: if false;
+    }
+
+    // =====================================================
+    // courses 컬렉션 - 강의 (읽기 전용, 관리자만 수정)
+    // =====================================================
+    match /courses/{courseId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() ||
+        // 수강신청 시 enrollCount 증가만 허용 (일반 사용자)
+        (isAuthenticated() &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount', 'enrollCount']));
+    }
+
+    // =====================================================
+    // prompts 컬렉션 - 프롬프트 게시판
+    // =====================================================
+    match /prompts/{promptId} {
+      allow read: if true;
+
+      // 작성: 관리자만
+      allow create: if isAdmin() &&
+        validString(request.resource.data.title, 60) &&
+        validString(request.resource.data.content, 2000) &&
+        request.resource.data.authorId == request.auth.uid;
+
+      // 수정: 관리자만 (좋아요/복사 카운트 업데이트는 인증된 사용자 허용)
+      allow update: if isAdmin() ||
+        (isAuthenticated() &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'copyCount']));
+
+      // 삭제: 작성자 본인 또는 관리자
+      allow delete: if isAdmin() ||
+        (isAuthenticated() && resource.data.authorId == request.auth.uid);
+    }
+
+    // =====================================================
+    // promptLikes 컬렉션 - 좋아요 기록
+    // =====================================================
+    match /promptLikes/{likeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+      allow update: if false;
+    }
+
+    // =====================================================
+    // resources 컬렉션 - 자료실
+    // =====================================================
+    match /resources/{resourceId} {
+      allow read: if true;
+
+      // 작성: 관리자만
+      allow create: if isAdmin() &&
+        validString(request.resource.data.title, 60) &&
+        validString(request.resource.data.content, 1000) &&
+        request.resource.data.authorId == request.auth.uid;
+
+      // 수정: 관리자만 (다운로드/좋아요 카운트는 인증된 사용자 허용)
+      allow update: if isAdmin() ||
+        (isAuthenticated() &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'downloadCount']));
+
+      // 삭제: 작성자 본인 또는 관리자
+      allow delete: if isAdmin() ||
+        (isAuthenticated() && resource.data.authorId == request.auth.uid);
+
+      // 파일 청크 서브컬렉션
+      match /fileChunks/{chunkId} {
+        allow read: if isAuthenticated();
+        allow create: if isAdmin();
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // =====================================================
+    // resourceLikes 컬렉션
+    // =====================================================
+    match /resourceLikes/{likeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+      allow update: if false;
+    }
+
+    // =====================================================
+    // enrollments 컬렉션 - 수강신청
+    // =====================================================
+    match /enrollments/{enrollId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // =====================================================
+    // watchHistory 컬렉션 - 시청 이력
+    // =====================================================
+    match /watchHistory/{historyId} {
+      allow read: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // =====================================================
+    // 기본: 그 외 모든 컬렉션은 접근 차단
+    // =====================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

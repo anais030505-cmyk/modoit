@@ -128,10 +128,23 @@ try {
     } else {
       const kakaoSession = localStorage.getItem('cls_kakao_user');
       if (kakaoSession) {
-        currentUser = JSON.parse(kakaoSession);
-        await loadUserProfile();
-        updateUserUI(currentUser);
-        await loadMyLikes();
+        try {
+          const parsed = JSON.parse(kakaoSession);
+          if (parsed && parsed.uid && /^kakao_\d+$/.test(parsed.uid) && parsed.provider === 'kakao') {
+            currentUser = parsed;
+          } else {
+            localStorage.removeItem('cls_kakao_user');
+            currentUser = null;
+          }
+        } catch (e) {
+          localStorage.removeItem('cls_kakao_user');
+          currentUser = null;
+        }
+        if (currentUser) {
+          await loadUserProfile();
+          updateUserUI(currentUser);
+          await loadMyLikes();
+        }
         await loadPrompts();
       } else {
         currentUser = null;
@@ -327,6 +340,11 @@ window.handleImageSelect = function (e) {
     // 5MB 제한
     if (file.size > 5 * 1024 * 1024) {
       showToast(`${file.name}은(는) 5MB를 초과합니다`);
+      continue;
+    }
+    // 보안: 이미지 MIME 타입 검증
+    if (!file.type.startsWith('image/')) {
+      showToast('이미지 파일만 업로드할 수 있습니다');
       continue;
     }
     pendingImages.push(file);
@@ -669,9 +687,18 @@ function formatDate(ts) {
 }
 
 function escapeHtml(str) {
+  if (!str) return '';
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+function sanitizeUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('data:image/')) return url;
+  if (url.startsWith('https://')) return url;
+  if (url.startsWith('http://')) return url;
+  return '';
 }
 
 function renderPrompts() {
@@ -864,8 +891,13 @@ window.submitPrompt = async function () {
   const tagsRaw = document.getElementById('writeTags').value.trim();
 
   if (!title) { showToast('제목을 입력해주세요'); return; }
+  if (title.length > 60) { showToast('제목은 60자 이내로 입력해주세요'); return; }
   if (!category) { showToast('카테고리를 선택해주세요'); return; }
   if (!content) { showToast('프롬프트 내용을 입력해주세요'); return; }
+  if (content.length > 2000) { showToast('내용은 2000자 이내로 입력해주세요'); return; }
+  // 보안: 허용된 카테고리 값만 허용
+  const allowedCats = ['ChatGPT','Gemini','미리캔버스','이미지생성','영상제작','업무자동화','기타'];
+  if (!allowedCats.includes(category)) { showToast('올바른 카테고리를 선택해주세요'); return; }
 
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean).slice(0, 5) : [];
 
@@ -912,7 +944,9 @@ window.openImageViewer = function (url, e) {
     viewer.onclick = () => viewer.classList.remove('open');
     document.body.appendChild(viewer);
   }
-  viewer.innerHTML = `<img src="${url}" alt="확대 이미지"><button class="pmt-img-viewer-close"><i class="fas fa-times"></i></button>`;
+  const safeUrl = sanitizeUrl(url);
+  if (!safeUrl) return;
+  viewer.innerHTML = `<img src="${safeUrl}" alt="확대 이미지"><button class="pmt-img-viewer-close"><i class="fas fa-times"></i></button>`;
   viewer.classList.add('open');
 };
 

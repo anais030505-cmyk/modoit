@@ -696,6 +696,13 @@
       'anais0305@naver.com',
     ];
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
     let courses = [];
     let deleteTargetId = null;
     let deleteMode = 'single'; // 'single' or 'all'
@@ -908,21 +915,22 @@
     };
 
     function courseRowHtml(c, i, filtered) {
+      const safeId = escapeHtml(c.id);
       return `
-        <div class="course-row" draggable="true" data-id="${c.id}" data-index="${courses.indexOf(c)}">
+        <div class="course-row" draggable="true" data-id="${safeId}" data-index="${courses.indexOf(c)}">
           <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
           <div class="order-num">${i + 1}</div>
-          <img class="course-thumb" src="${c.thumbnail || 'https://img.youtube.com/vi/' + c.videoId + '/mqdefault.jpg'}"
+          <img class="course-thumb" src="${escapeHtml(c.thumbnail || 'https://img.youtube.com/vi/' + c.videoId + '/mqdefault.jpg')}"
             onerror="this.src='images/logo.png';this.style.objectFit='contain';this.style.padding='4px';this.style.background='#f3f4f6'" alt="">
           <div class="course-title-cell">
-            <strong>${c.title || '(제목 없음)'}</strong>
-            <small><span class="badge-cat">${c.category || '-'}</span></small>
+            <strong>${escapeHtml(c.title || '(제목 없음)')}</strong>
+            <small><span class="badge-cat">${escapeHtml(c.category || '-')}</span></small>
           </div>
           <div class="row-views hide-mobile">${(c.viewCount || 0).toLocaleString()}</div>
           <div class="row-views hide-mobile" style="color:#7c3aed;font-weight:600">${(c.enrollCount || 0).toLocaleString()}</div>
           <div class="move-btns">
-            <button class="move-btn" onclick="event.stopPropagation();moveItem('${c.id}',-1)" ${i === 0 ? 'disabled' : ''} title="위로"><i class="fas fa-chevron-up"></i></button>
-            <button class="move-btn" onclick="event.stopPropagation();moveItem('${c.id}',1)" ${i === filtered.length - 1 ? 'disabled' : ''} title="아래로"><i class="fas fa-chevron-down"></i></button>
+            <button class="move-btn" onclick="event.stopPropagation();moveItem('${safeId}',-1)" ${i === 0 ? 'disabled' : ''} title="위로"><i class="fas fa-chevron-up"></i></button>
+            <button class="move-btn" onclick="event.stopPropagation();moveItem('${safeId}',1)" ${i === filtered.length - 1 ? 'disabled' : ''} title="아래로"><i class="fas fa-chevron-down"></i></button>
           </div>
         </div>`;
     }
@@ -1189,11 +1197,11 @@
           html += `
             <div class="user-card">
               <div class="user-card-header">
-                <img src="${user.userPhoto || 'images/logo.png'}"
+                <img src="${escapeHtml(user.userPhoto || 'images/logo.png')}"
                   onerror="this.src='images/logo.png'" alt="">
                 <div class="user-meta">
-                  <strong>${user.userName}</strong>
-                  <small>${user.userEmail}</small>
+                  <strong>${escapeHtml(user.userName)}</strong>
+                  <small>${escapeHtml(user.userEmail)}</small>
                 </div>
                 <span class="user-badge">${uniqueCourses}개 강의 · ${user.history.length}회 시청</span>
               </div>`;
@@ -1205,10 +1213,10 @@
             const videoId = course?.videoId || h.courseId;
             html += `
               <div class="user-history-row">
-                <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg"
+                <img src="https://img.youtube.com/vi/${escapeHtml(videoId)}/mqdefault.jpg"
                   onerror="this.src='images/logo.png';this.style.objectFit='contain'" alt="">
-                <span class="uh-title">${h.courseTitle || '(삭제된 강의)'}</span>
-                <span class="uh-cat">${h.category || ''}</span>
+                <span class="uh-title">${escapeHtml(h.courseTitle || '(삭제된 강의)')}</span>
+                <span class="uh-cat">${escapeHtml(h.category || '')}</span>
                 <span class="uh-date">${dateStr}</span>
               </div>`;
           });
