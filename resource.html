@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>프롬프트 모음 | 모두잇 클래스</title>
-  <meta name="description" content="AI 프롬프트 공유 게시판. ChatGPT, Gemini, 미리캔버스 등 실무에서 바로 쓸 수 있는 프롬프트를 공유하고 복사해서 사용하세요.">
+  <title>자료실 | 모두잇 클래스</title>
+  <meta name="description" content="모두잇 클래스 자료실. 강의 자료, 템플릿, 가이드 등 유용한 학습 자료를 다운로드하세요.">
   <meta name="robots" content="index, follow">
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="apple-touch-icon" href="images/logo.png">
@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="prompt.css">
+  <link rel="stylesheet" href="resource.css">
 </head>
 <body>
 
@@ -30,8 +30,8 @@
 
       <nav class="cls-nav" id="clsNav">
         <a href="class.html" class="cls-nav-link">전체강의</a>
-        <a href="prompt.html" class="cls-nav-link active">프롬프트 모음</a>
-        <a href="resource.html" class="cls-nav-link">자료실</a>
+        <a href="prompt.html" class="cls-nav-link">프롬프트 모음</a>
+        <a href="resource.html" class="cls-nav-link active">자료실</a>
         <a href="class.html#reviews" class="cls-nav-link">수강후기</a>
         <a href="class.html#faq" class="cls-nav-link">FAQ</a>
         <a href="index.html" class="cls-nav-link">협회 홈</a>
@@ -55,70 +55,68 @@
   </header>
 
   <!-- ===== HERO ===== -->
-  <section class="pmt-hero">
-    <div class="pmt-hero-bg">
-      <div class="pmt-hero-orb pmt-hero-orb-1"></div>
-      <div class="pmt-hero-orb pmt-hero-orb-2"></div>
+  <section class="res-hero">
+    <div class="res-hero-bg">
+      <div class="res-hero-orb res-hero-orb-1"></div>
+      <div class="res-hero-orb res-hero-orb-2"></div>
     </div>
-    <div class="cls-container pmt-hero-inner">
-      <span class="pmt-hero-chip"><i class="fas fa-lightbulb"></i> AI Prompt Library</span>
-      <h1 class="pmt-hero-title">
-        AI <span class="pmt-gradient">프롬프트</span> 모음
+    <div class="cls-container res-hero-inner">
+      <span class="res-hero-chip"><i class="fas fa-folder-open"></i> Resource Library</span>
+      <h1 class="res-hero-title">
+        학습 <span class="res-gradient">자료실</span>
       </h1>
-      <p class="pmt-hero-desc">실무에서 바로 쓸 수 있는 AI 프롬프트를 공유하고, 복사해서 활용해보세요</p>
-      <div class="pmt-hero-stats">
-        <div class="pmt-hero-stat">
-          <strong id="totalPrompts">0</strong>
-          <span>전체 프롬프트</span>
+      <p class="res-hero-desc">강의 자료, 템플릿, 가이드 등 유용한 학습 자료를 다운로드하세요</p>
+      <div class="res-hero-stats">
+        <div class="res-hero-stat">
+          <strong id="totalResources">0</strong>
+          <span>전체 자료</span>
         </div>
-        <div class="pmt-hero-stat-div"></div>
-        <div class="pmt-hero-stat">
-          <strong id="totalCopies">0</strong>
-          <span>총 복사</span>
+        <div class="res-hero-stat-div"></div>
+        <div class="res-hero-stat">
+          <strong id="totalDownloads">0</strong>
+          <span>총 다운로드</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== FILTER & WRITE BAR ===== -->
-  <div class="pmt-toolbar">
-    <div class="cls-container pmt-toolbar-inner">
-      <div class="pmt-tabs" id="catTabs">
-        <button class="pmt-tab active" data-cat="all">전체</button>
-        <button class="pmt-tab" data-cat="ChatGPT">ChatGPT</button>
-        <button class="pmt-tab" data-cat="Gemini">Gemini</button>
-        <button class="pmt-tab" data-cat="미리캔버스">미리캔버스</button>
-        <button class="pmt-tab" data-cat="이미지생성">이미지생성</button>
-        <button class="pmt-tab" data-cat="영상제작">영상제작</button>
-        <button class="pmt-tab" data-cat="업무자동화">업무자동화</button>
-        <button class="pmt-tab" data-cat="기타">기타</button>
+  <div class="res-toolbar">
+    <div class="cls-container res-toolbar-inner">
+      <div class="res-tabs" id="catTabs">
+        <button class="res-tab active" data-cat="all">전체</button>
+        <button class="res-tab" data-cat="강의자료">강의자료</button>
+        <button class="res-tab" data-cat="템플릿">템플릿</button>
+        <button class="res-tab" data-cat="가이드">가이드</button>
+        <button class="res-tab" data-cat="도구">도구</button>
+        <button class="res-tab" data-cat="기타">기타</button>
       </div>
-      <div class="pmt-toolbar-right">
-        <div class="pmt-search-wrap">
+      <div class="res-toolbar-right">
+        <div class="res-search-wrap">
           <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" class="pmt-search" placeholder="프롬프트 검색...">
+          <input type="text" id="searchInput" class="res-search" placeholder="자료 검색...">
         </div>
-        <button class="pmt-write-btn" id="writeBtn" onclick="openWriteModal()" style="display:none">
-          <i class="fas fa-pen"></i> <span>글쓰기</span>
+        <button class="res-write-btn" id="writeBtn" onclick="openWriteModal()" style="display:none">
+          <i class="fas fa-plus"></i> <span>자료 등록</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ===== PROMPT GRID ===== -->
-  <main class="pmt-main">
+  <!-- ===== RESOURCE GRID ===== -->
+  <main class="res-main">
     <div class="cls-container">
-      <div class="pmt-grid" id="promptGrid">
+      <div class="res-grid" id="resourceGrid">
         <!-- JS로 렌더링 -->
       </div>
-      <div class="pmt-empty" id="emptyState" style="display:none">
-        <i class="fas fa-lightbulb"></i>
-        <p>아직 프롬프트가 없어요</p>
-        <p class="pmt-empty-sub">첫 번째 프롬프트를 공유해보세요!</p>
+      <div class="res-empty" id="emptyState" style="display:none">
+        <i class="fas fa-folder-open"></i>
+        <p>아직 등록된 자료가 없어요</p>
+        <p class="res-empty-sub">첫 번째 자료를 등록해보세요!</p>
       </div>
-      <div class="pmt-loading" id="loadingState">
+      <div class="res-loading" id="loadingState">
         <i class="fas fa-spinner fa-spin"></i>
-        <p>프롬프트 불러오는 중...</p>
+        <p>자료 불러오는 중...</p>
       </div>
     </div>
   </main>
@@ -132,7 +130,7 @@
             <img src="images/logo.png" alt="모두잇">
             <span>모두잇 클래스</span>
           </div>
-          <p>AI 프롬프트를 공유하고 함께 성장하세요</p>
+          <p>유용한 학습 자료를 공유하고 함께 성장하세요</p>
         </div>
         <div class="cls-footer-links">
           <strong>바로가기</strong>
@@ -161,7 +159,7 @@
         <div><span class="cls-modal-brand">모두잇 클래스</span></div>
       </div>
       <h2 class="cls-modal-title">로그인</h2>
-      <p class="cls-modal-sub">프롬프트를 공유하려면 로그인해주세요</p>
+      <p class="cls-modal-sub">자료를 다운로드하려면 로그인해주세요</p>
       <div class="cls-login-btns">
         <button class="cls-btn-google" onclick="loginWithGoogle()">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
@@ -222,54 +220,60 @@
 
   <!-- ===== WRITE MODAL ===== -->
   <div class="cls-overlay" id="writeModal" onclick="closeWriteModal(event)">
-    <div class="cls-modal pmt-write-modal" id="writeModalBox">
+    <div class="cls-modal res-write-modal" id="writeModalBox">
       <button class="cls-modal-close" onclick="closeWriteModal()"><i class="fas fa-times"></i></button>
-      <h2 class="pmt-write-title"><i class="fas fa-pen-fancy"></i> 프롬프트 공유하기</h2>
-      <div class="pmt-form">
-        <div class="pmt-form-field">
-          <label>제목 <span class="pmt-required">*</span></label>
-          <input type="text" id="writeTitle" maxlength="60" placeholder="프롬프트 제목을 입력하세요">
+      <h2 class="res-write-title"><i class="fas fa-upload"></i> 자료 등록하기</h2>
+      <div class="res-form">
+        <div class="res-form-field">
+          <label>제목 <span class="res-required">*</span></label>
+          <input type="text" id="writeTitle" maxlength="60" placeholder="자료 제목을 입력하세요">
         </div>
-        <div class="pmt-form-field">
-          <label>카테고리 <span class="pmt-required">*</span></label>
+        <div class="res-form-field">
+          <label>카테고리 <span class="res-required">*</span></label>
           <select id="writeCat">
             <option value="">선택하세요</option>
-            <option value="ChatGPT">ChatGPT</option>
-            <option value="Gemini">Gemini</option>
-            <option value="미리캔버스">미리캔버스</option>
-            <option value="이미지생성">이미지생성</option>
-            <option value="영상제작">영상제작</option>
-            <option value="업무자동화">업무자동화</option>
+            <option value="강의자료">강의자료</option>
+            <option value="템플릿">템플릿</option>
+            <option value="가이드">가이드</option>
+            <option value="도구">도구</option>
             <option value="기타">기타</option>
           </select>
         </div>
-        <div class="pmt-form-field">
-          <label>프롬프트 내용 <span class="pmt-required">*</span></label>
-          <textarea id="writeContent" rows="6" maxlength="2000" placeholder="프롬프트 내용을 입력하세요&#10;&#10;예) 당신은 마케팅 전문가입니다. 다음 제품에 대한 SNS 홍보 문구를 3가지 작성해주세요..."></textarea>
-          <div class="pmt-char-count"><span id="charCount">0</span>/2000</div>
+        <div class="res-form-field">
+          <label>설명 <span class="res-required">*</span></label>
+          <textarea id="writeContent" rows="4" maxlength="1000" placeholder="자료에 대한 설명을 입력하세요"></textarea>
+          <div class="res-char-count"><span id="charCount">0</span>/1000</div>
         </div>
-        <div class="pmt-form-field">
-          <label>이미지 (선택)</label>
-          <div class="pmt-img-upload" id="imgUploadArea">
-            <input type="file" id="writeImage" accept="image/*" multiple style="display:none" onchange="handleImageSelect(event)">
-            <div class="pmt-img-upload-placeholder" id="imgPlaceholder" onclick="document.getElementById('writeImage').click()">
-              <i class="fas fa-cloud-upload-alt"></i>
+        <div class="res-form-field">
+          <label>대표 이미지 (선택, 1장)</label>
+          <div class="res-img-upload" id="imgUploadArea">
+            <input type="file" id="writeImage" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+            <div class="res-img-upload-placeholder" id="imgPlaceholder" onclick="document.getElementById('writeImage').click()">
+              <i class="fas fa-image"></i>
               <span>클릭하여 이미지 업로드</span>
-              <small>JPG, PNG, GIF / 최대 5MB / 최대 3장</small>
+              <small>JPG, PNG, GIF / 최대 5MB</small>
             </div>
-            <div class="pmt-img-preview-list" id="imgPreviewList"></div>
+            <div class="res-img-preview" id="imgPreview" style="display:none"></div>
           </div>
         </div>
-        <div class="pmt-form-field">
-          <label>설명 (선택)</label>
-          <input type="text" id="writeDesc" maxlength="100" placeholder="이 프롬프트를 어떤 상황에서 쓰면 좋은지 설명해주세요">
+        <div class="res-form-field">
+          <label>파일 첨부 (선택)</label>
+          <div class="res-file-upload" id="fileUploadArea">
+            <input type="file" id="writeFile" style="display:none" onchange="handleFileSelect(event)">
+            <div class="res-file-upload-placeholder" id="filePlaceholder" onclick="document.getElementById('writeFile').click()">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>클릭하여 파일 업로드</span>
+              <small>PDF, DOC, PPT, XLS, ZIP 등 / 최대 5MB</small>
+            </div>
+            <div class="res-file-info" id="fileInfo" style="display:none"></div>
+          </div>
         </div>
-        <div class="pmt-form-field">
+        <div class="res-form-field">
           <label>태그 (선택)</label>
-          <input type="text" id="writeTags" maxlength="60" placeholder="쉼표로 구분 (예: 마케팅, SNS, 홍보)">
+          <input type="text" id="writeTags" maxlength="60" placeholder="쉼표로 구분 (예: AI, 마케팅, 엑셀)">
         </div>
-        <button class="pmt-submit-btn" id="submitBtn" onclick="submitPrompt()">
-          <i class="fas fa-paper-plane"></i> 공유하기
+        <button class="res-submit-btn" id="submitBtn" onclick="submitResource()">
+          <i class="fas fa-paper-plane"></i> 등록하기
         </button>
       </div>
     </div>
@@ -277,14 +281,14 @@
 
   <!-- ===== DETAIL MODAL ===== -->
   <div class="cls-overlay" id="detailModal" onclick="closeDetailModal(event)">
-    <div class="cls-modal pmt-detail-modal" id="detailModalBox">
+    <div class="cls-modal res-detail-modal" id="detailModalBox">
       <button class="cls-modal-close" onclick="closeDetailModal()"><i class="fas fa-times"></i></button>
       <div id="detailContent"></div>
     </div>
   </div>
 
   <!-- Firebase SDK (v10) -->
-  <script type="module" src="prompt.js"></script>
+  <script type="module" src="resource.js"></script>
   <!-- Kakao SDK -->
   <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 </body>
