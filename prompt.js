@@ -13,6 +13,9 @@ import {
   setDoc, getDoc, updateDoc, increment, orderBy, query,
   addDoc, where, serverTimestamp, deleteDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {
+  getStorage, ref as storageRef, uploadBytes, getDownloadURL
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 // =====================================================
 // FIREBASE 설정
@@ -98,7 +101,8 @@ let allPrompts = [];
 let currentCat = 'all';
 let searchQuery = '';
 let fbReady = false;
-let auth, db;
+let auth, db, storage;
+let pendingImages = []; // 업로드 대기 이미지 파일
 let myLikes = new Set();
 
 // =====================================================
@@ -108,6 +112,7 @@ try {
   const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
   fbReady = true;
 
   onAuthStateChanged(auth, async (user) => {
@@ -274,6 +279,82 @@ async function deletePrompt(promptId) {
 }
 
 // =====================================================
+// 이미지 업로드
+// =====================================================
+async function uploadImage(file) {
+  if (!fbReady || !storage) throw new Error('Storage 미설정');
+  const ext = file.name.split('.').pop().toLowerCase();
+  const fileName = `prompts/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const imgRef = storageRef(storage, fileName);
+  await uploadBytes(imgRef, file);
+  return await getDownloadURL(imgRef);
+}
+
+async function uploadAllImages(files) {
+  const urls = [];
+  for (const file of files) {
+    const url = await uploadImage(file);
+    urls.push(url);
+  }
+  return urls;
+}
+
+window.handleImageSelect = function (e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  // 최대 3장 제한
+  const total = pendingImages.length + files.length;
+  if (total > 3) {
+    showToast('이미지는 최대 3장까지 업로드할 수 있습니다');
+    e.target.value = '';
+    return;
+  }
+
+  for (const file of files) {
+    // 5MB 제한
+    if (file.size > 5 * 1024 * 1024) {
+      showToast(`${file.name}은(는) 5MB를 초과합니다`);
+      continue;
+    }
+    pendingImages.push(file);
+  }
+
+  e.target.value = '';
+  renderImagePreviews();
+};
+
+window.removeImage = function (index) {
+  pendingImages.splice(index, 1);
+  renderImagePreviews();
+};
+
+function renderImagePreviews() {
+  const list = document.getElementById('imgPreviewList');
+  const placeholder = document.getElementById('imgPlaceholder');
+  if (!list) return;
+
+  if (pendingImages.length === 0) {
+    list.innerHTML = '';
+    list.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    return;
+  }
+
+  if (placeholder) placeholder.style.display = pendingImages.length >= 3 ? 'none' : 'flex';
+  list.style.display = 'flex';
+
+  list.innerHTML = pendingImages.map((file, i) => {
+    const url = URL.createObjectURL(file);
+    return `
+      <div class="pmt-img-preview-item">
+        <img src="${url}" alt="미리보기">
+        <button class="pmt-img-remove" onclick="removeImage(${i})"><i class="fas fa-times"></i></button>
+      </div>`;
+  }).join('');
+}
+
+// =====================================================
 // 인증 함수
 // =====================================================
 window.loginWithGoogle = async function () {
@@ -370,6 +451,11 @@ window.openWriteModal = function () {
   document.getElementById('writeDesc').value = '';
   document.getElementById('writeTags').value = '';
   document.getElementById('charCount').textContent = '0';
+  // 이미지 초기화
+  pendingImages = [];
+  renderImagePreviews();
+  const fileInput = document.getElementById('writeImage');
+  if (fileInput) fileInput.value = '';
   document.getElementById('writeModal').classList.add('open');
 };
 window.closeWriteModal = function (e) {
@@ -601,8 +687,13 @@ function renderPrompts() {
     const contentHtml = loggedIn
       ? `<div class="pmt-card-content">${escapeHtml(p.content || '')}</div>`
       : `<div class="pmt-card-content pmt-blurred"><span class="pmt-lock-msg"><i class="fas fa-lock"></i> 로그인 후 확인할 수 있습니다</span></div>`;
+    const images = p.imageUrls || [];
+    const imageHtml = images.length > 0
+      ? `<div class="pmt-card-images"><img src="${images[0]}" alt="" loading="lazy">${images.length > 1 ? `<span class="pmt-card-img-count">+${images.length - 1}</span>` : ''}</div>`
+      : '';
     return `
       <div class="pmt-card" onclick="openDetail('${p.id}')">
+        ${imageHtml}
         <div class="pmt-card-top">
           <span class="pmt-card-cat ${p.category || ''}">${p.category || '기타'}</span>
         </div>
@@ -654,10 +745,16 @@ window.openDetail = function (promptId) {
   const isAuthor = currentUser && currentUser.uid === p.authorId;
   const tags = p.tags || [];
 
+  const detailImages = p.imageUrls || [];
+  const detailImgHtml = detailImages.length > 0
+    ? `<div class="pmt-detail-images">${detailImages.map((url, i) => `<img src="${url}" alt="이미지 ${i+1}" onclick="openImageViewer('${url}', event)" loading="lazy">`).join('')}</div>`
+    : '';
+
   document.getElementById('detailContent').innerHTML = `
     <span class="pmt-detail-cat pmt-card-cat ${p.category || ''}">${p.category || '기타'}</span>
     <h2 class="pmt-detail-title">${escapeHtml(p.title || '')}</h2>
     ${p.description ? `<p class="pmt-detail-desc">${escapeHtml(p.description)}</p>` : ''}
+    ${detailImgHtml}
     <div class="pmt-detail-prompt-wrap">
       <div class="pmt-detail-prompt">${escapeHtml(p.content || '')}</div>
       <button class="pmt-copy-btn" onclick="copyPrompt('${p.id}', event)">
@@ -763,7 +860,21 @@ window.submitPrompt = async function () {
   const btn = document.getElementById('submitBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...'; }
 
-  const id = await addPrompt({ title, category, content, description, tags });
+  // 이미지 업로드
+  let imageUrls = [];
+  if (pendingImages.length > 0) {
+    try {
+      if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 이미지 업로드 중...';
+      imageUrls = await uploadAllImages(pendingImages);
+    } catch (e) {
+      console.warn('이미지 업로드 실패:', e);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> 공유하기'; }
+      showToast('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+  }
+
+  const id = await addPrompt({ title, category, content, description, tags, imageUrls });
 
   if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> 공유하기'; }
 
@@ -774,6 +885,23 @@ window.submitPrompt = async function () {
   } else {
     showToast('저장에 실패했습니다. 다시 시도해주세요.');
   }
+};
+
+// =====================================================
+// 이미지 뷰어
+// =====================================================
+window.openImageViewer = function (url, e) {
+  e.stopPropagation();
+  let viewer = document.getElementById('imgViewer');
+  if (!viewer) {
+    viewer = document.createElement('div');
+    viewer.id = 'imgViewer';
+    viewer.className = 'pmt-img-viewer';
+    viewer.onclick = () => viewer.classList.remove('open');
+    document.body.appendChild(viewer);
+  }
+  viewer.innerHTML = `<img src="${url}" alt="확대 이미지"><button class="pmt-img-viewer-close"><i class="fas fa-times"></i></button>`;
+  viewer.classList.add('open');
 };
 
 // =====================================================

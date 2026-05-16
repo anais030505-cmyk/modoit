@@ -392,6 +392,100 @@ ul { list-style: none; }
 .pmt-submit-btn:hover { background: var(--cp-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
 .pmt-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+/* ===== 이미지 업로드 ===== */
+.pmt-img-upload {
+  border: 2px dashed var(--gray-200); border-radius: 12px;
+  overflow: hidden; transition: border-color var(--trans);
+}
+.pmt-img-upload:hover { border-color: var(--cp-light); }
+.pmt-img-upload-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; padding: 28px 16px; cursor: pointer;
+  transition: background var(--trans);
+}
+.pmt-img-upload-placeholder:hover { background: var(--cp-bg); }
+.pmt-img-upload-placeholder i { font-size: 1.8rem; color: var(--cp-light); }
+.pmt-img-upload-placeholder span { font-size: 0.88rem; font-weight: 600; color: var(--gray-500); }
+.pmt-img-upload-placeholder small { font-size: 0.72rem; color: var(--gray-400); }
+
+.pmt-img-preview-list {
+  display: flex; gap: 10px; padding: 12px; flex-wrap: wrap;
+}
+.pmt-img-preview-item {
+  position: relative; width: 100px; height: 100px; border-radius: 10px;
+  overflow: hidden; border: 2px solid var(--gray-200);
+  flex-shrink: 0;
+}
+.pmt-img-preview-item img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.pmt-img-remove {
+  position: absolute; top: 4px; right: 4px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(0,0,0,0.6); color: white; border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; cursor: pointer; transition: background var(--trans);
+}
+.pmt-img-remove:hover { background: #EF4444; }
+
+/* ===== 카드 이미지 ===== */
+.pmt-card-images {
+  position: relative; margin: -24px -24px 14px -24px;
+  height: 160px; overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--gray-100);
+}
+.pmt-card-images img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.pmt-card-img-count {
+  position: absolute; bottom: 8px; right: 8px;
+  background: rgba(0,0,0,0.6); color: white;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 12px;
+  backdrop-filter: blur(4px);
+}
+
+/* ===== 상세 이미지 ===== */
+.pmt-detail-images {
+  display: flex; gap: 10px; margin-bottom: 20px;
+  overflow-x: auto; padding-bottom: 4px;
+}
+.pmt-detail-images::-webkit-scrollbar { height: 4px; }
+.pmt-detail-images::-webkit-scrollbar-thumb { background: var(--cp-subtle); border-radius: 4px; }
+.pmt-detail-images img {
+  height: 200px; border-radius: 12px; object-fit: cover;
+  cursor: pointer; border: 2px solid var(--gray-200);
+  transition: all var(--trans); flex-shrink: 0;
+}
+.pmt-detail-images img:hover {
+  border-color: var(--cp); transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(124,58,237,0.2);
+}
+
+/* ===== 이미지 뷰어 (풀스크린) ===== */
+.pmt-img-viewer {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 600;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(8px); cursor: zoom-out;
+}
+.pmt-img-viewer.open { display: flex; }
+.pmt-img-viewer img {
+  max-width: 90vw; max-height: 90vh;
+  object-fit: contain; border-radius: 8px;
+  box-shadow: 0 16px 64px rgba(0,0,0,0.4);
+}
+.pmt-img-viewer-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); border: none;
+  color: white; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background var(--trans);
+}
+.pmt-img-viewer-close:hover { background: rgba(255,255,255,0.3); }
+
 /* ===== DETAIL MODAL ===== */
 .pmt-detail-modal {
   width: 640px; max-width: 98vw;
@@ -529,6 +623,9 @@ ul { list-style: none; }
   .pmt-write-btn span { display: none; }
   .cls-footer-top { flex-direction: column; gap: 24px; }
   .cls-footer-bottom { flex-direction: column; align-items: flex-start; }
+  .pmt-card-images { height: 140px; }
+  .pmt-detail-images img { height: 150px; }
+  .pmt-img-preview-item { width: 80px; height: 80px; }
 }
 
 /* ===== 마이페이지 모달 ===== */
