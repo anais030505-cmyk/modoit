@@ -13,9 +13,7 @@ import {
   setDoc, getDoc, updateDoc, increment, orderBy, query,
   addDoc, where, serverTimestamp, deleteDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import {
-  getStorage, ref as storageRef, uploadBytes, getDownloadURL
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+// 이미지는 클라이언트에서 압축 후 base64로 Firestore에 저장
 
 // =====================================================
 // FIREBASE 설정
@@ -101,7 +99,7 @@ let allPrompts = [];
 let currentCat = 'all';
 let searchQuery = '';
 let fbReady = false;
-let auth, db, storage;
+let auth, db;
 let pendingImages = []; // 업로드 대기 이미지 파일
 let myLikes = new Set();
 
@@ -112,7 +110,6 @@ try {
   const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  storage = getStorage(app);
   fbReady = true;
 
   onAuthStateChanged(auth, async (user) => {
@@ -279,24 +276,39 @@ async function deletePrompt(promptId) {
 }
 
 // =====================================================
-// 이미지 업로드
+// 이미지 압축 & base64 변환
 // =====================================================
-async function uploadImage(file) {
-  if (!fbReady || !storage) throw new Error('Storage 미설정');
-  const ext = file.name.split('.').pop().toLowerCase();
-  const fileName = `prompts/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
-  const imgRef = storageRef(storage, fileName);
-  await uploadBytes(imgRef, file);
-  return await getDownloadURL(imgRef);
+function compressImage(file, maxWidth = 800, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-async function uploadAllImages(files) {
-  const urls = [];
+async function compressAllImages(files) {
+  const dataUrls = [];
   for (const file of files) {
-    const url = await uploadImage(file);
-    urls.push(url);
+    const dataUrl = await compressImage(file);
+    dataUrls.push(dataUrl);
   }
-  return urls;
+  return dataUrls;
 }
 
 window.handleImageSelect = function (e) {
@@ -860,16 +872,16 @@ window.submitPrompt = async function () {
   const btn = document.getElementById('submitBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...'; }
 
-  // 이미지 업로드
+  // 이미지 압축 & base64 변환
   let imageUrls = [];
   if (pendingImages.length > 0) {
     try {
-      if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 이미지 업로드 중...';
-      imageUrls = await uploadAllImages(pendingImages);
+      if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 이미지 처리 중...';
+      imageUrls = await compressAllImages(pendingImages);
     } catch (e) {
-      console.warn('이미지 업로드 실패:', e);
+      console.warn('이미지 처리 실패:', e);
       if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> 공유하기'; }
-      showToast('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+      showToast('이미지 처리에 실패했습니다. 다시 시도해주세요.');
       return;
     }
   }
