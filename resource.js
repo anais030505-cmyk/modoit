@@ -70,6 +70,7 @@ let auth, db;
 let myLikes = new Set();
 let pendingImage = null;   // 이미지 파일 1개
 let pendingFile = null;    // 첨부 파일 1개
+let editingResourceId = null; // 수정 모드 시 자료 ID
 
 // =====================================================
 // Firebase 초기화
@@ -224,6 +225,16 @@ async function deleteResource(resourceId) {
     allResources = allResources.filter(r => r.id !== resourceId);
     return true;
   } catch (e) { console.warn('자료 삭제 실패:', e); return false; }
+}
+
+async function updateResourceDoc(resourceId, data) {
+  if (!fbReady || !db || !currentUser) return false;
+  try {
+    await updateDoc(doc(db, 'resources', resourceId), data);
+    const r = allResources.find(x => x.id === resourceId);
+    if (r) Object.assign(r, data);
+    return true;
+  } catch (e) { console.warn('자료 수정 실패:', e); return false; }
 }
 
 // =====================================================
@@ -457,6 +468,7 @@ window.closeLoginModal = function (e) {
 window.openWriteModal = function () {
   if (!currentUser) { openLoginModal(); return; }
   if (!isAdmin) { showToast('관리자만 자료를 등록할 수 있습니다'); return; }
+  editingResourceId = null;
   document.getElementById('writeTitle').value = '';
   document.getElementById('writeCat').value = '';
   document.getElementById('writeContent').value = '';
@@ -466,6 +478,48 @@ window.openWriteModal = function () {
   renderImagePreview(); renderFileInfo();
   const fi = document.getElementById('writeImage'); if (fi) fi.value = '';
   const ff = document.getElementById('writeFile'); if (ff) ff.value = '';
+  document.querySelector('.res-write-title').innerHTML = '<i class="fas fa-upload"></i> 자료 등록하기';
+  document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> 등록하기';
+  document.getElementById('writeModal').classList.add('open');
+};
+
+window.openEditModal = function (resourceId) {
+  if (!currentUser) { openLoginModal(); return; }
+  if (!isAdmin) { showToast('관리자만 자료를 수정할 수 있습니다'); return; }
+  const r = allResources.find(x => x.id === resourceId);
+  if (!r) return;
+  editingResourceId = resourceId;
+  document.getElementById('writeTitle').value = r.title || '';
+  document.getElementById('writeCat').value = r.category || '';
+  document.getElementById('writeContent').value = r.content || '';
+  document.getElementById('writeTags').value = (r.tags || []).join(', ');
+  document.getElementById('charCount').textContent = (r.content || '').length;
+  pendingImage = null; pendingFile = null;
+  const fi = document.getElementById('writeImage'); if (fi) fi.value = '';
+  const ff = document.getElementById('writeFile'); if (ff) ff.value = '';
+  // 기존 이미지 미리보기
+  const preview = document.getElementById('imgPreview');
+  const placeholder = document.getElementById('imgPlaceholder');
+  if (r.imageUrl) {
+    if (placeholder) placeholder.style.display = 'none';
+    if (preview) { preview.style.display = 'block'; preview.innerHTML = `<div class="res-img-preview-item"><img src="${r.imageUrl}" alt="기존 이미지"><button class="res-img-remove" onclick="removeImage(); document.getElementById('imgPlaceholder').style.display='flex'"><i class="fas fa-times"></i></button></div>`; }
+  } else {
+    if (preview) { preview.style.display = 'none'; preview.innerHTML = ''; }
+    if (placeholder) placeholder.style.display = 'flex';
+  }
+  // 기존 파일 정보
+  const fileInfo = document.getElementById('fileInfo');
+  const filePlaceholder = document.getElementById('filePlaceholder');
+  if (r.fileName) {
+    const ext = r.fileName.split('.').pop().toUpperCase();
+    if (filePlaceholder) filePlaceholder.style.display = 'none';
+    if (fileInfo) { fileInfo.style.display = 'flex'; fileInfo.innerHTML = `<div class="res-file-icon"><i class="fas fa-file-${getFileIcon(ext)}"></i></div><div class="res-file-detail"><span class="res-file-name">${escapeHtml(r.fileName)}</span><span class="res-file-size">${escapeHtml(ext)} / ${formatFileSize(r.fileSize)}</span></div><span style="font-size:0.72rem;color:var(--gray-400)">기존 파일 유지</span>`; }
+  } else {
+    if (fileInfo) { fileInfo.style.display = 'none'; fileInfo.innerHTML = ''; }
+    if (filePlaceholder) filePlaceholder.style.display = 'flex';
+  }
+  document.querySelector('.res-write-title').innerHTML = '<i class="fas fa-edit"></i> 자료 수정하기';
+  document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i> 수정 완료';
   document.getElementById('writeModal').classList.add('open');
 };
 window.closeWriteModal = function (e) {
@@ -740,6 +794,7 @@ window.openDetail = function (resourceId) {
       <button class="res-detail-like-btn ${liked?'liked':''}" id="detailLikeBtn" onclick="handleLike('${r.id}', event)">
         <i class="fas fa-heart"></i> ${liked ? '좋아요 취소' : '좋아요'}
       </button>
+      ${isAdmin ? `<button class="res-edit-btn" onclick="openEditModal('${r.id}')"><i class="fas fa-edit"></i> 수정</button>` : ''}
       ${canDelete ? `<button class="res-delete-btn" onclick="handleDelete('${r.id}', event)"><i class="fas fa-trash"></i> 삭제</button>` : ''}
     </div>`;
 
@@ -867,26 +922,53 @@ window.submitResource = async function () {
 
   // Firestore 저장
   if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중...';
-  const id = await addResource({ title, category, content, tags, imageUrl, fileName, fileSize });
 
-  if (id && fileBase64) {
-    try {
-      if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 파일 업로드 중...';
-      await saveFileChunks(id, fileBase64);
-    } catch (e) {
-      console.warn('파일 청크 저장 실패:', e);
-      showToast('파일 저장 중 오류가 발생했습니다.');
+  if (editingResourceId) {
+    // === 수정 모드 ===
+    const updateData = { title, category, content, tags };
+    if (imageUrl) { updateData.imageUrl = imageUrl; }
+    if (fileName) { updateData.fileName = fileName; updateData.fileSize = fileSize; }
+    const ok = await updateResourceDoc(editingResourceId, updateData);
+
+    if (ok && fileBase64) {
+      try {
+        if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 파일 업로드 중...';
+        // 기존 청크 삭제 후 새로 저장
+        const oldChunks = await getDocs(collection(db, 'resources', editingResourceId, 'fileChunks'));
+        for (const d of oldChunks.docs) await deleteDoc(doc(db, 'resources', editingResourceId, 'fileChunks', d.id));
+        await saveFileChunks(editingResourceId, fileBase64);
+      } catch (e) { console.warn('파일 청크 저장 실패:', e); }
     }
-  }
 
-  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> 등록하기'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> 수정 완료'; }
+    if (ok) {
+      closeWriteModal();
+      await loadResources();
+      closeDetail();
+      showToast('자료가 수정되었습니다!');
+      editingResourceId = null;
+    } else { showToast('수정에 실패했습니다.'); }
 
-  if (id) {
-    closeWriteModal();
-    await loadResources();
-    showToast('자료가 등록되었습니다!');
   } else {
-    showToast('저장에 실패했습니다. 다시 시도해주세요.');
+    // === 신규 등록 모드 ===
+    const id = await addResource({ title, category, content, tags, imageUrl, fileName, fileSize });
+
+    if (id && fileBase64) {
+      try {
+        if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 파일 업로드 중...';
+        await saveFileChunks(id, fileBase64);
+      } catch (e) {
+        console.warn('파일 청크 저장 실패:', e);
+        showToast('파일 저장 중 오류가 발생했습니다.');
+      }
+    }
+
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> 등록하기'; }
+    if (id) {
+      closeWriteModal();
+      await loadResources();
+      showToast('자료가 등록되었습니다!');
+    } else { showToast('저장에 실패했습니다. 다시 시도해주세요.'); }
   }
 };
 
