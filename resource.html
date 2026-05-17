@@ -34,7 +34,7 @@
         <a href="resource.html" class="cls-nav-link active">자료실</a>
         <a href="class.html#reviews" class="cls-nav-link">수강후기</a>
         <a href="class.html#faq" class="cls-nav-link">FAQ</a>
-        <a href="index.html" class="cls-nav-link">협회 홈</a>
+        <a href="index.html" class="cls-nav-link">협회 소개</a>
       </nav>
 
       <div class="cls-header-right">
@@ -279,13 +279,16 @@
     </div>
   </div>
 
-  <!-- ===== DETAIL MODAL ===== -->
-  <div class="cls-overlay" id="detailModal" onclick="closeDetailModal(event)">
-    <div class="cls-modal res-detail-modal" id="detailModalBox">
-      <button class="cls-modal-close" onclick="closeDetailModal()"><i class="fas fa-times"></i></button>
-      <div id="detailContent"></div>
+  <!-- ===== DETAIL VIEW (인라인 게시판 뷰) ===== -->
+  <section class="res-detail-view" id="detailView" style="display:none">
+    <div class="cls-container">
+      <button class="res-back-btn" onclick="closeDetail()">
+        <i class="fas fa-arrow-left"></i> 목록으로
+      </button>
+      <article class="res-detail-wrap" id="detailContent">
+      </article>
     </div>
-  </div>
+  </section>
 
   <!-- Firebase SDK (v10) -->
   <script type="module" src="resource.js"></script>

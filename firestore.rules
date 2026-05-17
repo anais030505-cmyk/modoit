@@ -108,9 +108,9 @@ service cloud.firestore {
       allow delete: if isAdmin() ||
         (isAuthenticated() && resource.data.authorId == request.auth.uid);
 
-      // 파일 청크 서브컬렉션
+      // 파일 청크 서브컬렉션 (부모 resources와 동일하게 공개 읽기)
       match /fileChunks/{chunkId} {
-        allow read: if isAuthenticated();
+        allow read: if true;
         allow create: if isAdmin();
         allow update, delete: if isAdmin();
       }

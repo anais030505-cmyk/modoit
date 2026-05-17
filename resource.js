@@ -471,8 +471,12 @@ window.openWriteModal = function () {
 window.closeWriteModal = function (e) {
   if (!e || e.target === document.getElementById('writeModal')) document.getElementById('writeModal').classList.remove('open');
 };
-window.closeDetailModal = function (e) {
-  if (!e || e.target === document.getElementById('detailModal')) document.getElementById('detailModal').classList.remove('open');
+window.closeDetail = function () {
+  document.getElementById('detailView').style.display = 'none';
+  document.querySelector('.res-hero').style.display = '';
+  document.querySelector('.res-toolbar').style.display = '';
+  document.querySelector('.res-main').style.display = '';
+  window.scrollTo({ top: 0 });
 };
 
 // =====================================================
@@ -687,6 +691,7 @@ window.openDetail = function (resourceId) {
   if (!r) return;
   const liked = myLikes.has(r.id);
   const isAuthor = currentUser && currentUser.uid === r.authorId;
+  const canDelete = isAdmin || isAuthor;
   const tags = r.tags || [];
   const ext = r.fileName ? r.fileName.split('.').pop().toUpperCase() : '';
 
@@ -708,32 +713,42 @@ window.openDetail = function (resourceId) {
       </div>` : '';
 
   document.getElementById('detailContent').innerHTML = `
-    <span class="res-detail-cat res-card-cat ${r.category||''}">${r.category||'기타'}</span>
-    <h2 class="res-detail-title">${escapeHtml(r.title||'')}</h2>
-    ${imageHtml}
-    <div class="res-detail-desc">${escapeHtml(r.content||'')}</div>
-    ${fileHtml}
-    ${tags.length ? `<div class="res-detail-tags">${tags.map(t => `<span class="res-detail-tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
-    <div class="res-detail-meta">
-      <div class="res-detail-author">
-        <img class="res-detail-avatar" src="${getAvatarDataUri(r.authorAvatarId||1)}" alt="">
-        <div>
-          <div class="res-detail-author-name">${escapeHtml(r.authorName||'사용자')}</div>
-          <div class="res-detail-author-date">${formatDate(r.createdAt)}</div>
+    <div class="res-detail-header">
+      <span class="res-detail-cat res-card-cat ${r.category||''}">${r.category||'기타'}</span>
+      <h2 class="res-detail-title">${escapeHtml(r.title||'')}</h2>
+      <div class="res-detail-meta-top">
+        <div class="res-detail-author">
+          <img class="res-detail-avatar" src="${getAvatarDataUri(r.authorAvatarId||1)}" alt="">
+          <div>
+            <div class="res-detail-author-name">${escapeHtml(r.authorName||'사용자')}</div>
+            <div class="res-detail-author-date">${formatDate(r.createdAt)}</div>
+          </div>
+        </div>
+        <div class="res-detail-stats">
+          <span class="res-detail-stat"><i class="fas fa-heart"></i> <span id="detailLikeCount">${r.likes||0}</span></span>
+          <span class="res-detail-stat"><i class="fas fa-download"></i> <span id="detailDlCount">${r.downloadCount||0}</span></span>
         </div>
       </div>
-      <div class="res-detail-stats">
-        <span class="res-detail-stat"><i class="fas fa-heart"></i> <span id="detailLikeCount">${r.likes||0}</span></span>
-        <span class="res-detail-stat"><i class="fas fa-download"></i> <span id="detailDlCount">${r.downloadCount||0}</span></span>
-      </div>
     </div>
-    <div style="display:flex;align-items:center;flex-wrap:wrap;">
+    <div class="res-detail-body">
+      ${imageHtml}
+      <div class="res-detail-desc">${escapeHtml(r.content||'')}</div>
+      ${fileHtml}
+      ${tags.length ? `<div class="res-detail-tags">${tags.map(t => `<span class="res-detail-tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+    </div>
+    <div class="res-detail-actions">
       <button class="res-detail-like-btn ${liked?'liked':''}" id="detailLikeBtn" onclick="handleLike('${r.id}', event)">
         <i class="fas fa-heart"></i> ${liked ? '좋아요 취소' : '좋아요'}
       </button>
-      ${isAuthor ? `<button class="res-delete-btn" onclick="handleDelete('${r.id}', event)"><i class="fas fa-trash"></i> 삭제</button>` : ''}
+      ${canDelete ? `<button class="res-delete-btn" onclick="handleDelete('${r.id}', event)"><i class="fas fa-trash"></i> 삭제</button>` : ''}
     </div>`;
-  document.getElementById('detailModal').classList.add('open');
+
+  // 목록 숨기고 상세 보기
+  document.querySelector('.res-hero').style.display = 'none';
+  document.querySelector('.res-toolbar').style.display = 'none';
+  document.querySelector('.res-main').style.display = 'none';
+  document.getElementById('detailView').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 // =====================================================
@@ -795,7 +810,7 @@ window.handleDelete = async function (resourceId, e) {
   e.stopPropagation();
   if (!confirm('정말 이 자료를 삭제하시겠습니까?')) return;
   const ok = await deleteResource(resourceId);
-  if (ok) { closeDetailModal(); renderResources(); updateStats(); showToast('자료가 삭제되었습니다.'); }
+  if (ok) { closeDetail(); renderResources(); updateStats(); showToast('자료가 삭제되었습니다.'); }
   else { showToast('삭제에 실패했습니다.'); }
 };
 
