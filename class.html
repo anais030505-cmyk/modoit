@@ -264,6 +264,9 @@
         <h2 class="cls-sec-title">수강생 <span class="cls-title-accent">후기</span></h2>
         <p class="cls-sec-sub">실제 수강생들의 생생한 후기</p>
       </div>
+      <button class="cls-review-write-btn" onclick="openReviewModal()">
+        <i class="fas fa-pen"></i> 후기 작성하기
+      </button>
       <div class="cls-reviews-grid" id="reviewsGrid"></div>
     </div>
   </section>
@@ -430,6 +433,41 @@
       </div>
       <h3 class="cls-mypage-section-title"><i class="fas fa-book-open"></i> 수강신청 강의</h3>
       <div id="myHistoryList" class="cls-mypage-history"></div>
+    </div>
+  </div>
+
+  <!-- ===== REVIEW WRITE MODAL ===== -->
+  <div class="cls-overlay" id="reviewModal" onclick="closeReviewModal(event)">
+    <div class="cls-modal cls-review-modal" id="reviewModalBox">
+      <button class="cls-modal-close" onclick="closeReviewModal()"><i class="fas fa-times"></i></button>
+      <h2 class="cls-review-modal-title"><i class="fas fa-star"></i> 수강 후기 작성</h2>
+      <p class="cls-review-modal-sub">강의를 수강하신 소감을 공유해주세요</p>
+      <div class="cls-review-form">
+        <div class="cls-review-form-field">
+          <label>별점</label>
+          <div class="cls-star-select" id="starSelect">
+            <span class="cls-star-btn" data-star="1"><i class="fas fa-star"></i></span>
+            <span class="cls-star-btn" data-star="2"><i class="fas fa-star"></i></span>
+            <span class="cls-star-btn" data-star="3"><i class="fas fa-star"></i></span>
+            <span class="cls-star-btn" data-star="4"><i class="fas fa-star"></i></span>
+            <span class="cls-star-btn" data-star="5"><i class="fas fa-star"></i></span>
+          </div>
+        </div>
+        <div class="cls-review-form-field">
+          <label>수강 강의</label>
+          <select id="reviewCourse">
+            <option value="">선택하세요</option>
+          </select>
+        </div>
+        <div class="cls-review-form-field">
+          <label>후기 내용 <span class="cls-rv-required">*</span></label>
+          <textarea id="reviewText" rows="4" maxlength="500" placeholder="강의 후기를 작성해주세요 (최대 500자)"></textarea>
+          <div class="cls-rv-char-count"><span id="rvCharCount">0</span>/500</div>
+        </div>
+        <button class="cls-review-submit-btn" id="reviewSubmitBtn" onclick="submitReview()">
+          <i class="fas fa-paper-plane"></i> 후기 등록
+        </button>
+      </div>
     </div>
   </div>
 

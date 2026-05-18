@@ -205,6 +205,8 @@ let auth, db;
 let myEnrollments = new Set();
 let userProfile = { nickname: '', avatarId: 1 };
 let selectedAvatarId = 1;
+let allReviews = [];
+let reviewStars = 5;
 
 // =====================================================
 // Firebase 초기화
@@ -229,6 +231,7 @@ try {
       await loadCourses();
       await loadMyEnrollments();
       await loadUserProfile();
+      await loadReviews();
     } else {
       const kakaoSession = localStorage.getItem('cls_kakao_user');
       if (kakaoSession) {
@@ -249,11 +252,13 @@ try {
         await loadCourses();
         await loadMyEnrollments();
         if (currentUser) await loadUserProfile();
+        await loadReviews();
       } else {
         currentUser = null;
         myEnrollments = new Set();
         updateUserUI(null);
         await loadCourses();
+        await loadReviews();
       }
     }
   });
@@ -308,6 +313,7 @@ async function loadUserProfile() {
       const data = snap.data();
       userProfile.nickname = data.nickname || currentUser.name || '사용자';
       userProfile.avatarId = data.avatarId || 1;
+      userProfile.isAdmin = data.isAdmin === true;
       updateUserUI(currentUser);
     }
   } catch (e) {
@@ -941,12 +947,143 @@ window.openCourse = function (courseId) {
 };
 
 // =====================================================
+// 후기 Firestore 함수
+// =====================================================
+async function loadReviews() {
+  if (!fbReady || !db) { renderReviews(); return; }
+  try {
+    const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    allReviews = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { console.warn('후기 로드 실패:', e); allReviews = []; }
+  renderReviews();
+}
+
+async function addReview(data) {
+  if (!fbReady || !db || !currentUser) return null;
+  try {
+    const docRef = await addDoc(collection(db, 'reviews'), {
+      ...data,
+      authorId: currentUser.uid,
+      authorName: userProfile.nickname || currentUser.name,
+      authorAvatarId: userProfile.avatarId || 1,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (e) { console.warn('후기 저장 실패:', e); return null; }
+}
+
+async function deleteReview(reviewId) {
+  if (!fbReady || !db || !currentUser) return false;
+  try {
+    await deleteDoc(doc(db, 'reviews', reviewId));
+    allReviews = allReviews.filter(r => r.id !== reviewId);
+    return true;
+  } catch (e) { console.warn('후기 삭제 실패:', e); return false; }
+}
+
+function formatReviewDate(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const now = new Date(), diff = now - d;
+  if (diff < 60000) return '방금 전';
+  if (diff < 3600000) return Math.floor(diff/60000) + '분 전';
+  if (diff < 86400000) return Math.floor(diff/3600000) + '시간 전';
+  if (diff < 604800000) return Math.floor(diff/86400000) + '일 전';
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// =====================================================
+// 후기 모달
+// =====================================================
+window.openReviewModal = function () {
+  if (!currentUser) { openLoginModal(); return; }
+  reviewStars = 5;
+  document.getElementById('reviewText').value = '';
+  document.getElementById('rvCharCount').textContent = '0';
+  updateStarUI();
+  // 강의 목록 채우기
+  const sel = document.getElementById('reviewCourse');
+  sel.innerHTML = '<option value="">선택하세요</option>' +
+    PLAYLISTS.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join('');
+  document.getElementById('reviewModal').classList.add('open');
+};
+
+window.closeReviewModal = function (e) {
+  if (!e || e.target === document.getElementById('reviewModal'))
+    document.getElementById('reviewModal').classList.remove('open');
+};
+
+function updateStarUI() {
+  document.querySelectorAll('.cls-star-btn').forEach(btn => {
+    const s = parseInt(btn.dataset.star);
+    btn.classList.toggle('active', s <= reviewStars);
+  });
+}
+
+window.submitReview = async function () {
+  if (!currentUser) { openLoginModal(); return; }
+  const text = document.getElementById('reviewText').value.trim();
+  const course = document.getElementById('reviewCourse').value;
+  if (!text) { showToast('후기 내용을 입력해주세요'); return; }
+  if (text.length > 500) { showToast('후기는 500자 이내로 입력해주세요'); return; }
+
+  const btn = document.getElementById('reviewSubmitBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 등록 중...'; }
+
+  const id = await addReview({ text, course, stars: reviewStars });
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> 후기 등록'; }
+  if (id) {
+    closeReviewModal();
+    await loadReviews();
+    showToast('후기가 등록되었습니다!');
+  } else {
+    showToast('후기 등록에 실패했습니다. 구글 로그인 후 다시 시도해주세요.');
+  }
+};
+
+window.handleDeleteReview = async function (reviewId) {
+  if (!confirm('이 후기를 삭제하시겠습니까?')) return;
+  const ok = await deleteReview(reviewId);
+  if (ok) { renderReviews(); showToast('후기가 삭제되었습니다.'); }
+  else { showToast('삭제에 실패했습니다.'); }
+};
+
+// =====================================================
 // 후기 렌더링
 // =====================================================
 function renderReviews() {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
-  grid.innerHTML = SAMPLE_REVIEWS.map(r => `
+
+  // Firestore 후기 (상단)
+  const userReviewsHtml = allReviews.map(r => {
+    const isAuthor = currentUser && currentUser.uid === r.authorId;
+    const isAdminUser = currentUser && userProfile && userProfile.isAdmin === true;
+    const canDelete = isAuthor || isAdminUser;
+    return `
+    <div class="cls-review-card cls-review-user">
+      <p class="cls-review-text">"${escapeHtml(r.text)}"</p>
+      <div class="cls-review-footer">
+        <div class="cls-review-author-area">
+          <img class="cls-review-avatar" src="${getAvatarDataUri(r.authorAvatarId||1)}" alt="">
+          <div>
+            <div class="cls-review-stars">${'★'.repeat(r.stars||5)}${'☆'.repeat(5-(r.stars||5))}</div>
+            <div class="cls-review-name">${escapeHtml(r.authorName||'수강생')}</div>
+            ${r.course ? `<div class="cls-review-course">${escapeHtml(r.course)}</div>` : ''}
+          </div>
+        </div>
+        <div class="cls-review-right">
+          <span class="cls-review-date">${formatReviewDate(r.createdAt)}</span>
+          ${canDelete ? `<button class="cls-review-del-btn" onclick="handleDeleteReview('${r.id}')"><i class="fas fa-trash-alt"></i></button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 기존 샘플 후기 (하단)
+  const sampleHtml = SAMPLE_REVIEWS.map(r => `
     <div class="cls-review-card">
       <p class="cls-review-text">"${r.text}"</p>
       <div class="cls-review-footer">
@@ -959,6 +1096,8 @@ function renderReviews() {
       </div>
     </div>
   `).join('');
+
+  grid.innerHTML = userReviewsHtml + sampleHtml;
 }
 
 // =====================================================
@@ -997,6 +1136,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderReviews();
+
+  // 별점 클릭 이벤트
+  document.querySelectorAll('.cls-star-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      reviewStars = parseInt(btn.dataset.star);
+      updateStarUI();
+    });
+  });
+
+  // 후기 글자수 카운터
+  const rvTextEl = document.getElementById('reviewText');
+  const rvCount = document.getElementById('rvCharCount');
+  if (rvTextEl && rvCount) rvTextEl.addEventListener('input', () => { rvCount.textContent = rvTextEl.value.length; });
 
   // Firebase 미설정 시
   if (!fbReady) {

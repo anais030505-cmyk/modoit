@@ -411,6 +411,49 @@ ul { list-style: none; }
   background: var(--cp-subtle); color: var(--cp); border-radius: 20px;
 }
 
+/* 후기 작성 버튼 */
+.cls-review-write-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; background: var(--cp); color: var(--white);
+  border: none; border-radius: 50px; font-size: 0.9rem; font-weight: 700;
+  font-family: inherit; transition: all var(--trans); margin-bottom: 24px;
+}
+.cls-review-write-btn:hover { background: var(--cp-dark); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
+
+/* 사용자 후기 카드 */
+.cls-review-user { border: 1.5px solid rgba(124,58,237,0.2); background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%); }
+.cls-review-author-area { display: flex; align-items: center; gap: 10px; }
+.cls-review-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--cp-subtle); object-fit: cover; flex-shrink: 0; }
+.cls-review-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.cls-review-date { font-size: 0.68rem; color: var(--gray-400); }
+.cls-review-del-btn { background: none; border: none; color: var(--gray-400); font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; transition: all var(--trans); }
+.cls-review-del-btn:hover { color: #EF4444; background: #FEF2F2; }
+
+/* 후기 작성 모달 */
+.cls-review-modal { width: 480px; max-width: 96vw; padding: 36px; }
+.cls-review-modal-title { font-size: 1.3rem; font-weight: 900; color: var(--dark); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.cls-review-modal-title i { color: #FBBF24; }
+.cls-review-modal-sub { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 24px; }
+.cls-review-form { display: flex; flex-direction: column; gap: 18px; }
+.cls-review-form-field label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--gray-700); margin-bottom: 6px; }
+.cls-rv-required { color: #EF4444; }
+.cls-review-form-field select,
+.cls-review-form-field textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: 10px; font-size: 0.9rem; font-family: inherit; color: var(--dark); outline: none; transition: border-color var(--trans), box-shadow var(--trans); background: var(--white); }
+.cls-review-form-field select:focus,
+.cls-review-form-field textarea:focus { border-color: var(--cp); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+.cls-review-form-field textarea { resize: vertical; min-height: 100px; line-height: 1.7; }
+.cls-rv-char-count { text-align: right; font-size: 0.72rem; color: var(--gray-400); margin-top: 4px; }
+
+/* 별점 선택 */
+.cls-star-select { display: flex; gap: 6px; }
+.cls-star-btn { font-size: 1.6rem; color: var(--gray-200); cursor: pointer; transition: color 0.15s, transform 0.15s; }
+.cls-star-btn:hover { transform: scale(1.15); }
+.cls-star-btn.active { color: #FBBF24; }
+
+.cls-review-submit-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: var(--cp); color: var(--white); border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: inherit; transition: all var(--trans); }
+.cls-review-submit-btn:hover { background: var(--cp-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
+.cls-review-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
 /* FAQ */
 .cls-faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
 .cls-faq-item { border: 1.5px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
