@@ -530,6 +530,7 @@ window.closeDetail = function () {
   document.querySelector('.res-hero').style.display = '';
   document.querySelector('.res-toolbar').style.display = '';
   document.querySelector('.res-main').style.display = '';
+  document.querySelector('.cls-footer').style.display = '';
   window.scrollTo({ top: 0 });
 };
 
@@ -802,6 +803,7 @@ window.openDetail = function (resourceId) {
   document.querySelector('.res-hero').style.display = 'none';
   document.querySelector('.res-toolbar').style.display = 'none';
   document.querySelector('.res-main').style.display = 'none';
+  document.querySelector('.cls-footer').style.display = 'none';
   document.getElementById('detailView').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };

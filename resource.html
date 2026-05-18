@@ -121,6 +121,17 @@
     </div>
   </main>
 
+  <!-- ===== DETAIL VIEW (인라인 게시판 뷰) ===== -->
+  <section class="res-detail-view" id="detailView" style="display:none">
+    <div class="cls-container">
+      <button class="res-back-btn" onclick="closeDetail()">
+        <i class="fas fa-arrow-left"></i> 목록으로
+      </button>
+      <article class="res-detail-wrap" id="detailContent">
+      </article>
+    </div>
+  </section>
+
   <!-- ===== FOOTER ===== -->
   <footer class="cls-footer">
     <div class="cls-container">
@@ -278,17 +289,6 @@
       </div>
     </div>
   </div>
-
-  <!-- ===== DETAIL VIEW (인라인 게시판 뷰) ===== -->
-  <section class="res-detail-view" id="detailView" style="display:none">
-    <div class="cls-container">
-      <button class="res-back-btn" onclick="closeDetail()">
-        <i class="fas fa-arrow-left"></i> 목록으로
-      </button>
-      <article class="res-detail-wrap" id="detailContent">
-      </article>
-    </div>
-  </section>
 
   <!-- Firebase SDK (v10) -->
   <script type="module" src="resource.js"></script>
