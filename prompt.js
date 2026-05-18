@@ -5,7 +5,7 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getAuth, signInWithPopup, GoogleAuthProvider,
+  getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider,
   onAuthStateChanged, signOut
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
@@ -111,6 +111,11 @@ try {
   auth = getAuth(app);
   db = getFirestore(app);
   fbReady = true;
+
+  // 구글 리다이렉트 로그인 결과 처리
+  getRedirectResult(auth).catch((e) => {
+    console.error('구글 리다이렉트 로그인 에러:', e);
+  });
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -397,10 +402,9 @@ window.loginWithGoogle = async function () {
   if (!fbReady) { alert('Firebase 설정 후 이용 가능합니다.'); return; }
   try {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-    closeLoginModal();
+    await signInWithRedirect(auth, provider);
   } catch (e) {
-    if (e.code !== 'auth/popup-closed-by-user') alert('구글 로그인 오류: ' + e.message);
+    alert('구글 로그인 오류: ' + e.message);
   }
 };
 
