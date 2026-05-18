@@ -199,6 +199,12 @@ async function loadPrompts() {
   hideLoading();
   renderPrompts();
   updateStats();
+  // URL 파라미터로 특정 게시글 자동 열기
+  const urlId = new URLSearchParams(location.search).get('id');
+  if (urlId && allPrompts.find(x => x.id === urlId)) {
+    openDetail(urlId);
+    history.replaceState(null, '', location.pathname);
+  }
 }
 
 async function loadMyLikes() {
@@ -818,6 +824,7 @@ window.openDetail = function (promptId) {
       <button class="pmt-detail-like-btn ${liked ? 'liked' : ''}" id="detailLikeBtn" onclick="handleLike('${p.id}', event)">
         <i class="fas fa-heart"></i> ${liked ? '좋아요 취소' : '좋아요'}
       </button>
+      <button class="pmt-share-btn" onclick="sharePrompt('${p.id}', event)"><i class="fas fa-link"></i> 공유</button>
       ${isAuthor ? `<button class="pmt-delete-btn" onclick="handleDelete('${p.id}', event)"><i class="fas fa-trash"></i> 삭제</button>` : ''}
     </div>
   `;
@@ -847,6 +854,17 @@ window.copyPrompt = async function (promptId, e) {
     showToast('프롬프트가 복사되었습니다!');
   } catch (err) {
     showToast('복사에 실패했습니다.');
+  }
+};
+
+window.sharePrompt = async function (promptId, e) {
+  e.stopPropagation();
+  const url = `${location.origin}/prompt.html?id=${promptId}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('공유 링크가 복사되었습니다!');
+  } catch (err) {
+    showToast('링크 복사에 실패했습니다.');
   }
 };
 

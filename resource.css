@@ -234,6 +234,8 @@ button { cursor: pointer; font-family: inherit; } ul { list-style: none; }
 .res-detail-like-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; border: 1.5px solid var(--gray-200); border-radius: 50px; background: var(--white); color: var(--gray-500); font-size: 0.85rem; font-weight: 600; font-family: inherit; transition: all var(--trans); }
 .res-detail-like-btn:hover { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
 .res-detail-like-btn.liked { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
+.res-share-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; border: 1.5px solid var(--gray-200); border-radius: 50px; background: var(--white); color: var(--gray-500); font-size: 0.85rem; font-weight: 600; font-family: inherit; transition: all var(--trans); }
+.res-share-btn:hover { border-color: #3B82F6; color: #3B82F6; background: #EFF6FF; }
 .res-edit-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; border: 1.5px solid var(--gray-200); border-radius: 50px; background: var(--white); color: var(--gray-500); font-size: 0.85rem; font-weight: 600; font-family: inherit; transition: all var(--trans); }
 .res-edit-btn:hover { border-color: var(--teal); color: var(--teal); background: #f0fdfa; }
 .res-delete-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; border: 1.5px solid var(--gray-200); border-radius: 50px; background: var(--white); color: var(--gray-400); font-size: 0.85rem; font-weight: 600; font-family: inherit; transition: all var(--trans); }

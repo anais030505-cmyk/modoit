@@ -553,6 +553,16 @@ ul { list-style: none; }
 .pmt-detail-like-btn:hover { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
 .pmt-detail-like-btn.liked { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
 
+/* Share button */
+.pmt-share-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border: 1.5px solid var(--gray-200); border-radius: 50px;
+  background: var(--white); color: var(--gray-500);
+  font-size: 0.82rem; font-weight: 600; font-family: inherit;
+  transition: all var(--trans); margin-top: 16px; margin-left: 8px;
+}
+.pmt-share-btn:hover { border-color: #3B82F6; color: #3B82F6; background: #EFF6FF; }
+
 /* Delete button */
 .pmt-delete-btn {
   display: inline-flex; align-items: center; gap: 6px;

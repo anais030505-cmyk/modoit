@@ -157,6 +157,12 @@ async function loadResources() {
   hideLoading();
   renderResources();
   updateStats();
+  // URL 파라미터로 특정 게시글 자동 열기
+  const urlId = new URLSearchParams(location.search).get('id');
+  if (urlId && allResources.find(x => x.id === urlId)) {
+    openDetail(urlId);
+    history.replaceState(null, '', location.pathname);
+  }
 }
 
 async function loadMyLikes() {
@@ -795,6 +801,7 @@ window.openDetail = function (resourceId) {
       <button class="res-detail-like-btn ${liked?'liked':''}" id="detailLikeBtn" onclick="handleLike('${r.id}', event)">
         <i class="fas fa-heart"></i> ${liked ? '좋아요 취소' : '좋아요'}
       </button>
+      <button class="res-share-btn" onclick="shareResource('${r.id}', event)"><i class="fas fa-link"></i> 공유</button>
       ${isAdmin ? `<button class="res-edit-btn" onclick="openEditModal('${r.id}')"><i class="fas fa-edit"></i> 수정</button>` : ''}
       ${canDelete ? `<button class="res-delete-btn" onclick="handleDelete('${r.id}', event)"><i class="fas fa-trash"></i> 삭제</button>` : ''}
     </div>`;
@@ -869,6 +876,17 @@ window.handleDelete = async function (resourceId, e) {
   const ok = await deleteResource(resourceId);
   if (ok) { closeDetail(); renderResources(); updateStats(); showToast('자료가 삭제되었습니다.'); }
   else { showToast('삭제에 실패했습니다.'); }
+};
+
+window.shareResource = async function (resourceId, e) {
+  e.stopPropagation();
+  const url = `${location.origin}/resource.html?id=${resourceId}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('공유 링크가 복사되었습니다!');
+  } catch (err) {
+    showToast('링크 복사에 실패했습니다.');
+  }
 };
 
 window.submitResource = async function () {
