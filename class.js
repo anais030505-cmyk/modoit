@@ -1005,7 +1005,10 @@ window.openReviewModal = function () {
   // 강의 목록 채우기
   const sel = document.getElementById('reviewCourse');
   sel.innerHTML = '<option value="">선택하세요</option>' +
-    PLAYLISTS.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join('');
+    PLAYLISTS.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join('') +
+    '<option value="__custom__">직접입력</option>';
+  const customInput = document.getElementById('reviewCourseCustom');
+  if (customInput) { customInput.style.display = 'none'; customInput.value = ''; }
   document.getElementById('reviewModal').classList.add('open');
 };
 
@@ -1024,7 +1027,10 @@ function updateStarUI() {
 window.submitReview = async function () {
   if (!currentUser) { openLoginModal(); return; }
   const text = document.getElementById('reviewText').value.trim();
-  const course = document.getElementById('reviewCourse').value;
+  const courseSelect = document.getElementById('reviewCourse').value;
+  const course = courseSelect === '__custom__'
+    ? (document.getElementById('reviewCourseCustom').value.trim() || '')
+    : courseSelect;
   if (!text) { showToast('후기 내용을 입력해주세요'); return; }
   if (text.length > 500) { showToast('후기는 500자 이내로 입력해주세요'); return; }
 
@@ -1144,6 +1150,16 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStarUI();
     });
   });
+
+  // 수강 강의 직접입력 토글
+  const rvCourseSelect = document.getElementById('reviewCourse');
+  const rvCustomInput = document.getElementById('reviewCourseCustom');
+  if (rvCourseSelect && rvCustomInput) {
+    rvCourseSelect.addEventListener('change', () => {
+      rvCustomInput.style.display = rvCourseSelect.value === '__custom__' ? 'block' : 'none';
+      if (rvCourseSelect.value === '__custom__') rvCustomInput.focus();
+    });
+  }
 
   // 후기 글자수 카운터
   const rvTextEl = document.getElementById('reviewText');
